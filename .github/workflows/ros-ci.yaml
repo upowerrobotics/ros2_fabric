@@ -14,6 +14,7 @@ jobs:
         uses: ros-tooling/setup-ros@v0.6
         with:
           required-ros-distributions: galactic
+          import-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tests
         uses: ros-tooling/action-ros-ci@v0.3
         with:
@@ -25,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ros_ws/log
+          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()
   build-ros2-humble:
     runs-on: ubuntu-22.04
@@ -36,6 +37,7 @@ jobs:
         uses: ros-tooling/setup-ros@v0.6
         with:
           required-ros-distributions: humble
+          import-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tests
         uses: ros-tooling/action-ros-ci@v0.3
         with:
@@ -47,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ros_ws/log
+          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()
   build-ros2-iron:
     runs-on: ubuntu-22.04
@@ -58,6 +60,7 @@ jobs:
         uses: ros-tooling/setup-ros@v0.6
         with:
           required-ros-distributions: iron
+          import-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tests
         uses: ros-tooling/action-ros-ci@v0.3
         with:
@@ -69,5 +72,5 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ros_ws/log
+          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()

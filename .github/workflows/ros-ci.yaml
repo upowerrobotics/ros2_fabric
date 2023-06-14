@@ -8,7 +8,7 @@ jobs:
   build-ros2-galactic:
     runs-on: ubuntu-22.04
     container:
-      image: rostooling/setup-ros-docker:ubuntu-focal-ros-galactic-ros-base-latest
+      image: rostooling/setup-ros-docker:ubuntu-focal-ros-galactic-desktop-latest
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.5
@@ -32,7 +32,7 @@ jobs:
   build-ros2-humble:
     runs-on: ubuntu-22.04
     container:
-      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-ros-base-latest
+      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-desktop-latest
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.6
@@ -56,7 +56,7 @@ jobs:
   build-ros2-iron:
     runs-on: ubuntu-22.04
     container:
-      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-iron-ros-base-latest
+      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-iron-desktop-latest
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.6

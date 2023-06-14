@@ -1,5 +1,5 @@
-# ros2_automated_testing
-A framework for communications-based evaltion of ROS2 architectures
+# ROS2 FABRIC
+A Framework for Automated Benchmarking of ROS Interprocess Communication (FABRIC).
 
 ## Supported ROS2 Versions
 

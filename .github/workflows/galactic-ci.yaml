@@ -1,0 +1,31 @@
+name: Galactic Workflow
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  build-ros2-galactic:
+    runs-on: ubuntu-22.04
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-focal-ros-galactic-desktop-latest
+    steps:
+      - name: Build Environment
+        uses: ros-tooling/setup-ros@v0.5
+        with:
+          required-ros-distributions: galactic
+      - name: Run Tests
+        id: galactic_action_ros_ci_step
+        uses: ros-tooling/action-ros-ci@v0.3
+        with:
+          package-name: |
+            fabric_interfaces
+            fabric_nodes
+          target-ros2-distro: galactic
+          import-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload logs
+        uses: actions/upload-artifact@v1
+        with:
+          name: colcon-logs-galactic
+          path: ${{ steps.galactic_action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
+        if: always()

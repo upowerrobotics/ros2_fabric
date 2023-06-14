@@ -11,7 +11,7 @@ jobs:
       image: rostooling/setup-ros-docker:ubuntu-focal-ros-galactic-ros-base-latest
     steps:
       - name: Build Environment
-        uses: ros-tooling/setup-ros@v0.6
+        uses: ros-tooling/setup-ros@v0.5
         with:
           required-ros-distributions: galactic
       - name: Run Tests

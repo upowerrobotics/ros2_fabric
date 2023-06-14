@@ -15,6 +15,7 @@ jobs:
         with:
           required-ros-distributions: galactic
       - name: Run Tests
+        id: galactic_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3
         with:
           package-name: |
@@ -26,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
+          path: ${{ steps.galactic_action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()
   build-ros2-humble:
     runs-on: ubuntu-22.04
@@ -38,6 +39,7 @@ jobs:
         with:
           required-ros-distributions: humble
       - name: Run Tests
+        id: humble_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3
         with:
           package-name: |
@@ -49,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
+          path: ${{ steps.humble_action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()
   build-ros2-iron:
     runs-on: ubuntu-22.04
@@ -61,6 +63,7 @@ jobs:
         with:
           required-ros-distributions: iron
       - name: Run Tests
+        id: iron_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3
         with:
           package-name: |
@@ -72,5 +75,5 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: colcon-logs
-          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
+          path: ${{ steps.iron_action_ros_ci_step.outputs.ros-workspace-directory-name }}/log
         if: always()

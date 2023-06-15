@@ -32,6 +32,24 @@ ament_auto_find_build_dependencies(REQUIRED
   ${${PROJECT_NAME}_BUILDTOOL_DEPENDS}
 )
 
+set(${PROJECT_NAME}_INCLUDES
+  include/fabric_nodes/dummy_node.hpp
+)
+
+set(${PROJECT_NAME}_SRCS
+  src/dummy_node.cpp
+)
+
+ament_auto_add_library(${PROJECT_NAME} SHARED
+  ${${PROJECT_NAME}_INCLUDES}
+  ${${PROJECT_NAME}_SRCS}
+)
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "fabric_nodes::DummyNode"
+  EXECUTABLE "dummy_node_exe"
+)
+
 # Testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

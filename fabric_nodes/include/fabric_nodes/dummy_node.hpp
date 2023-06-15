@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/rclcpp.hpp>  // NOLINT
 
 namespace fabric_nodes
 {

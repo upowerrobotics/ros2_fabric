@@ -16,16 +16,51 @@
 #define FABRIC_NODES__DUMMY_NODE_HPP_
 
 #include <string>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>  // NOLINT
 
 namespace fabric_nodes
 {
 
+enum class SizeType
+{
+  BYTES = 1LL,
+  KILOBYTES = 1024LL,
+  MEGABYTES = 1048576LL,
+  GIGABYTES = 1073741824LL
+};
+
+struct PublishTopic
+{
+  float bandwidth_scalar = 0.0f;
+  SizeType bandwidth_size_type = SizeType::BYTES;
+  float msg_frequency = 0.0f;
+  float msg_size_scalar = 0.0f;
+  SizeType msg_size_type = SizeType::BYTES;
+  std::string topic_name = "";
+};
+
+struct SubscribeTopic
+{
+  std::string node_name = "";
+  std::string topic_name = "";
+};
+
 class DummyNode : public rclcpp::Node
 {
 public:
-  explicit DummyNode(const rclcpp::NodeOptions options);
+  explicit DummyNode(rclcpp::NodeOptions options);
+
+private:
+  void parse_publish_topic(const std::string & param_prefix);
+  void parse_subscribe_topic(const std::string & subscribe_prefix);
+  bool parse_data_size(const std::string & data_size, float * scalar, SizeType * type);
+
+  bool m_root_node = false;
+  bool m_terminal_node = false;
+  std::vector<PublishTopic> m_publish_topics;
+  std::vector<SubscribeTopic> m_subscribe_topics;
 };
 
 }  // namespace fabric_nodes

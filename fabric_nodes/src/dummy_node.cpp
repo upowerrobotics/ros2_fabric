@@ -15,9 +15,10 @@
 #include <fabric_nodes/dummy_node.hpp>
 
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <rclcpp/exceptions.hpp>
+#include <rclcpp/exceptions.hpp>  // NOLINT
 
 // Size of the text "publish_topics."
 static constexpr uint8_t PUBLISH_PREFIX_SIZE = 15U;

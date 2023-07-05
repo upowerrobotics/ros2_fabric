@@ -32,6 +32,12 @@ ament_auto_find_build_dependencies(REQUIRED
   ${${PROJECT_NAME}_BUILDTOOL_DEPENDS}
 )
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/DummyMessage.msg"
+  DEPENDENCIES builtin_interfaces
+  ADD_LINTER_TESTS
+)
+
 # Testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

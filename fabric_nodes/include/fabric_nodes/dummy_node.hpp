@@ -19,6 +19,9 @@
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>  // NOLINT
+#include <fabric_interfaces/msg/dummy_message.hpp>
+
+using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 
 namespace fabric_nodes
 {
@@ -39,12 +42,15 @@ struct PublishTopic
   float msg_size_scalar = 0.0f;
   SizeType msg_size_type = SizeType::BYTES;
   std::string topic_name = "";
+  rclcpp::Publisher<DummyMsgT>::SharedPtr publisher;
+  rclcpp::TimerBase::SharedPtr publish_timer;
 };
 
 struct SubscribeTopic
 {
   std::string node_name = "";
   std::string topic_name = "";
+  rclcpp::Subscription<DummyMsgT>::SharedPtr subscriber;
 };
 
 class DummyNode : public rclcpp::Node
@@ -56,6 +62,8 @@ private:
   void parse_publish_topic(const std::string & param_prefix);
   void parse_subscribe_topic(const std::string & subscribe_prefix);
   bool parse_data_size(const std::string & data_size, float * scalar, SizeType * type);
+  void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes);
+  void sub_callback(const DummyMsgT::SharedPtr msg);
 
   bool m_root_node = false;
   bool m_terminal_node = false;

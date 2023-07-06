@@ -14,16 +14,28 @@
 
 #include <fabric_nodes/dummy_node.hpp>
 
+#include <algorithm>
+#include <cstdio>
+#include <chrono>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <rclcpp/exceptions.hpp>  // NOLINT
+#include <fabric_interfaces/msg/dummy_message.hpp>
+
+using DummyMsgT = fabric_interfaces::msg::DummyMessage;
+using namespace std::chrono_literals;
+
+int constexpr char_len(const char * str)
+{
+  return *str ? 1 + char_len(str + 1) : 0;
+}
 
 // Size of the text "publish_topics."
-static constexpr uint8_t PUBLISH_PREFIX_SIZE = 15U;
+static constexpr uint8_t PUBLISH_PREFIX_SIZE = char_len("publish_topics.");
 // Size of the text "subscribe_topics."
-static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE = 17U;
+static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE = char_len("subscribe_topics.");
 
 namespace fabric_nodes
 {
@@ -64,6 +76,8 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
     for (const auto & prefix : subscribe_params_msg.prefixes) {
       parse_subscribe_topic(prefix);
     }
+
+    // TODO(jwhitleywork): Actually create the subscribers
   }
 }
 
@@ -125,6 +139,36 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
     }
   }
 
+  // TODO(jwhitleywork): Figure out QoS settings
+  pub.publisher = this->create_publisher<DummyMsgT>(pub.topic_name, rclcpp::QoS{1});
+
+  float frequency = pub.msg_frequency;
+  uint64_t msg_bytes =
+    static_cast<uint64_t>(pub.msg_size_scalar * static_cast<float>(pub.msg_size_type));
+  uint64_t bw_bytes =
+    static_cast<uint64_t>(pub.bandwidth_scalar * static_cast<float>(pub.bandwidth_size_type));
+
+  // If frequency is 0, must have only bw and msg size
+  if (frequency == 0.0f) {
+    frequency = static_cast<float>(bw_bytes) / static_cast<float>(msg_bytes);
+  }
+
+  // If msg size is 0, must have only frequency and bw
+  if (msg_bytes == 0) {
+    msg_bytes = static_cast<uint64_t>(static_cast<float>(bw_bytes) / frequency);
+  }
+
+  std::chrono::milliseconds timer_interval =
+    std::chrono::milliseconds(static_cast<uint64_t>(1.0f / frequency * 1000.0f));
+
+  // This is really stupid. See
+  // https://answers.ros.org/question/308386/ros2-add-arguments-to-callback/
+  // for explanation of the next line.
+  std::function<void()> bound_func =
+    std::bind(&DummyNode::pub_callback, this, pub.publisher, msg_bytes);
+
+  pub.publish_timer = this->create_wall_timer(timer_interval, bound_func);
+
   m_publish_topics.push_back(std::move(pub));
 }
 
@@ -158,6 +202,13 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
     }
   }
 
+  std::ostringstream topic_oss{};
+  topic_oss << "/" << sub.node_name << "/" << sub.topic_name;
+
+  sub.subscriber = this->create_subscription<DummyMsgT>(
+    topic_oss.str(), rclcpp::QoS{1}, std::bind(
+      &DummyNode::sub_callback, this, std::placeholders::_1));
+
   m_subscribe_topics.push_back(std::move(sub));
 }
 
@@ -190,6 +241,18 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   *scalar = std::stof(size_scalar);
 
   return true;
+}
+
+void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes)
+{
+  auto msg = std::make_unique<DummyMsgT>();
+  msg->data.resize(msg_bytes, 42);
+  msg->timestamp = this->now();
+  publisher->publish(std::move(msg));
+}
+
+void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg)
+{
 }
 
 }  // namespace fabric_nodes

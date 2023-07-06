@@ -1,2 +1,3 @@
 builtin_interfaces/Time timestamp
-char[] data
+uint8[16] uuid
+uint8[] data

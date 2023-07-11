@@ -18,8 +18,9 @@
 #include <string>
 #include <vector>
 
+// The NOLINTs below are to fix Galactic bugs
 #include <rclcpp/rclcpp.hpp>  // NOLINT
-#include <fabric_interfaces/msg/dummy_message.hpp>
+#include <fabric_interfaces/msg/dummy_message.hpp>  // NOLINT
 
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 

@@ -17,12 +17,14 @@
 #include <algorithm>
 #include <cstdio>
 #include <chrono>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+// The NOLINTs below are to fix Galactic bugs
 #include <rclcpp/exceptions.hpp>  // NOLINT
-#include <fabric_interfaces/msg/dummy_message.hpp>
+#include <fabric_interfaces/msg/dummy_message.hpp>  // NOLINT
 
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 using namespace std::chrono_literals;

@@ -76,8 +76,6 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
     for (const auto & prefix : subscribe_params_msg.prefixes) {
       parse_subscribe_topic(prefix);
     }
-
-    // TODO(jwhitleywork): Actually create the subscribers
   }
 }
 
@@ -205,9 +203,13 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   std::ostringstream topic_oss{};
   topic_oss << "/" << sub.node_name << "/" << sub.topic_name;
 
+  auto sub_options = rclcpp::SubscriptionOptions();
+  sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
+
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, std::bind(
-      &DummyNode::sub_callback, this, std::placeholders::_1));
+      &DummyNode::sub_callback, this, std::placeholders::_1),
+      sub_options);
 
   m_subscribe_topics.push_back(std::move(sub));
 }

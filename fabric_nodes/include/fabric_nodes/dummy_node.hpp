@@ -15,11 +15,11 @@
 #ifndef FABRIC_NODES__DUMMY_NODE_HPP_
 #define FABRIC_NODES__DUMMY_NODE_HPP_
 
-#include <string>
-#include <vector>
-
 #include <rclcpp/rclcpp.hpp>  // NOLINT
 #include <fabric_interfaces/msg/dummy_message.hpp>
+
+#include <string>
+#include <vector>
 
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 

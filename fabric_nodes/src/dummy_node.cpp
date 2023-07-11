@@ -14,15 +14,16 @@
 
 #include <fabric_nodes/dummy_node.hpp>
 
+#include <rclcpp/exceptions.hpp>  // NOLINT
+#include <fabric_interfaces/msg/dummy_message.hpp>
+
+#include <chrono>
 #include <algorithm>
 #include <cstdio>
-#include <chrono>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <rclcpp/exceptions.hpp>  // NOLINT
-#include <fabric_interfaces/msg/dummy_message.hpp>
+#include <memory>
 
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 using namespace std::chrono_literals;

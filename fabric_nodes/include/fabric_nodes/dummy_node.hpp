@@ -63,7 +63,7 @@ private:
   void parse_subscribe_topic(const std::string & subscribe_prefix);
   bool parse_data_size(const std::string & data_size, float * scalar, SizeType * type);
   void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes);
-  void sub_callback(const DummyMsgT::SharedPtr msg);
+  void sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
 
   bool m_root_node = false;
   bool m_terminal_node = false;

@@ -206,10 +206,11 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   auto sub_options = rclcpp::SubscriptionOptions();
   sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
 
+  std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
+    &DummyNode::sub_callback, this, std::placeholders::_1, topic_oss.str());
+
   sub.subscriber = this->create_subscription<DummyMsgT>(
-    topic_oss.str(), rclcpp::QoS{1}, std::bind(
-      &DummyNode::sub_callback, this, std::placeholders::_1),
-      sub_options);
+    topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
 
   m_subscribe_topics.push_back(std::move(sub));
 }
@@ -253,8 +254,13 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
   publisher->publish(std::move(msg));
 }
 
-void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg)
+void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
+  auto now = this->now();
+  auto diff = now - rclcpp::Time(msg->timestamp);
+
+  RCLCPP_DEBUG(
+    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());
 }
 
 }  // namespace fabric_nodes

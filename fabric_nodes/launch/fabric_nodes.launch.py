@@ -1,11 +1,11 @@
-# Copyright 2023 U Power Robotics, USA
-
+# Copyright 2023 U Power Robotics USA, Inc.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
-#    http://www.apache.org/licenses/LICENSE-2.0
-
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ from launch import LaunchDescription
 
 import os
 import yaml
+
 
 def generate_launch_description():
     pkg_share_path = get_package_share_directory('fabric_nodes')
@@ -45,7 +46,9 @@ def generate_launch_description():
         nodes.append(node)
 
     # Process subscribe topics
-    for subscriber_name, subscriber_config in config['ros__parameters']['subscribe_topics'].items():
+    for subscriber_name, subscriber_config in (
+        config['ros__parameters']['subscribe_topics'].items()
+    ):
         node_name = subscriber_config['node']
         node = Node(
             package='fabric_nodes',

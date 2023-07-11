@@ -68,4 +68,5 @@ ament_auto_package(
     config
     docs
     param
+    launch
 )

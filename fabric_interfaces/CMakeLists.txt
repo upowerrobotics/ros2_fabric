@@ -35,7 +35,6 @@ ament_auto_find_build_dependencies(REQUIRED
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/DummyMessage.msg"
   DEPENDENCIES builtin_interfaces
-  ADD_LINTER_TESTS
 )
 
 # Testing

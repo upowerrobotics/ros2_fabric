@@ -22,6 +22,14 @@ import yaml
 
 
 def generate_launch_description():
+    """
+    Generate the LaunchDescription for the fabric_nodes package.
+
+    Returns
+    -------
+    The LaunchDescription object.
+
+    """
     pkg_share_path = get_package_share_directory('fabric_nodes')
     config_file_path = os.path.join(pkg_share_path, 'param/dummy_config.param.yaml')
 

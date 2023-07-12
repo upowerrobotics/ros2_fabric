@@ -14,9 +14,9 @@
 
 import os
 
+from ament_index_python import get_package_share_directory
 import yaml
 
-from ament_index_python import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
@@ -32,7 +32,7 @@ def generate_launch_description():
 
     # Process publish topics
     for env_name, env_config in config['environments'].items():
-        if env_name=="env1":
+        if env_name == "env1":
             for nodename, nodeconfig in env_config['nodes'].items():
                 node = Node(
                     package='fabric_nodes',

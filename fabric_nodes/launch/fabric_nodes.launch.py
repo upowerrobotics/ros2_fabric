@@ -30,37 +30,22 @@ def generate_launch_description():
     nodes = []
 
     # Process publish topics
-    for publisher_name, publisher_config in config['ros__parameters']['publish_topics'].items():
-        node_name = 'publisher_node_' + publisher_name
-        node = Node(
-            package='fabric_nodes',
-            executable='dummy_node_exe',
-            name=node_name,
-            parameters=[{
-                'root_node': config['ros__parameters']['root_node'],
-                'terminal_node': config['ros__parameters']['terminal_node'],
-                'publish_topics': {publisher_name: publisher_config}
-            }],
-            output='screen'
-        )
-        nodes.append(node)
-
-    # Process subscribe topics
-    for subscriber_name, subscriber_config in (
-        config['ros__parameters']['subscribe_topics'].items()
-    ):
-        node_name = subscriber_config['node']
-        node = Node(
-            package='fabric_nodes',
-            executable='dummy_node_exe',
-            name='subscriber_node_' + subscriber_name,
-            parameters=[{
-                'root_node': config['ros__parameters']['root_node'],
-                'terminal_node': config['ros__parameters']['terminal_node'],
-                'subscribe_topics': {subscriber_name: subscriber_config}
-            }],
-            output='screen'
-        )
-        nodes.append(node)
+    for env_name, env_config in config['environments'].items():
+        if env_name == "env1":
+            for nodename, nodeconfig in env_config['nodes'].items():
+                node = Node(
+                    package='fabric_nodes',
+                    executable='dummy_node_exe',
+                    name='fabric_node',
+                    namespace=nodename,
+                    parameters=[{
+                        'root_node': nodeconfig['root_node'],
+                        'terminal_node': nodeconfig['terminal_node'],
+                        'publish_topics': nodeconfig['publish_topics'],
+                        'subscribe_topics': nodeconfig['subscribe_topics'],
+                    }],
+                    output='screen'
+                )
+                nodes.append(node)
 
     return LaunchDescription(nodes)

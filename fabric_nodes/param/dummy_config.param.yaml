@@ -1,16 +1,23 @@
-ros__parameters:
-  root_node: false
-  terminal_node: false
-  publish_topics:
-    publisher1:
-      msg_size: "1M"
-      msg_frequency: 25.0
-    publisher2:
-      bandwidth: "2M"
-      msg_size: "250K"
-    publisher3:
-      bandwidth: "500K"
-      msg_frequency: 10.0
-  subscribe_topics:
-    subscriber1:
-      node: "publisher_node"
+environments:
+  env1:
+    nodes:
+      node1:
+        root_node: false
+        terminal_node: false
+        publish_topics:
+          publisher1:
+            msg_size: "1M"
+            msg_frequency: 25.0
+          publisher2:
+            bandwidth: "2M"
+            msg_size: "250K"
+          publisher3:
+            bandwidth: "500K"
+            msg_frequency: 10.0
+        subscribe_topics:
+          publisher1:
+            node: "node1"
+          publisher2:
+            node: "node1"
+          publisher3:
+            node: "node1"

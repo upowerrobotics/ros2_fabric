@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_index_python import get_package_share_directory
-from launch_ros.actions import Node
-from launch import LaunchDescription
-
 import os
+
 import yaml
+
+from ament_index_python import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -31,7 +32,7 @@ def generate_launch_description():
 
     # Process publish topics
     for env_name, env_config in config['environments'].items():
-        if env_name == "env1":
+        if env_name=="env1":
             for nodename, nodeconfig in env_config['nodes'].items():
                 node = Node(
                     package='fabric_nodes',

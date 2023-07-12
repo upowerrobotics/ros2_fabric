@@ -57,12 +57,7 @@ def check_config_rules(config):
                         return 1
 
             # Check if each publisher has a connected subscriber
-            if 'subscribe_topics' in nodeconfig:
-                for topic, params in nodeconfig['subscribe_topics'].items():
-                    if not any(params['node'] == pub_node for pub_node, pub_config in env_config['nodes'].items()
-                               if 'publish_topics' in pub_config and topic in pub_config['publish_topics']):
-                        print(f"Error: Publisher '{nodename}' on topic '{topic}' does not have a connected subscriber.")
-                        return 1
+            """TO DO"""
 
             # Update root and terminal node flags
             if is_root_node:

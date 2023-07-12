@@ -2,7 +2,7 @@ environments:
   env1:
     nodes:
       node1:
-        root_node: false
+        root_node: true
         terminal_node: false
         publish_topics:
           topic_1M:
@@ -14,13 +14,6 @@ environments:
           topic_500K:
             bandwidth: "500K"
             msg_frequency: 10.0
-        subscribe_topics:
-          topic_1M:
-            node: "node2"
-          topic_2M:
-            node: "node2"
-          topic_500K:
-            node: "node2"
       node2:
         root_node: false
         terminal_node: false
@@ -41,3 +34,13 @@ environments:
             node: "node1"
           topic_500K:
             node: "node1"
+      node3:
+        root_node: false
+        terminal_node: true
+        subscribe_topics:
+          topic_1M:
+            node: "node2"
+          topic_2M:
+            node: "node2"
+          topic_500K:
+            node: "node2"

@@ -61,7 +61,7 @@ class Config2Nodes:
                     publisher_qty = publisher.get('qty', 1)
                     if publisher_qty < 1:
                         raise ValueError(
-                            f"Invalid publisher quantity for publisher "
+                            f'Invalid publisher quantity for publisher '
                             f"{publisher['name']}' in node '{node_config['name']}'"
                         )
 
@@ -72,7 +72,7 @@ class Config2Nodes:
                         raise ValueError(
                             f"Publisher '{publisher['name']}' in node "
                             f"'{node_config['name']}' must have at least two of the "
-                            f"following parameters: bandwidth, msg_size, msg_frequency"
+                            f'following parameters: bandwidth, msg_size, msg_frequency'
                         )
 
                     # Store publisher_topics
@@ -85,7 +85,7 @@ class Config2Nodes:
                     subscriber_qty = subscriber.get('qty', 1)
                     if subscriber_qty < 1:
                         raise ValueError(
-                            f"Invalid subscriber quantity for subscriber "
+                            f'Invalid subscriber quantity for subscriber '
                             f"'{subscriber['name']}' in node '{node_config['name']}'"
                         )
 
@@ -99,7 +99,7 @@ class Config2Nodes:
                 if root_node and terminal_node:
                     raise ValueError(
                         f"Node '{node_config['name']}' "
-                        f"cannot be both a terminal node and a root node"
+                        f'cannot be both a terminal node and a root node'
                     )
                 if root_node and 'subscribers' in node_config:
                     raise ValueError(
@@ -144,11 +144,11 @@ class Config2Nodes:
 
         Parameters
         ----------
-            node_config (dict): The configuration of a specific node.
+        node_config (dict): The configuration of a specific node.
 
         Returns
         -------
-            dict: A dictionary containing the processed publisher topics.
+        dict: A dictionary containing the processed publisher topics.
 
         """
         publish_topics = {}
@@ -176,11 +176,11 @@ class Config2Nodes:
 
         Parameters
         ----------
-            node_config (dict): The configuration of a specific node.
+        node_config (dict): The configuration of a specific node.
 
         Returns
         -------
-            dict: A dictionary containing the processed subscriber topics.
+        subscribe_topics (dict): A dictionary containing the processed subscriber topics.
 
         """
         subscribe_topics = {}
@@ -203,12 +203,12 @@ class Config2Nodes:
 
         Parameters
         ----------
-            node_config (dict): The configuration of a specific node.
-            node_name (str): The name of the node.
-            root_node (bool): Whether the node is a root node.
-            terminal_node (bool): Whether the node is a terminal node.
-            publish_topics (dict): The processed publisher topics.
-            subscribe_topics (dict): The processed subscriber topics.
+        node_config: The configuration of a specific node.
+        node_name (str): The name of the node.
+        root_node (bool): Whether the node is a root node.
+        terminal_node (bool): Whether the node is a terminal node.
+        publish_topics (dict): The processed publisher topics.
+        subscribe_topics (dict): The processed subscriber topics.
 
         """
         if 'qty' in node_config:
@@ -228,15 +228,19 @@ class Config2Nodes:
 
         Parameters
         ----------
-            name (str): The name of the node.
-            root_node (bool): Whether the node is a root node.
-            terminal_node (bool): Whether the node is a terminal node.
-            publish_topics (dict): The processed publisher topics.
-            subscribe_topics (dict): The processed subscriber topics.
+        name (str): The name of the node.
+
+        root_node (bool): Whether the node is a root node.
+
+        terminal_node (bool): Whether the node is a terminal node.
+
+        publish_topics (dict): The processed publisher topics.
+
+        subscribe_topics (dict): The processed subscriber topics.
 
         Returns
         -------
-            Node: The created ROS node object.
+        Node: The created ROS node object.
 
         """
         node = Node(
@@ -260,7 +264,7 @@ class Config2Nodes:
 
         Returns
         -------
-            list: A list of the generated ROS node objects.
+        list: A list of the generated ROS node objects.
 
         """
         self.load_config()
@@ -289,7 +293,7 @@ def generate_launch_description():
 
     Returns
     -------
-        The LaunchDescription object.
+    LaunchDescription: The LaunchDescription object.
 
     """
     pkg_share_path = get_package_share_directory('fabric_nodes')

@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import sys
 
 from ament_index_python import get_package_share_directory
 from launch import LaunchDescription
@@ -21,84 +20,137 @@ from launch_ros.actions import Node
 
 import yaml
 
-def validate_config(config):
-    publisher_topics = set()
-    subscriber_topics = set()
-
-    for environment in config['environments']:
-        for node_config in environment['nodes']:
-
-            # Validate node qty rules
-            node_qty = node_config.get('qty', 1)
-            if node_qty < 1:
-                raise ValueError(f"Invalid node quantity for node '{node_config['name']}'")
-
-            # Validate publishers qty rules
-            node_publishers = node_config.get('publishers', [])
-            for publisher in node_publishers:
-                publisher_qty = publisher.get('qty', 1)
-                if publisher_qty < 1:
-                    raise ValueError(f"Invalid publisher quantity for publisher '{publisher['name']}' in node '{node_config['name']}'")
-
-                # Validate publisher parameters
-                parameter_count = sum(parameter in publisher for parameter in ['bandwidth', 'msg_size', 'msg_frequency'])
-                if parameter_count < 2:
-                    raise ValueError(f"Publisher '{publisher['name']}' in node '{node_config['name']}' must have at least two of the following parameters: bandwidth, msg_size, msg_frequency")
-                
-                #Store publisher_topics
-                publisher_topics.add((node_config['name'], publisher['name']))
-
-            # Validate subscribers qty rules
-            node_subscribers = node_config.get('subscribers', [])
-            for subscriber in node_subscribers:
-                subscriber_qty = subscriber.get('qty', 1)
-                if subscriber_qty < 1:
-                    raise ValueError(f"Invalid subscriber quantity for subscriber '{subscriber['name']}' in node '{node_config['name']}'")
-
-                #Store subscriber_topics
-                subscriber_topics.add((subscriber['node'], subscriber['name'], node_config['name']))
-
-            # Validate root_node and terminal_node rules
-            root_node = node_config.get('root_node', False)
-            terminal_node = node_config.get('terminal_node', False)
-            if root_node and terminal_node:
-                raise ValueError(f"Node '{node_config['name']}' cannot be both a terminal node and a root node")
-            if root_node and 'subscribers' in node_config:
-                raise ValueError(f"Root node '{node_config['name']}' cannot have subscribers")
-            if terminal_node and 'publishers' in node_config:
-                raise ValueError(f"Terminal node '{node_config['name']}' cannot have publishers")
-    
-    # Validate publishers-subscribers connections
-    for publisher_topic in publisher_topics:
-        pub_connected = False
-        for subscriber_topic in subscriber_topics:
-            if publisher_topic[0] == subscriber_topic[0] and publisher_topic[1] == subscriber_topic[1]:
-                pub_connected = True
-        if pub_connected == False:
-            raise ValueError(f"Publisher '{publisher_topic[1]}' in node '{publisher_topic[0]}' is not connected with any subscriber")
-    for subscriber_topic in subscriber_topics:
-        sub_connected = False
-        for publisher_topic in publisher_topics:
-            if subscriber_topic[0] == publisher_topic[0] and subscriber_topic[1] == publisher_topic[1]:
-                sub_connected = True
-        if sub_connected == False:
-            raise ValueError(f"Subscriber '{subscriber_topic[1]}' in node '{subscriber_topic[2]}' is not connected with any publisher")
-
-def load_config(config_file_path):
-    with open(config_file_path, 'r') as file:
-        config = yaml.safe_load(file)
-
-    validate_config(config)
-
-    return config
 
 class Config2Nodes:
-    def __init__(self, config, env):
-        self.nodes = []
-        self.config = config
+    """
+    Helper class for processing configuration files and generating nodes.
+
+    Parameters
+    ----------
+        config_file_path (str): The path to the configuration file.
+        env (str): The environment to be used for processing the configuration.
+
+    """
+
+    def __init__(self, config_file_path, env):
+        self.config_file_path = config_file_path
         self.env = env
+        self.nodes = []
+        self.config = None
+
+    def load_config(self):
+        """Load the configuration file."""
+        with open(self.config_file_path, 'r') as file:
+            self.config = yaml.safe_load(file)
+
+    def validate_config(self):
+        """Validate the loaded configuration."""
+        publisher_topics = set()
+        subscriber_topics = set()
+
+        for environment in self.config['environments']:
+            for node_config in environment['nodes']:
+                # Validate node qty rules
+                node_qty = node_config.get('qty', 1)
+                if node_qty < 1:
+                    raise ValueError(f"Invalid node quantity for node '{node_config['name']}'")
+
+                # Validate publishers qty rules
+                node_publishers = node_config.get('publishers', [])
+                for publisher in node_publishers:
+                    publisher_qty = publisher.get('qty', 1)
+                    if publisher_qty < 1:
+                        raise ValueError(
+                            f"Invalid publisher quantity for publisher "
+                            f"{publisher['name']}' in node '{node_config['name']}'"
+                        )
+
+                    # Validate publisher parameters
+                    parameter_count = sum(parameter in publisher for parameter in [
+                        'bandwidth', 'msg_size', 'msg_frequency'])
+                    if parameter_count < 2:
+                        raise ValueError(
+                            f"Publisher '{publisher['name']}' in node "
+                            f"'{node_config['name']}' must have at least two of the "
+                            f"following parameters: bandwidth, msg_size, msg_frequency"
+                        )
+
+                    # Store publisher_topics
+                    publisher_topics.add((node_config['name'], publisher['name'],
+                                          node_qty, publisher_qty))
+
+                # Validate subscribers qty rules
+                node_subscribers = node_config.get('subscribers', [])
+                for subscriber in node_subscribers:
+                    subscriber_qty = subscriber.get('qty', 1)
+                    if subscriber_qty < 1:
+                        raise ValueError(
+                            f"Invalid subscriber quantity for subscriber "
+                            f"'{subscriber['name']}' in node '{node_config['name']}'"
+                        )
+
+                    # Store subscriber_topics
+                    subscriber_topics.add((subscriber['node'], subscriber['name'],
+                                           node_qty, subscriber_qty, node_config['name']))
+
+                # Validate root_node and terminal_node rules
+                root_node = node_config.get('root_node', False)
+                terminal_node = node_config.get('terminal_node', False)
+                if root_node and terminal_node:
+                    raise ValueError(
+                        f"Node '{node_config['name']}' "
+                        f"cannot be both a terminal node and a root node"
+                    )
+                if root_node and 'subscribers' in node_config:
+                    raise ValueError(
+                        f"Root node '{node_config['name']}' cannot have subscribers"
+                    )
+                if terminal_node and 'publishers' in node_config:
+                    raise ValueError(
+                        f"Terminal node '{node_config['name']}' cannot have publishers"
+                    )
+
+        # Validate publishers-subscribers connections
+        for publisher_topic in publisher_topics:
+            pub_connected = False
+            for subscriber_topic in subscriber_topics:
+                if (publisher_topic[0] == subscriber_topic[0] and
+                        publisher_topic[1] == subscriber_topic[1] and
+                        publisher_topic[2] <= subscriber_topic[2] and
+                        publisher_topic[3] <= subscriber_topic[3]):
+                    pub_connected = True
+            if not pub_connected:
+                raise ValueError(
+                    f"Publisher '{publisher_topic[1]}' in node "
+                    f"'{publisher_topic[0]}' is not connected properly"
+                )
+        for subscriber_topic in subscriber_topics:
+            sub_connected = False
+            for publisher_topic in publisher_topics:
+                if (subscriber_topic[0] == publisher_topic[0] and
+                        subscriber_topic[1] == publisher_topic[1] and
+                        subscriber_topic[2] <= publisher_topic[2] and
+                        subscriber_topic[3] <= publisher_topic[3]):
+                    sub_connected = True
+            if not sub_connected:
+                raise ValueError(
+                    f"Subscriber '{subscriber_topic[1]}' in node "
+                    f"'{subscriber_topic[4]}' is not connected properly"
+                )
 
     def process_publishers(self, node_config):
+        """
+        Process publishers in the node configuration.
+
+        Parameters
+        ----------
+            node_config (dict): The configuration of a specific node.
+
+        Returns
+        -------
+            dict: A dictionary containing the processed publisher topics.
+
+        """
         publish_topics = {}
         if 'publishers' in node_config:
             for publisher in node_config['publishers']:
@@ -119,6 +171,18 @@ class Config2Nodes:
         return publish_topics
 
     def process_subscribers(self, node_config):
+        """
+        Process subscribers in the node configuration.
+
+        Parameters
+        ----------
+            node_config (dict): The configuration of a specific node.
+
+        Returns
+        -------
+            dict: A dictionary containing the processed subscriber topics.
+
+        """
         subscribe_topics = {}
         if 'subscribers' in node_config:
             for subscriber in node_config['subscribers']:
@@ -132,18 +196,49 @@ class Config2Nodes:
                     subscribe_topics[topic_name] = subscribe_topic
         return subscribe_topics
 
-    def generate_node(self, node_config, node_name, root_node, terminal_node, publish_topics, subscribe_topics):
+    def generate_node(self, node_config, node_name, root_node,
+                      terminal_node, publish_topics, subscribe_topics):
+        """
+        Generate a node based on the provided configuration.
+
+        Parameters
+        ----------
+            node_config (dict): The configuration of a specific node.
+            node_name (str): The name of the node.
+            root_node (bool): Whether the node is a root node.
+            terminal_node (bool): Whether the node is a terminal node.
+            publish_topics (dict): The processed publisher topics.
+            subscribe_topics (dict): The processed subscriber topics.
+
+        """
         if 'qty' in node_config:
             node_qty = node_config['qty']
             for num in range(1, node_qty + 1):
-                node = self.create_node(node_name + '_' + str(num), root_node, terminal_node, publish_topics,
-                                        subscribe_topics)
+                node = self.create_node(node_name + '_' + str(num), root_node,
+                                        terminal_node, publish_topics, subscribe_topics)
                 self.nodes.append(node)
         else:
-            node = self.create_node(node_name, root_node, terminal_node, publish_topics, subscribe_topics)
+            node = self.create_node(node_name, root_node,
+                                    terminal_node, publish_topics, subscribe_topics)
             self.nodes.append(node)
 
     def create_node(self, name, root_node, terminal_node, publish_topics, subscribe_topics):
+        """
+        Create a ROS node object.
+
+        Parameters
+        ----------
+            name (str): The name of the node.
+            root_node (bool): Whether the node is a root node.
+            terminal_node (bool): Whether the node is a terminal node.
+            publish_topics (dict): The processed publisher topics.
+            subscribe_topics (dict): The processed subscriber topics.
+
+        Returns
+        -------
+            Node: The created ROS node object.
+
+        """
         node = Node(
             package='fabric_nodes',
             executable='dummy_node_exe',
@@ -159,9 +254,20 @@ class Config2Nodes:
         )
         return node
 
-    def get_nodes(self, env):
+    def get_nodes(self):
+        """
+        Get the generated nodes based on the configuration.
+
+        Returns
+        -------
+            list: A list of the generated ROS node objects.
+
+        """
+        self.load_config()
+        self.validate_config()
+
         for environment in self.config['environments']:
-            if environment['name'] != env:
+            if environment['name'] != self.env:
                 continue
             for node_config in environment['nodes']:
                 node_name = node_config['name']
@@ -171,25 +277,25 @@ class Config2Nodes:
                 publish_topics = self.process_publishers(node_config)
                 subscribe_topics = self.process_subscribers(node_config)
 
-                self.generate_node(node_config, node_name, root_node, terminal_node, publish_topics,
-                                    subscribe_topics)
+                self.generate_node(node_config, node_name, root_node,
+                                   terminal_node, publish_topics, subscribe_topics)
 
         return self.nodes
 
+
 def generate_launch_description():
     """
-    Check the config rules and Generate the LaunchDescription for the fabric_nodes package.
+    Generate the LaunchDescription for the fabric_nodes package.
 
     Returns
     -------
-    The LaunchDescription object.
+        The LaunchDescription object.
 
     """
     pkg_share_path = get_package_share_directory('fabric_nodes')
     config_file_path = os.path.join(pkg_share_path, 'param/pass_config.param.yaml')
-    
-    config = load_config(config_file_path)
-    converter = Config2Nodes(config, 'env1')
-    nodes = converter.get_nodes()
+
+    config2nodes = Config2Nodes(config_file_path, 'env1')
+    nodes = config2nodes.get_nodes()
 
     return LaunchDescription(nodes)

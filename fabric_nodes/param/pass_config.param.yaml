@@ -45,17 +45,17 @@ environments:
           - name: topic_500K
             qty: 3
             node: node1
-      # - name: node3
-      #   qty: 1
-      #   root_node: false
-      #   terminal_node: true
-      #   subscribers:
-      #     - name: topic_1M
-      #       qty: 4
-      #       node: node2
-      #     - name: topic_2M
-      #       qty: 5
-      #       node: node2
-      #     - name: topic_500K
-      #       qty: 6
-      #       node: node2
+      - name: node3
+        qty: 1
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: topic_1M
+            qty: 4
+            node: node2
+          - name: topic_2M
+            qty: 5
+            node: node2
+          - name: topic_500K
+            qty: 6
+            node: node2

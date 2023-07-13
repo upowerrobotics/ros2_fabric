@@ -66,9 +66,10 @@ def generate_launch_description():
                 if 'subscribers' in node_config:
                     for subscriber in node_config['subscribers']:
                         topic_name = subscriber['name']
-                        target_node = {subscriber['node']}
-                        subscribe_topics[topic_name] = target_node                
-                    print(node_name, subscribe_topics)
+                        subscribe_topic = {
+                            'node': subscriber['node']
+                        }
+                        subscribe_topics[topic_name] = subscribe_topic      
 
                 node = Node(
                     package='fabric_nodes',

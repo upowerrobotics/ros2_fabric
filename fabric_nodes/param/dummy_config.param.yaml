@@ -29,18 +29,18 @@ environments:
             msg_frequency: 10.0
         subscribers:
           - name: topic_1M
-            node: "node1"
+            node: node1
           - name: topic_2M
-            node: "node1"
+            node: node1
           - name: topic_500K
-            node: "node1"
-      # - name: node3
-      #   root_node: false
-      #   terminal_node: true
-      #   subscriber:
-      #     - name: topic_1M
-      #       node: "node2"
-      #     - name: topic_2M
-      #       node: "node2"
-      #     - name: topic_500K
-      #       node: "node2"
+            node: node1
+      - name: node3
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: topic_1M
+            node: node2
+          - name: topic_2M
+            node: node2
+          - name: topic_500K
+            node: node2

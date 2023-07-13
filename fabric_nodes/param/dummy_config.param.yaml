@@ -2,7 +2,7 @@ environments:
   - name: env1
     nodes:
       - name: node1
-        qty: 2
+        qty: 1
         root_node: true
         terminal_node: false
         publishers:
@@ -19,7 +19,7 @@ environments:
             bandwidth: 500K
             msg_frequency: 10.0
       - name: node2
-        qty: 2
+        qty: 1
         root_node: false
         terminal_node: false
         publishers:
@@ -45,17 +45,17 @@ environments:
           - name: topic_500K
             qty: 3
             node: node1
-      - name: node3
-        qty: 2
-        root_node: false
-        terminal_node: true
-        subscribers:
-          - name: topic_1M
-            qty: 4
-            node: node2
-          - name: topic_2M
-            qty: 5
-            node: node2
-          - name: topic_500K
-            qty: 6
-            node: node2
+      # - name: node3
+      #   qty: 1
+      #   root_node: false
+      #   terminal_node: true
+      #   subscribers:
+      #     - name: topic_1M
+      #       qty: 4
+      #       node: node2
+      #     - name: topic_2M
+      #       qty: 5
+      #       node: node2
+      #     - name: topic_500K
+      #       qty: 6
+      #       node: node2

@@ -55,6 +55,11 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  add_ros_test(
+    test/fabric_nodes_launch.test.py
+    TIMEOUT "30"
+  )
+
   # Unit tests
   # set(TEST_SOURCES test/test_ars430_driver.cpp)
   # set(TEST_ARS430_DRIVER_EXE test_ars430_driver)

@@ -16,13 +16,12 @@
 import os
 import unittest
 
-import pytest
-import launch_testing
-
 from ament_index_python import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+import launch_testing
+import pytest
 
 
 @pytest.mark.launch_test
@@ -50,9 +49,9 @@ def generate_test_description():
 @launch_testing.post_shutdown_test()
 class TestProcessOutput(unittest.TestCase):
 
-    def test_exit_code(self, proc_output, proc_info):
-        # Check that process exits with code -2 code: termination request, sent to the program
+    def test_exit_code(self, proc_info):
+        # Check that the process exits with code -2 (termination request)
         launch_testing.asserts.assertExitCodes(
             proc_info,
-            [-2, -6, -15]
+            allowable_exit_codes=[-2, -6, -15]
         )

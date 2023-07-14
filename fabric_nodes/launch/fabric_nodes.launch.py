@@ -144,7 +144,8 @@ class Config2Nodes:
 
         Parameters
         ----------
-        node_config (dict): The configuration of a specific node.
+        node_config :
+            The configuration of a specific node.
 
         Returns
         -------
@@ -176,11 +177,13 @@ class Config2Nodes:
 
         Parameters
         ----------
-        node_config (dict): The configuration of a specific node.
+        node_config : dict
+            The configuration of a specific node.
 
         Returns
         -------
-        subscribe_topics (dict): A dictionary containing the processed subscriber topics.
+        subscribe_topics :
+            A dictionary containing the processed subscriber topics.
 
         """
         subscribe_topics = {}
@@ -203,12 +206,18 @@ class Config2Nodes:
 
         Parameters
         ----------
-        node_config: The configuration of a specific node.
-        node_name (str): The name of the node.
-        root_node (bool): Whether the node is a root node.
-        terminal_node (bool): Whether the node is a terminal node.
-        publish_topics (dict): The processed publisher topics.
-        subscribe_topics (dict): The processed subscriber topics.
+        node_config:
+            The configuration of a specific node.
+        node_name : str
+            The name of the node.
+        root_node : bool
+            Whether the node is a root node.
+        terminal_node : bool
+            Whether the node is a terminal node.
+        publish_topics : dict
+            The processed publisher topics.
+        subscribe_topics : dict
+            The processed subscriber topics.
 
         """
         if 'qty' in node_config:
@@ -228,15 +237,16 @@ class Config2Nodes:
 
         Parameters
         ----------
-        name (str): The name of the node.
-
-        root_node (bool): Whether the node is a root node.
-
-        terminal_node (bool): Whether the node is a terminal node.
-
-        publish_topics (dict): The processed publisher topics.
-
-        subscribe_topics (dict): The processed subscriber topics.
+        name : str
+            The name of the node.
+        root_node : bool
+            Whether the node is a root node.
+        terminal_node : bool
+            Whether the node is a terminal node.
+        publish_topics : dict
+            The processed publisher topics.
+        subscribe_topics : dict
+            The processed subscriber topics.
 
         Returns
         -------

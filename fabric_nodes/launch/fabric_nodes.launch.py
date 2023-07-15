@@ -306,8 +306,13 @@ def generate_launch_description():
     LaunchDescription: The LaunchDescription object.
 
     """
-    pkg_share_path = get_package_share_directory('fabric_nodes')
-    config_file_path = os.path.join(pkg_share_path, 'param/pass_config.param.yaml')
+    config_file_path = os.getenv(
+        'CONFIG_FILE_PATH',
+        os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/pass_config.param.yaml'
+        )
+    )
 
     config2nodes = Config2Nodes(config_file_path, 'env1')
     nodes = config2nodes.get_nodes()

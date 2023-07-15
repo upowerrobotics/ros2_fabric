@@ -27,12 +27,16 @@ import pytest
 @pytest.mark.launch_test
 def generate_test_description():
 
+    config_file_path = os.path.join(
+        get_package_share_directory('fabric_nodes'),
+        'param/pass_config.param.yaml'
+    )
     launch_file_path = os.path.join(
         get_package_share_directory('fabric_nodes'),
-        'launch',
-        'fabric_nodes.launch.py'
+        'launch/fabric_nodes.launch.py'
     )
 
+    os.environ["CONFIG_FILE_PATH"] = config_file_path
     launch_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(launch_file_path)
     )
@@ -55,3 +59,15 @@ class TestProcessOutput(unittest.TestCase):
             proc_info,
             allowable_exit_codes=[-2, -6, -15]
         )
+
+    def test_process_creation(self, proc_output):
+        # Get the process names that generated IO
+        process_names = proc_output.process_names()
+
+        # Check if the expected topics are present
+        dummy_process = ['dummy_node_exe-1', 'dummy_node_exe-2', 'dummy_node_exe-3']
+
+        for process_name in process_names:
+            assert process_name in dummy_process, (
+                f"{process_name} was not found in dummy_process."
+            )

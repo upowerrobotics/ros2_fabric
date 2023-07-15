@@ -74,4 +74,5 @@ ament_auto_package(
     docs
     param
     launch
+    test
 )

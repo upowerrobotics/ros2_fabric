@@ -36,7 +36,7 @@ def generate_test_description():
         'launch/fabric_nodes.launch.py'
     )
 
-    os.environ["CONFIG_FILE_PATH"] = config_file_path
+    os.environ['CONFIG_FILE_PATH'] = config_file_path
     launch_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(launch_file_path)
     )
@@ -69,5 +69,5 @@ class TestProcessOutput(unittest.TestCase):
 
         for process_name in process_names:
             assert process_name in dummy_process, (
-                f"{process_name} was not found in dummy_process."
+                f'{process_name} was not found in dummy_process.'
             )

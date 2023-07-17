@@ -219,9 +219,17 @@ class Config2Nodes:
         """
         if 'qty' in node_config:
             node_qty = node_config['qty']
-            for num in range(1, node_qty + 1):
-                node = self.create_node(node_name + '_' + str(num), root_node,
-                                        terminal_node, publish_topics, subscribe_topics)
+            if node_qty != 1:
+                for num in range(1, node_qty + 1):
+                    subscribe_topics_qty = subscribe_topics.copy()
+                    for key, value in subscribe_topics.items():
+                        subscribe_topics_qty[key] = {'node': value['node'] + '_' +  str(num)}
+                    node = self.create_node(node_name + '_' + str(num), root_node,
+                                            terminal_node, publish_topics, subscribe_topics_qty)
+                    self.nodes.append(node)
+            else:
+                node = self.create_node(node_name, root_node,
+                                    terminal_node, publish_topics, subscribe_topics)
                 self.nodes.append(node)
         else:
             node = self.create_node(node_name, root_node,

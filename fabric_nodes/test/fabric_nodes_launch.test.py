@@ -65,7 +65,8 @@ class TestProcessOutput(unittest.TestCase):
         process_names = proc_output.process_names()
 
         # Check if the expected topics are present
-        dummy_process = ['dummy_node_exe-1', 'dummy_node_exe-2', 'dummy_node_exe-3']
+        dummy_process = ['dummy_node_exe-1', 'dummy_node_exe-2', 'dummy_node_exe-3',
+                         'dummy_node_exe-4', 'dummy_node_exe-5', 'dummy_node_exe-6']
 
         for process_name in process_names:
             assert process_name in dummy_process, (

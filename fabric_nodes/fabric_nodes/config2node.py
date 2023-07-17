@@ -150,22 +150,25 @@ class Config2Nodes:
 
         """
         publish_topics = {}
-        if 'publishers' in node_config:
-            for publisher in node_config['publishers']:
-                topic_name = publisher['name']
-                publish_topic = {}
-                if 'msg_size' in publisher:
-                    publish_topic['msg_size'] = publisher['msg_size']
-                if 'bandwidth' in publisher:
-                    publish_topic['bandwidth'] = publisher['bandwidth']
-                if 'msg_frequency' in publisher:
-                    publish_topic['msg_frequency'] = publisher['msg_frequency']
-                publisher_qty = publisher.get('qty', 1)
-                if publisher_qty != 1:
-                    for num in range(1, publisher_qty + 1):
-                        publish_topics[topic_name + '_' + str(num)] = publish_topic
-                else:
-                    publish_topics[topic_name] = publish_topic
+        publishers = node_config.get('publishers', [])
+
+        for publisher in publishers:
+            topic_name = publisher['name']
+            publish_topic = {}
+
+            if 'msg_size' in publisher:
+                publish_topic['msg_size'] = publisher['msg_size']
+            if 'bandwidth' in publisher:
+                publish_topic['bandwidth'] = publisher['bandwidth']
+            if 'msg_frequency' in publisher:
+                publish_topic['msg_frequency'] = publisher['msg_frequency']
+
+            publisher_qty = publisher.get('qty', 1)
+
+            for num in range(1, publisher_qty + 1):
+                key = topic_name if publisher_qty == 1 else f"{topic_name}_{num}"
+                publish_topics[key] = publish_topic
+
         return publish_topics
 
     def process_subscribers(self, node_config):
@@ -184,16 +187,21 @@ class Config2Nodes:
 
         """
         subscribe_topics = {}
-        if 'subscribers' in node_config:
-            for subscriber in node_config['subscribers']:
-                topic_name = subscriber['name']
-                subscribe_topic = {'node': subscriber['node']}
-                subscriber_qty = subscriber.get('qty', 1)
-                if subscriber_qty != 1:
-                    for num in range(1, subscriber_qty + 1):
-                        subscribe_topics[topic_name + '_' + str(num)] = subscribe_topic
+        subscribers = node_config.get('subscribers', [])
+        
+        for subscriber in subscribers:
+            topic_name = subscriber['name']
+            subscribe_topic = {'node': subscriber['node']}
+            subscriber_qty = subscriber.get('qty', 1)
+
+            for num in range(1, subscriber_qty + 1):
+                if subscriber_qty == 1:
+                    key = topic_name
                 else:
-                    subscribe_topics[topic_name] = subscribe_topic
+                    key = f"{topic_name}_{num}"
+                    
+                subscribe_topics[key] = subscribe_topic
+
         return subscribe_topics
 
     def generate_node(self, node_config, node_name, root_node,
@@ -217,23 +225,20 @@ class Config2Nodes:
             The processed subscriber topics.
 
         """
-        if 'qty' in node_config:
-            node_qty = node_config['qty']
+        node_qty = node_config.get('qty', 1)
+        for num in range(1, node_qty + 1):
             if node_qty != 1:
-                for num in range(1, node_qty + 1):
-                    subscribe_topics_qty = subscribe_topics.copy()
-                    for key, value in subscribe_topics.items():
-                        subscribe_topics_qty[key] = {'node': value['node'] + '_' +  str(num)}
-                    node = self.create_node(node_name + '_' + str(num), root_node,
-                                            terminal_node, publish_topics, subscribe_topics_qty)
-                    self.nodes.append(node)
+                subscribe_topics_qty = {
+                    key: {'node': value['node'] + '_' + str(num)}
+                    for key, value in subscribe_topics.items()
+                }
+                node_name_with_num = f"{node_name}_{num}"
             else:
-                node = self.create_node(node_name, root_node,
-                                    terminal_node, publish_topics, subscribe_topics)
-                self.nodes.append(node)
-        else:
-            node = self.create_node(node_name, root_node,
-                                    terminal_node, publish_topics, subscribe_topics)
+                subscribe_topics_qty = subscribe_topics
+                node_name_with_num = node_name
+
+            node = self.create_node(node_name_with_num, root_node, terminal_node,
+                                    publish_topics, subscribe_topics_qty)
             self.nodes.append(node)
 
     def create_node(self, name, root_node, terminal_node, publish_topics, subscribe_topics):

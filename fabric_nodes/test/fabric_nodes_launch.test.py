@@ -22,6 +22,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing
 import pytest
+from fabric_nodes.config2node import Config2Nodes
 
 
 @pytest.mark.launch_test
@@ -72,3 +73,158 @@ class TestProcessOutput(unittest.TestCase):
             assert process_name in dummy_process, (
                 f'{process_name} was not found in dummy_process.'
             )
+
+    # Test publisher param config checker
+    def test_error_param_pub(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_param_pub.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'must have at least two of the following parameters: '
+                f'bandwidth, msg_size, msg_frequency in ' + str(excinfo.value))
+
+    # Test publisher connection if different qty
+    def test_error_pub_connection_qty(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_pub_connection_qty.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'publisher is not connected in ' + str(excinfo.value))
+
+    # Test publisher connection if same qty
+    def test_error_pub_connection(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_pub_connection.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'publisher is not connected in ' + str(excinfo.value))
+
+    # Test qty node
+    def test_error_qty_node(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_qty_node.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'node qty is not a valid number in ' + str(excinfo.value))
+
+    # Test qty publisher
+    def test_error_qty_publisher(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_qty_pub.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'publisher qty is not a valid number in ' + str(excinfo.value))
+
+    # Test qty subscriber
+    def test_error_qty_subscriber(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_qty_sub.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'subscriber qty is not a valid number in ' + str(excinfo.value))
+
+    # Test root terminal node
+    def test_error_root_terminal(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_root_terminal.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'root node can not be terminal node in ' + str(excinfo.value))
+
+    # Test root node
+    def test_error_root(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_root.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'root node can not have subscribers in ' + str(excinfo.value))
+
+    # Test subscriber connection if different qty
+    def test_error_sub_connection_qty(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_sub_connection_qty.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'subsciber is not connected in ' + str(excinfo.value))
+
+    # Test subscriber connection if same qty
+    def test_error_sub_connetion(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_sub_connetion.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'subsciber is not connected in ' + str(excinfo.value))
+
+    # Test terminal node
+    def test_error_terminal(self):
+        config_file_path = os.path.join(
+            get_package_share_directory('fabric_nodes'),
+            'param/error_test_configs/error_terminal.param.yaml'
+        )
+
+        config2nodes = Config2Nodes(config_file_path, 'env1')
+
+        with pytest.raises(ValueError) as excinfo:
+            config2nodes.get_nodes()
+
+        assert (f'terminal node can not have publihsers in ' + str(excinfo.value))

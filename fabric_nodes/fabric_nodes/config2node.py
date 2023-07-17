@@ -188,7 +188,7 @@ class Config2Nodes:
         """
         subscribe_topics = {}
         subscribers = node_config.get('subscribers', [])
-        
+
         for subscriber in subscribers:
             topic_name = subscriber['name']
             subscribe_topic = {'node': subscriber['node']}
@@ -199,7 +199,7 @@ class Config2Nodes:
                     key = topic_name
                 else:
                     key = f"{topic_name}_{num}"
-                    
+
                 subscribe_topics[key] = subscribe_topic
 
         return subscribe_topics

@@ -12,9 +12,11 @@
   <url type="bugtracker">https://github.com/upowerrobotics/ros2_fabric/issues</url>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>fabric_interfaces</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpy</depend>
   <depend>rclcpp_components</depend>
 
   <test_depend>ament_lint_auto</test_depend>

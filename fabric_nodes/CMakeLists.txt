@@ -60,9 +60,22 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   add_ros_test(
-    test/fabric_nodes_launch.test.py
+    tests/test_fabric_nodes_launch.py
     TIMEOUT "30"
   )
+
+  set(_pytest_tests
+    tests/test_config2node.py
+    # Add other test files here
+  )
+  foreach(_test_path ${_pytest_tests})
+    get_filename_component(_test_name ${_test_path} NAME_WE)
+    ament_add_pytest_test(${_test_name} ${_test_path}
+      APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+      TIMEOUT 60
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+  endforeach()
 
   # Unit tests
   # set(TEST_SOURCES test/test_ars430_driver.cpp)
@@ -78,5 +91,5 @@ ament_auto_package(
     docs
     param
     launch
-    test
+    tests
 )

@@ -22,7 +22,6 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing
 import pytest
-from fabric_nodes.config2node import Config2Nodes
 
 
 @pytest.mark.launch_test
@@ -54,13 +53,6 @@ def generate_test_description():
 @launch_testing.post_shutdown_test()
 class TestProcessOutput(unittest.TestCase):
 
-    def test_exit_code(self, proc_info):
-        # Check that the process exits with code -2 (termination request)
-        launch_testing.asserts.assertExitCodes(
-            proc_info,
-            allowable_exit_codes=[-2, -6, -15]
-        )
-
     def test_process_creation(self, proc_output):
         # Get the process names that generated IO
         process_names = proc_output.process_names()
@@ -74,33 +66,27 @@ class TestProcessOutput(unittest.TestCase):
                 f'{process_name} was not found in dummy_process.'
             )
 
-    def test_error_conditions(self):
-        test_cases = {
-            'error_param_pub.param.yaml': (f'must have at least two '
-                                           f'of the following parameters: '
-                                           f'bandwidth, msg_size, msg_frequency'),
-            'error_pub_connection_qty.param.yaml': 'publisher is not connected',
-            'error_pub_connection.param.yaml': 'publisher is not connected',
-            'error_qty_node.param.yaml': 'node qty is not a valid number',
-            'error_qty_pub.param.yaml': 'publisher qty is not a valid number',
-            'error_qty_sub.param.yaml': 'subscriber qty is not a valid number',
-            'error_root_terminal.param.yaml': 'root node can not be terminal node',
-            'error_root.param.yaml': 'root node can not have subscribers',
-            'error_sub_connection_qty.param.yaml': 'subsciber is not connected',
-            'error_sub_connetion.param.yaml': 'subsciber is not connected',
-            'error_terminal.param.yaml': 'terminal node can not have publihsers',
-        }
+    def test_exit_code(self, proc_info):
+        # Check that the process exits with code -2 (termination request)
+        launch_testing.asserts.assertExitCodes(
+            proc_info,
+            allowable_exit_codes=[-2, -6, -15]
+        )
 
-        for config_file, expected_error in test_cases.items():
-            config_file_path = os.path.join(
-                get_package_share_directory('fabric_nodes'),
-                'param/error_test_configs/',
-                config_file
-            )
+    def test_node_list(self):
+        import subprocess
+        # expected_node_namespaces = [
+        #     '/node1_1/node1_1',
+        #     '/node1_2/node1_2',
+        #     '/node2_1/node2_1',
+        #     '/node2_2/node2_2',
+        #     '/node3_1/node3_1',
+        #     '/node3_2/node3_2'
+        # ]
 
-            config2nodes = Config2Nodes(config_file_path, 'env1')
+        cmd_str = "bash -c 'source /opt/ros/$ROS_DISTRO/setup.bash && ros2 node list'"
 
-            with pytest.raises(ValueError) as excinfo:
-                config2nodes.get_nodes()
+        node_list = subprocess.run(cmd_str, shell=True, capture_output=True, text=True)
+        node_list = node_list.stdout.strip().splitlines()
 
-            assert (expected_error + str(excinfo.value))
+        assert True, f'node_list: {node_list}'

@@ -69,6 +69,7 @@ if(BUILD_TESTING)
   set(_pytest_tests
     tests/test_config2node.py
     tests/test_node_list.py
+    tests/test_topic_list.py
     # Add other test files here
   )
   foreach(_test_path ${_pytest_tests})

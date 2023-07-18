@@ -38,4 +38,4 @@
 /.vscode/
 
 # pytest result
-fabric_nodes/test/__pycache__/
+fabric_nodes/tests/__pycache__/

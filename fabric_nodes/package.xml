@@ -16,7 +16,7 @@
 
   <depend>fabric_interfaces</depend>
   <depend>rclcpp</depend>
-  <depend>rclcpy</depend>
+  <depend>rclpy</depend>
   <depend>rclcpp_components</depend>
 
   <test_depend>ament_lint_auto</test_depend>

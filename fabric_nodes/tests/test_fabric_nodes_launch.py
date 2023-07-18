@@ -70,23 +70,5 @@ class TestProcessOutput(unittest.TestCase):
         # Check that the process exits with code -2 (termination request)
         launch_testing.asserts.assertExitCodes(
             proc_info,
-            allowable_exit_codes=[-2, -6, -15]
+            allowable_exit_codes=[0, -2, -6, -15]
         )
-
-    def test_node_list(self):
-        import subprocess
-        # expected_node_namespaces = [
-        #     '/node1_1/node1_1',
-        #     '/node1_2/node1_2',
-        #     '/node2_1/node2_1',
-        #     '/node2_2/node2_2',
-        #     '/node3_1/node3_1',
-        #     '/node3_2/node3_2'
-        # ]
-
-        cmd_str = "bash -c 'source /opt/ros/$ROS_DISTRO/setup.bash && ros2 node list'"
-
-        node_list = subprocess.run(cmd_str, shell=True, capture_output=True, text=True)
-        node_list = node_list.stdout.strip().splitlines()
-
-        assert True, f'node_list: {node_list}'

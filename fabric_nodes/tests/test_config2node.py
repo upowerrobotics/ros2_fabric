@@ -19,7 +19,7 @@ from fabric_nodes.config2node import Config2Nodes
 import pytest
 
 
-def test_error_conditions():
+def test_error_configuration():
     # expected test configs
     test_cases = {
         'error_param_pub.param.yaml': (f'must have at least two '

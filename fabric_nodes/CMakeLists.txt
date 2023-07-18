@@ -59,13 +59,16 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  # launch test
   add_ros_test(
     tests/test_fabric_nodes_launch.py
     TIMEOUT "30"
   )
 
+  # pytests
   set(_pytest_tests
     tests/test_config2node.py
+    tests/test_node_list.py
     # Add other test files here
   )
   foreach(_test_path ${_pytest_tests})

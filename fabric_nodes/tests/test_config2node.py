@@ -20,7 +20,14 @@ import pytest
 
 
 def test_error_configuration():
-    # expected test configs
+    """
+    Test different error configurations for the fabric_nodes package.
+
+    This function tests several error configuration scenarios in which a ValueError is expected to
+    be raised. For each configuration file in the 'test_cases' dictionary, it creates a
+    Config2Nodes object and calls the 'get_nodes' method, expecting a ValueError to be thrown. It
+    then asserts that the actual error message includes the expected error message.
+    """
     test_cases = {
         'error_param_pub.param.yaml': (f'must have at least two '
                                        f'of the following parameters: '

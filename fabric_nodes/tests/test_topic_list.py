@@ -20,6 +20,14 @@ import time
 
 
 def test_topic_list():
+    """
+    Test the availability of the expected topics in the ROS2 environment.
+
+    This function launches a subprocess which starts the 'fabric_nodes.launch.py' ROS2 launch
+    file. It then retrieves the list of active topics using 'ros2 topic list', and checks if the
+    expected topics are in the list. The launch subprocess is then terminated, and the function
+    finally asserts that all the expected topics were processed.
+    """
     expect_topics = [
         '/node1_1/topic_1M',
         '/node1_1/topic_2M_1',

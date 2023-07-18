@@ -13,6 +13,14 @@
 # limitations under the License.
 
 
+"""
+This module contains tests for verifying the correct launch of nodes in a ROS2 environment.
+
+Tests are executed at launch time and post-shutdown. They ensure that the required processes
+are properly launched and that they terminate with expected exit codes.
+"""
+
+
 import os
 import unittest
 
@@ -26,7 +34,17 @@ import pytest
 
 @pytest.mark.launch_test
 def generate_test_description():
+    """
+    Generate a launch description for the nodes under test.
 
+    Returns
+    -------
+        LaunchDescription: A launch description with the paths to the node launch file
+                        and the config file. ReadyToTest action is also included
+                        to start tests immediately.
+        dict: A context dictionary containing the path to the config file.
+
+    """
     config_file_path = os.path.join(
         get_package_share_directory('fabric_nodes'),
         'param/pass_config.param.yaml'
@@ -45,29 +63,49 @@ def generate_test_description():
 
     return LaunchDescription([
         launch_description,
-        # Start tests right away - no need to wait for anything
         launch_testing.actions.ReadyToTest()]
     ), context
 
 
 @launch_testing.post_shutdown_test()
 class TestProcessOutput(unittest.TestCase):
+    """TestCase for validating the process output after the nodes have been shutdown."""
 
     def test_process_creation(self, proc_output):
-        # Get the process names that generated IO
-        process_names = proc_output.process_names()
+        """
+        Test if the processes launched include the dummy processes.
 
-        # Check if the expected topics are present
+        Args
+        ----
+        proc_output: The output of the processes under test.
+
+        Raises
+        ------
+        AssertionError: If a process name from the output is
+                        not found in the list of dummy processes.
+
+        """
+        process_names = proc_output.process_names()
         dummy_process = ['dummy_node_exe-1', 'dummy_node_exe-2', 'dummy_node_exe-3',
                          'dummy_node_exe-4', 'dummy_node_exe-5', 'dummy_node_exe-6']
-
         for process_name in process_names:
             assert process_name in dummy_process, (
                 f'{process_name} was not found in dummy_process.'
             )
 
     def test_exit_code(self, proc_info):
-        # Check that the process exits with code -2 (termination request)
+        """
+        Test if the process exits with acceptable exit codes.
+
+        Args
+        ----
+        proc_info: Information about the process under test.
+
+        Raises
+        ------
+        AssertionError: If the process exit code is not among the allowable exit codes.
+
+        """
         launch_testing.asserts.assertExitCodes(
             proc_info,
             allowable_exit_codes=[0, -2, -6, -15]

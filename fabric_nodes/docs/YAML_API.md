@@ -1,7 +1,7 @@
 # ROS2 FABRIC YAML API
 
 This document describes the format of YAML documents which can be read and acted upon by the FABRIC
-Python Startup script. See the [`config_examples`](../config_examples) folder for example
+Python Startup script. See the [`config`](../config) folder for example
 configurations which conform to this specification.
 
 ## How to Read this Document
@@ -58,3 +58,37 @@ Properties:
 
 - `subscribers` *[array: Subscriber objects]*: An array of one or more subscriber objects. Required
   if `root_node` is false.
+
+### Publisher Objects
+
+Each publisher object represents one or more publishers on a node. Each publisher object must
+contain exactly two of the three properties `bandwidth`, `frequency`, and `msg_size` and the third
+will be inferred from the other two.
+
+Properties:
+
+- `name` *[string]* **(required)**: The name of this publisher or the base of the name of each
+  publisher in this group of publishers if `qty` is greater than 1. Must contain only alpha-numeric
+  characters and be unique in this node. Does not need to be unique in a group of nodes because
+  topic names will be namespaced with the node name.
+
+- `qty` *[integer]*: The number of publishers to create with identical properties. If this propery
+  is not included the value is assumed to be 1.
+
+- `bandwidth` *[string]*: The total bandwidth for this topic or a single instance of this topic if
+  `qty` is greater than 1. This value is a combination of a float value and a single character
+  indicating the unit. The character unit can be `B`, `K`, `M`, or `G` indicating Bytes, Kilobytes,
+  Megabytes, or Gigabytes per second respectively. e.g. `2.3M` would be 2.3 Megabytes/second or
+  2,411,725 Bytes/second (rounded to the nearest integer value).
+
+- `frequency` *[float]*: The frequency of message publishing in messages/second.
+
+- `msg_size` *[string]*: The size of the payload of each message transmission, not including a
+  timestamp field. This value is a combination of a float value and a single character indicating
+  the unit. The character unit can be `B`, `K`, `M`, or `G` indicating Bytes, Kilobytes, Megabytes,
+  or Gigabytes respectively. e.g. `2.3M` would be 2.3 Megabytes or 2,411,725 Bytes (rounded to the
+  nearest integer value).
+
+### Subscriber Objects
+
+Each subscriber object represents one subscriber on a node.

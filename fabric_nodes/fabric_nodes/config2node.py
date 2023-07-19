@@ -275,7 +275,6 @@ class Config2Nodes:
                 'subscribe_topics': subscribe_topics,
             }],
             output='screen',
-            arguments=['--ros-args', '--log-level', 'debug']
         )
         return node
 

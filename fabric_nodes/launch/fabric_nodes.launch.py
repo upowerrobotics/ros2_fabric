@@ -27,8 +27,8 @@ Note: This file should not be removed even in custom, cause it is use to do 'col
 import os
 
 from ament_index_python import get_package_share_directory
-from launch import LaunchDescription
 from fabric_nodes.config2node import Config2Nodes
+from launch import LaunchDescription
 
 
 def generate_launch_description():

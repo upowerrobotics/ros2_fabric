@@ -166,7 +166,7 @@ class Config2Nodes:
             publisher_qty = publisher.get('qty', 1)
 
             for num in range(1, publisher_qty + 1):
-                key = topic_name if publisher_qty == 1 else f"{topic_name}_{num}"
+                key = topic_name if publisher_qty == 1 else f'{topic_name}_{num}'
                 publish_topics[key] = publish_topic
 
         return publish_topics
@@ -198,7 +198,7 @@ class Config2Nodes:
                 if subscriber_qty == 1:
                     key = topic_name
                 else:
-                    key = f"{topic_name}_{num}"
+                    key = f'{topic_name}_{num}'
 
                 subscribe_topics[key] = subscribe_topic
 
@@ -232,7 +232,7 @@ class Config2Nodes:
                     key: {'node': value['node'] + '_' + str(num)}
                     for key, value in subscribe_topics.items()
                 }
-                node_name_with_num = f"{node_name}_{num}"
+                node_name_with_num = f'{node_name}_{num}'
             else:
                 subscribe_topics_qty = subscribe_topics
                 node_name_with_num = node_name

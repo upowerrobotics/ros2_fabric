@@ -37,13 +37,29 @@ class GetLog(Node):
         self.run_id = run_id
 
     def read_log(self):
-        self.lines = open("log.txt", "r").readlines()
-        for line in self.lines:
+        lines = open("log.txt", "r").readlines()
+        parsed_log = []
+        for line in lines:
             stats_log = re.search(r"\[node.*:\sT.*", line)
             if stats_log is not None:  # valid lines
-                print(stats_log.group())
+                topic_name = str(re.search(r"(?<=Topic:\s).*,", stats_log.group()).group()) or None
+                sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)", stats_log.group()).group()) or None
+                pub_node = str(re.search(r"(?<=\[).*(?=\.)", stats_log.group()).group()) or None
+                ros_sub_stamp = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*", stats_log.group()).group()) or None
+                ros_pub_stamp = None
+                rmw_sub_stamp = None
+                rmw_pub_stamp = None
+                parsed_log.append([topic_name, sub_node, pub_node, 
+                                  ros_sub_stamp, ros_pub_stamp,
+                                  rmw_sub_stamp, rmw_pub_stamp])
+                # print(stats_log.group())
+        self.parsed_log_df = pd.DataFrame(parsed_log, columns=['Topic', 'Subscriber Node', 'Publisher Node',
+                                               'ROS Layer Subscriber Timestamp', 'ROS Layer Publisher Timestamp',
+                                               'RMW Layer Subscriber Timestamp', 'RMW Layer Publisher Timestamp'])
+
     def output_log(self):
         """Outputing the parsed statistics"""
+        self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)
         self.get_logger().info(str(self.time) + " seconds on " + self.run_id)
 
 

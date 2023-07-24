@@ -56,7 +56,6 @@ class GetLog(Node):
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=['Topic', 'Subscriber Node', 'Publisher Node',
                                                'ROS Layer Subscriber Timestamp', 'ROS Layer Publisher Timestamp',
                                                'RMW Layer Subscriber Timestamp', 'RMW Layer Publisher Timestamp'])
-
     def output_log(self):
         """Outputing the parsed statistics"""
         self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)

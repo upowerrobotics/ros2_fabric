@@ -15,6 +15,8 @@
 
 
 import rclpy
+import re
+import pandas as pd
 
 from rclpy.node import Node
 
@@ -29,19 +31,26 @@ class GetLog(Node):
 
     """
 
-    def __init__(self, time, run_id):
+    def __init__(self, time = 0, run_id = "default_run"):
         super().__init__('get_log')
         self.time = time
         self.run_id = run_id
 
+    def read_log(self):
+        self.lines = open("log.txt", "r").readlines()
+        for line in self.lines:
+            stats_log = re.search(r"\[node.*:\sT.*", line)
+            if stats_log is not None:  # valid lines
+                print(stats_log.group())
     def output_log(self):
         """Outputing the parsed statistics"""
-        self.get_logger().info('OKOKOK')
+        self.get_logger().info(str(self.time) + " seconds on " + self.run_id)
 
 
 def main(args=None):
     rclpy.init(args=args)
-    m_log = GetLog(5, "run_1")
+    m_log = GetLog(5)
+    m_log.read_log()
     m_log.output_log()
     rclpy.shutdown()
 

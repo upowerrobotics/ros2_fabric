@@ -42,7 +42,7 @@ class GetLog(Node):
         for line in lines:
             stats_log = re.search(r"\[node.*:\sT.*", line)
             if stats_log is not None:  # valid lines
-                topic_name = str(re.search(r"(?<=Topic:\s).*,", stats_log.group()).group()) or None
+                topic_name = str(re.search(r"(?<=Topic:\s).*(?=,)", stats_log.group()).group()) or None
                 sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)", stats_log.group()).group()) or None
                 pub_node = str(re.search(r"(?<=\[).*(?=\.)", stats_log.group()).group()) or None
                 ros_sub_stamp = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*", stats_log.group()).group()) or None

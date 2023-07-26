@@ -41,25 +41,40 @@ class GetLog(Node):
         ros_log_dir = os.path.expanduser('~') + "/.ros/log/"
         dirlist = [d for d in next(os.walk(ros_log_dir))[1]]
         dirlist.sort()
-        self.run_id = dirlist[-1]
+        if (self.run_id == "default_run"):
+            self.run_id = dirlist[-1]
         lines = open(ros_log_dir + self.run_id + "/launch.log", "r").readlines()
+        self.get_logger().info("Reading log from " + ros_log_dir + self.run_id + "/launch.log")
+        begin_timestamp = float(re.search(r"\d*\.\d*", lines[0]).group())
+        current_timestamp = begin_timestamp
+        use_input_time = False
+
         parsed_log = []
         for line in lines:
             stats_log = re.search(r"\[node.*:\sT.*", line)
             if stats_log is not None:  # valid lines
+                current_timestamp = float(re.search(r"\d*\.\d*(?=\s)", line).group())
+                if (current_timestamp > begin_timestamp + self.time):
+                    self.get_logger().info("Starting at " + str(begin_timestamp) + 
+                                           ", ending at " + str(current_timestamp))
+                    use_input_time = True
+                    break
                 topic_name = str(re.search(r"(?<=Topic:\s).*(?=,)", stats_log.group()).group()) or None
                 sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)", stats_log.group()).group()) or None
                 pub_node = str(re.search(r"(?<=\[).*(?=\.)", stats_log.group()).group()) or None
-                ros_sub_stamp = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*", stats_log.group()).group()) or None
-                ros_pub_stamp = None
-                rmw_sub_stamp = None
-                rmw_pub_stamp = None
+                ros_sub_time = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*", stats_log.group()).group()) or None
+                ros_pub_time = None
+                rmw_sub_time = None
+                rmw_pub_time = None
                 parsed_log.append([topic_name, sub_node, pub_node, 
-                                  ros_sub_stamp, ros_pub_stamp,
-                                  rmw_sub_stamp, rmw_pub_stamp])
+                                  ros_sub_time, ros_pub_time,
+                                  rmw_sub_time, rmw_pub_time])
+        if (not use_input_time):
+            self.get_logger().info("Given log has less than " + str(self.time) + " seconds.")
+            self.time = current_timestamp - begin_timestamp
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=['Topic', 'Subscriber Node', 'Publisher Node',
-                                               'ROS Layer Subscriber Timestamp', 'ROS Layer Publisher Timestamp',
-                                               'RMW Layer Subscriber Timestamp', 'RMW Layer Publisher Timestamp'])
+                                               'ROS Layer Subscriber Time', 'ROS Layer Publisher Time',
+                                               'RMW Layer Subscriber Time', 'RMW Layer Publisher Time'])
     def output_log(self):
         """Outputing the parsed statistics"""
         self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)

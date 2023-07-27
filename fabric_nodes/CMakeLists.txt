@@ -40,6 +40,8 @@ set(${PROJECT_NAME}_SRCS
   src/dummy_node.cpp
 )
 
+ament_python_install_package(${PROJECT_NAME})
+
 ament_auto_add_library(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_INCLUDES}
   ${${PROJECT_NAME}_SRCS}
@@ -55,6 +57,28 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  # launch test
+  add_ros_test(
+    tests/test_fabric_nodes_launch.py
+    TIMEOUT "30"
+  )
+
+  # pytests
+  set(_pytest_tests
+    tests/test_config2node.py
+    tests/test_node_list.py
+    tests/test_topic_list.py
+    # Add other test files here
+  )
+  foreach(_test_path ${_pytest_tests})
+    get_filename_component(_test_name ${_test_path} NAME_WE)
+    ament_add_pytest_test(${_test_name} ${_test_path}
+      APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+      TIMEOUT 60
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+  endforeach()
+
   # Unit tests
   # set(TEST_SOURCES test/test_ars430_driver.cpp)
   # set(TEST_ARS430_DRIVER_EXE test_ars430_driver)
@@ -68,4 +92,6 @@ ament_auto_package(
     config
     docs
     param
+    launch
+    tests
 )

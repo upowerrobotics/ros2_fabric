@@ -39,7 +39,7 @@ struct PublishTopic
 {
   float bandwidth_scalar = 0.0f;
   SizeType bandwidth_size_type = SizeType::BYTES;
-  float msg_frequency = 0.0f;
+  float frequency = 0.0f;
   float msg_size_scalar = 0.0f;
   SizeType msg_size_type = SizeType::BYTES;
   std::string topic_name = "";

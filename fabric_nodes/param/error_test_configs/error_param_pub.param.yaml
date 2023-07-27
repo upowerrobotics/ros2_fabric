@@ -1,0 +1,15 @@
+environments:
+  - name: env1
+    nodes:
+      - name: node1
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: topic_1M
+            frequency: 25.0
+      - name: node2
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: topic_1M
+            node: node1

@@ -14,7 +14,6 @@
 # limitations under the License.
 
 
-
 import os
 import pandas as pd
 import rclpy
@@ -22,9 +21,10 @@ import re
 
 from rclpy.node import Node
 
+
 class GetLog(Node):
     """
-    Gather statistics from log files for a given period or run
+    Gather statistics from log files for a given period or run.
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ class GetLog(Node):
 
     """
 
-    def __init__(self, time = 0, run_id = "default_run"):
+    def __init__(self, time=0, run_id="default_run"):
         super().__init__('get_log')
         self.time = time
         self.run_id = run_id
@@ -58,29 +58,36 @@ class GetLog(Node):
             if stats_log is not None:  # valid lines
                 current_timestamp = float(re.search(r"\d*\.\d*(?=\s)", line).group())
                 if (current_timestamp > begin_timestamp + self.time):
-                    self.get_logger().info("Starting at " + str(begin_timestamp) + 
+                    self.get_logger().info("Starting at " + str(begin_timestamp) +
                                            ", ending at " + str(current_timestamp))
                     use_input_time = True
                     break
-                topic_name = str(re.search(r"(?<=Topic:\s).*(?=,)", stats_log.group()).group()) or None
-                sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)", stats_log.group()).group()) or None
-                pub_node = str(re.search(r"(?<=\[).*(?=\.)", stats_log.group()).group()) or None
-                ros_sub_time = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*", stats_log.group()).group()) or None
+                topic_name = str(re.search(r"(?<=Topic:\s).*(?=,)",
+                                           stats_log.group()).group()) or None
+                sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)",
+                                         stats_log.group()).group()) or None
+                pub_node = str(re.search(r"(?<=\[).*(?=\.)",
+                                         stats_log.group()).group()) or None
+                ros_sub_time = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*",
+                                             stats_log.group()).group()) or None
                 ros_pub_time = None
                 rmw_sub_time = None
                 rmw_pub_time = None
-                parsed_log.append([topic_name, sub_node, pub_node, 
+                parsed_log.append([topic_name, sub_node, pub_node,
                                   ros_sub_time, ros_pub_time,
                                   rmw_sub_time, rmw_pub_time])
         if (not use_input_time):
             self.get_logger().info("This given log has less than " + str(self.time) + " seconds.")
             self.time = current_timestamp - begin_timestamp
-        self.parsed_log_df = pd.DataFrame(parsed_log, columns=['Topic', 'Subscriber Node', 'Publisher Node',
-                                               'ROS Layer Subscriber Time', 'ROS Layer Publisher Time',
-                                               'RMW Layer Subscriber Time', 'RMW Layer Publisher Time'])
+        self.parsed_log_df = pd.DataFrame(parsed_log, columns=[
+                                            'Topic', 'Subscriber Node', 'Publisher Node',
+                                            'ROS Layer Subscriber Time',
+                                            'ROS Layer Publisher Time',
+                                            'RMW Layer Subscriber Time',
+                                            'RMW Layer Publisher Time'])
 
     def output_log(self):
-        """Outputing the parsed statistics"""
+        """Output the parsed statistics."""
         self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)
         self.get_logger().info(str(self.time) + " seconds on run: " + self.run_id)
 

@@ -42,7 +42,7 @@ def get_nodes(context, *args, **kwargs):
     nodes = config2nodes.get_nodes()
 
     return nodes
-    
+
 
 def generate_launch_description():
     """

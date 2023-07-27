@@ -37,25 +37,49 @@ environments:
             frequency: 10.0
         subscribers:
           - name: topic_1M
-            qty: 1
             node: node1
-          - name: topic_2M
-            qty: 2
+          - name: topic_2M_1
             node: node1
-          - name: topic_500K
-            qty: 3
+          - name: topic_2M_2
+            node: node1
+          - name: topic_500K_1
+            node: node1
+          - name: topic_500K_2
+            node: node1
+          - name: topic_500K_3
             node: node1
       - name: node3
         qty: 2
         root_node: false
         terminal_node: true
         subscribers:
-          - name: topic_1M
-            qty: 4
+          - name: topic_1M_1
             node: node2
-          - name: topic_2M
-            qty: 5
+          - name: topic_1M_2
             node: node2
-          - name: topic_500K
-            qty: 6
+          - name: topic_1M_3
+            node: node2
+          - name: topic_1M_4
+            node: node2
+          - name: topic_2M_1
+            node: node2
+          - name: topic_2M_2
+            node: node2
+          - name: topic_2M_3
+            node: node2
+          - name: topic_2M_4
+            node: node2
+          - name: topic_2M_5
+            node: node2
+          - name: topic_500K_1
+            node: node2
+          - name: topic_500K_2
+            node: node2
+          - name: topic_500K_3
+            node: node2
+          - name: topic_500K_4
+            node: node2
+          - name: topic_500K_5
+            node: node2
+          - name: topic_500K_6
             node: node2

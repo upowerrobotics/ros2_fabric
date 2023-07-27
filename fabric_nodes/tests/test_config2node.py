@@ -40,7 +40,7 @@ def test_error_configuration():
         'error_root_terminal.param.yaml': 'root node can not be terminal node',
         'error_root.param.yaml': 'root node can not have subscribers',
         'error_sub_connection_qty.param.yaml': 'subsciber is not connected',
-        'error_sub_connetion.param.yaml': 'subsciber is not connected',
+        'error_sub_connection.param.yaml': 'subsciber is not connected',
         'error_terminal.param.yaml': 'terminal node can not have publihsers',
     }
 

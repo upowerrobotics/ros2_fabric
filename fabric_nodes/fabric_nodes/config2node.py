@@ -135,7 +135,7 @@ class Config2Nodes:
             if not sub_connected:
                 raise ValueError(
                     f"Subscriber '{subscriber_topic[1]}' in node "
-                    f"'{subscriber_topic[4]}' is not connected properly"
+                    f"'{subscriber_topic[2]}' is not connected properly"
                 )
 
     def process_publishers(self, node_config):

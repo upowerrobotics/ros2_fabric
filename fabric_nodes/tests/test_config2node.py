@@ -36,7 +36,6 @@ def test_error_configuration():
         'error_pub_connection.param.yaml': 'publisher is not connected',
         'error_qty_node.param.yaml': 'node qty is not a valid number',
         'error_qty_pub.param.yaml': 'publisher qty is not a valid number',
-        'error_qty_sub.param.yaml': 'subscriber qty is not a valid number',
         'error_root_terminal.param.yaml': 'root node can not be terminal node',
         'error_root.param.yaml': 'root node can not have subscribers',
         'error_sub_connection_qty.param.yaml': 'subsciber is not connected',

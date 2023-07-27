@@ -15,9 +15,10 @@
 
 
 import os
+import re
+
 import pandas as pd
 import rclpy
-import re
 
 from rclpy.node import Node
 
@@ -33,42 +34,42 @@ class GetLog(Node):
 
     """
 
-    def __init__(self, time=0, run_id="default_run"):
+    def __init__(self, time=0, run_id='default_run'):
         super().__init__('get_log')
         self.time = time
         self.run_id = run_id
 
     def read_log(self):
-        ros_log_dir = os.path.expanduser('~') + "/.ros/log/"
+        ros_log_dir = os.path.expanduser('~') + '/.ros/log/'
         dirlist = [d for d in next(os.walk(ros_log_dir))[1]]
         dirlist.sort()
-        if (self.run_id == "default_run"):
+        if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]
-        self.lines = open(ros_log_dir + self.run_id + "/launch.log", "r").readlines()
-        self.get_logger().info("Reading log from " + ros_log_dir + self.run_id + "/launch.log")
+        self.lines = open(ros_log_dir + self.run_id + '/launch.log', 'r').readlines()
+        self.get_logger().info('Reading log from ' + ros_log_dir + self.run_id + '/launch.log')
 
     def parse_log(self):
-        begin_timestamp = float(re.search(r"\d*\.\d*", self.lines[0]).group())
+        begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())
         current_timestamp = begin_timestamp
         use_input_time = False
 
         parsed_log = []
         for line in self.lines:
-            stats_log = re.search(r"\[node.*:\sT.*", line)
+            stats_log = re.search(r'\[node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
-                current_timestamp = float(re.search(r"\d*\.\d*(?=\s)", line).group())
+                current_timestamp = float(re.search(r'\d*\.\d*(?=\s)', line).group())
                 if (current_timestamp > begin_timestamp + self.time):
-                    self.get_logger().info("Starting at " + str(begin_timestamp) +
-                                           ", ending at " + str(current_timestamp))
+                    self.get_logger().info('Starting at ' + str(begin_timestamp) +
+                                           ', ending at ' + str(current_timestamp))
                     use_input_time = True
                     break
-                topic_name = str(re.search(r"(?<=Topic:\s).*(?=,)",
+                topic_name = str(re.search(r'(?<=Topic:\s).*(?=,)',
                                            stats_log.group()).group()) or None
-                sub_node = str(re.search(r"(?<=Topic:\s/).*(?=/)",
+                sub_node = str(re.search(r'(?<=Topic:\s/).*(?=/)',
                                          stats_log.group()).group()) or None
-                pub_node = str(re.search(r"(?<=\[).*(?=\.)",
+                pub_node = str(re.search(r'(?<=\[).*(?=\.)',
                                          stats_log.group()).group()) or None
-                ros_sub_time = str(re.search(r"(?<=ROS\sxmt\stime\sns:\s).*",
+                ros_sub_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s).*',
                                              stats_log.group()).group()) or None
                 ros_pub_time = None
                 rmw_sub_time = None
@@ -77,7 +78,7 @@ class GetLog(Node):
                                   ros_sub_time, ros_pub_time,
                                   rmw_sub_time, rmw_pub_time])
         if (not use_input_time):
-            self.get_logger().info("This given log has less than " + str(self.time) + " seconds.")
+            self.get_logger().info('This given log has less than ' + str(self.time) + ' seconds.')
             self.time = current_timestamp - begin_timestamp
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=[
                                             'Topic', 'Subscriber Node', 'Publisher Node',
@@ -88,8 +89,8 @@ class GetLog(Node):
 
     def output_log(self):
         """Output the parsed statistics."""
-        self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)
-        self.get_logger().info(str(self.time) + " seconds on run: " + self.run_id)
+        self.parsed_log_df.to_csv('log.csv', sep='\t', index=False)
+        self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
 
 
 def main(args=None):

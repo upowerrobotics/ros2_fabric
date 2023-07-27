@@ -29,7 +29,20 @@ import os
 from ament_index_python import get_package_share_directory
 from fabric_nodes.config2node import Config2Nodes
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.actions import OpaqueFunction
+from launch.substitutions import LaunchConfiguration
 
+
+def get_nodes(context, *args, **kwargs):
+    config_path = LaunchConfiguration('config-path').perform(context)
+    environment = LaunchConfiguration('environment').perform(context)
+
+    config2nodes = Config2Nodes(config_path, environment)
+    nodes = config2nodes.get_nodes()
+
+    return nodes
+    
 
 def generate_launch_description():
     """
@@ -40,15 +53,23 @@ def generate_launch_description():
     LaunchDescription: The LaunchDescription object.
 
     """
-    config_file_path = os.getenv(
-        'CONFIG_FILE_PATH',
-        os.path.join(
-            get_package_share_directory('fabric_nodes'),
-            'param/pass_config.param.yaml'
-        )
+    pass_config_path = os.path.join(
+        get_package_share_directory('fabric_nodes'),
+        'param/pass_config.param.yaml'
     )
 
-    config2nodes = Config2Nodes(config_file_path, 'env1')
-    nodes = config2nodes.get_nodes()
+    config_path_arg = DeclareLaunchArgument(
+        name='config-path',
+        default_value=pass_config_path,
+        description='Path to the configuration file to load'
+    )
 
-    return LaunchDescription(nodes)
+    environment_arg = DeclareLaunchArgument(
+        name='environment',
+        default_value='env1',
+        description='The environment from the config file from which to launch nodes'
+    )
+
+    return LaunchDescription(
+      [config_path_arg, environment_arg] + [OpaqueFunction(function=get_nodes)]
+    )

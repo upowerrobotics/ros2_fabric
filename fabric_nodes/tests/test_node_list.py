@@ -41,7 +41,7 @@ def test_node_list():
 
     # Start the launch subprocess
     launch_process = subprocess.Popen(launch_str, shell=True, preexec_fn=os.setpgrp)
-    time.sleep(5)
+    time.sleep(10)
 
     # Get node list
     node_list_process = subprocess.run(node_list_str, shell=True, capture_output=True, text=True)

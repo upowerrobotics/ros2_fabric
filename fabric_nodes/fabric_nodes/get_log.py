@@ -43,14 +43,16 @@ class GetLog(Node):
         dirlist.sort()
         if (self.run_id == "default_run"):
             self.run_id = dirlist[-1]
-        lines = open(ros_log_dir + self.run_id + "/launch.log", "r").readlines()
+        self.lines = open(ros_log_dir + self.run_id + "/launch.log", "r").readlines()
         self.get_logger().info("Reading log from " + ros_log_dir + self.run_id + "/launch.log")
-        begin_timestamp = float(re.search(r"\d*\.\d*", lines[0]).group())
+
+    def parse_log(self):
+        begin_timestamp = float(re.search(r"\d*\.\d*", self.lines[0]).group())
         current_timestamp = begin_timestamp
         use_input_time = False
 
         parsed_log = []
-        for line in lines:
+        for line in self.lines:
             stats_log = re.search(r"\[node.*:\sT.*", line)
             if stats_log is not None:  # valid lines
                 current_timestamp = float(re.search(r"\d*\.\d*(?=\s)", line).group())
@@ -70,11 +72,12 @@ class GetLog(Node):
                                   ros_sub_time, ros_pub_time,
                                   rmw_sub_time, rmw_pub_time])
         if (not use_input_time):
-            self.get_logger().info("Given log has less than " + str(self.time) + " seconds.")
+            self.get_logger().info("This given log has less than " + str(self.time) + " seconds.")
             self.time = current_timestamp - begin_timestamp
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=['Topic', 'Subscriber Node', 'Publisher Node',
                                                'ROS Layer Subscriber Time', 'ROS Layer Publisher Time',
                                                'RMW Layer Subscriber Time', 'RMW Layer Publisher Time'])
+
     def output_log(self):
         """Outputing the parsed statistics"""
         self.parsed_log_df.to_csv("log.csv", sep='\t', index=False)
@@ -85,6 +88,7 @@ def main(args=None):
     rclpy.init(args=args)
     m_log = GetLog(5)
     m_log.read_log()
+    m_log.parse_log()
     m_log.output_log()
     rclpy.shutdown()
 

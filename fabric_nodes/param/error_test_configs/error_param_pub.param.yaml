@@ -8,7 +8,7 @@ environments:
         publishers:
           - name: topic_1M
             qty: 1
-            msg_frequency: 25.0
+            frequency: 25.0
       - name: node2
         qty: 1
         root_node: false

@@ -106,10 +106,10 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
         "\tbandwidth: %.1f bytes/sec",
         pub.bandwidth_scalar * static_cast<uint64_t>(pub.bandwidth_size_type)
       );
-    } else if (param_name_trimmed == "msg_frequency") {
-      this->get_parameter(param, pub.msg_frequency);
+    } else if (param_name_trimmed == "frequency") {
+      this->get_parameter(param, pub.frequency);
 
-      RCLCPP_INFO(this->get_logger(), "\tfrequency: %.1f msgs/sec", pub.msg_frequency);
+      RCLCPP_INFO(this->get_logger(), "\tfrequency: %.1f msgs/sec", pub.frequency);
     } else if (param_name_trimmed == "msg_size") {
       std::string size_value{};
       this->get_parameter(param, size_value);
@@ -128,9 +128,9 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
       param_format_invalid = true;
     }
 
-    if (pub.bandwidth_scalar == 0.0f && pub.msg_frequency == 0.0f && pub.msg_size_scalar == 0.0f) {
+    if (pub.bandwidth_scalar == 0.0f && pub.frequency == 0.0f && pub.msg_size_scalar == 0.0f) {
       throw rclcpp::exceptions::InvalidParametersException{param_prefix +
-              ": each topic must have two of bandwidth, msg_frequency, or msg_size."};
+              ": each topic must have two of bandwidth, frequency, or msg_size."};
     }
 
     if (param_format_invalid) {
@@ -142,7 +142,7 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   // TODO(jwhitleywork): Figure out QoS settings
   pub.publisher = this->create_publisher<DummyMsgT>(pub.topic_name, rclcpp::QoS{1});
 
-  float frequency = pub.msg_frequency;
+  float frequency = pub.frequency;
   uint64_t msg_bytes =
     static_cast<uint64_t>(pub.msg_size_scalar * static_cast<float>(pub.msg_size_type));
   uint64_t bw_bytes =

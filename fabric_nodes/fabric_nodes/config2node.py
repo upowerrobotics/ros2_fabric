@@ -64,12 +64,12 @@ class Config2Nodes:
 
                     # Validate publisher parameters
                     parameter_count = sum(parameter in publisher for parameter in [
-                        'bandwidth', 'msg_size', 'msg_frequency'])
+                        'bandwidth', 'msg_size', 'frequency'])
                     if parameter_count < 2:
                         raise ValueError(
                             f"Publisher '{publisher['name']}' in node "
                             f"'{node_config['name']}' must have at least two of the "
-                            f'following parameters: bandwidth, msg_size, msg_frequency'
+                            f'following parameters: bandwidth, msg_size, frequency'
                         )
 
                     # Store publisher_topics
@@ -160,8 +160,8 @@ class Config2Nodes:
                 publish_topic['msg_size'] = publisher['msg_size']
             if 'bandwidth' in publisher:
                 publish_topic['bandwidth'] = publisher['bandwidth']
-            if 'msg_frequency' in publisher:
-                publish_topic['msg_frequency'] = publisher['msg_frequency']
+            if 'frequency' in publisher:
+                publish_topic['frequency'] = publisher['frequency']
 
             publisher_qty = publisher.get('qty', 1)
 

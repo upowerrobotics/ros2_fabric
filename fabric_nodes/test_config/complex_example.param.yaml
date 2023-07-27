@@ -1,0 +1,51 @@
+environments:
+  - name: embedded
+    nodes:
+      - name: cam_capture
+        qty: 3
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: image
+            msg_size: 2.7M
+            frequency: 30.0
+      - name: sr_lidar_capture
+        qty: 4
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: point_cloud
+            msg_size: 200K
+            frequency: 10.0
+      - name: lr_lidar_capture
+        qty: 3
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: point_cloud
+            msg_size: 350K
+            frequency: 10.0
+  - name: compute
+    nodes:
+      - name: cam_rectify
+        qty: 3
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: image
+            node: cam_capture
+      - name: lidar_motion_comp
+        qty: 3
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: point_cloud
+            node: sr_lidar_capture
+          - name: point_cloud
+            node: lr_lidar_capture
+      - name: lidar_motion_comp_outlier
+        root_node: false
+        terminal_node: true
+        subscribers:
+          - name: point_cloud
+            node: sr_lidar_capture_4

@@ -52,9 +52,10 @@ class Config2Nodes:
                 if node_qty < 1:
                     raise ValueError(f"Invalid node quantity for node '{node_config['name']}'")
 
-                # Validate publishers qty rules
                 node_publishers = node_config.get('publishers', [])
+
                 for publisher in node_publishers:
+                    # Validate publishers qty rules
                     publisher_qty = publisher.get('qty', 1)
                     if publisher_qty < 1:
                         raise ValueError(
@@ -73,22 +74,28 @@ class Config2Nodes:
                         )
 
                     # Store publisher_topics
-                    publisher_topics.add((node_config['name'], publisher['name'],
-                                          node_qty, publisher_qty))
+                    for i in range(1, node_qty + 1):
+                        base_node_name = node_config['name']
+                        node_name = base_node_name if node_qty == 1 else f'{base_node_name}_{i}'
 
-                # Validate subscribers qty rules
+                        for j in range(1, publisher_qty + 1):
+                            base_publisher_name = publisher['name']
+                            publisher_name = (
+                                base_publisher_name if publisher_qty == 1
+                                else f'{base_publisher_name}_{j}')
+                            publisher_topics.add((node_name, publisher_name))
+
                 node_subscribers = node_config.get('subscribers', [])
-                for subscriber in node_subscribers:
-                    subscriber_qty = subscriber.get('qty', 1)
-                    if subscriber_qty < 1:
-                        raise ValueError(
-                            f'Invalid subscriber quantity for subscriber '
-                            f"'{subscriber['name']}' in node '{node_config['name']}'"
-                        )
 
+                for subscriber in node_subscribers:
                     # Store subscriber_topics
-                    subscriber_topics.add((subscriber['node'], subscriber['name'],
-                                           node_qty, subscriber_qty, node_config['name']))
+                    for i in range(1, node_qty + 1):
+                        base_subscriber_node_name = subscriber['node']
+                        subscriber_node_name = (
+                            base_subscriber_node_name if node_qty == 1 else
+                            f'{base_subscriber_node_name}_{i}')
+                        subscriber_topics.add(
+                            (subscriber_node_name, subscriber['name'], node_config['name']))
 
                 # Validate root_node and terminal_node rules
                 root_node = node_config.get('root_node', False)
@@ -112,9 +119,7 @@ class Config2Nodes:
             pub_connected = False
             for subscriber_topic in subscriber_topics:
                 if (publisher_topic[0] == subscriber_topic[0] and
-                        publisher_topic[1] == subscriber_topic[1] and
-                        publisher_topic[2] <= subscriber_topic[2] and
-                        publisher_topic[3] <= subscriber_topic[3]):
+                        publisher_topic[1] == subscriber_topic[1]):
                     pub_connected = True
             if not pub_connected:
                 raise ValueError(
@@ -125,9 +130,7 @@ class Config2Nodes:
             sub_connected = False
             for publisher_topic in publisher_topics:
                 if (subscriber_topic[0] == publisher_topic[0] and
-                        subscriber_topic[1] == publisher_topic[1] and
-                        subscriber_topic[2] <= publisher_topic[2] and
-                        subscriber_topic[3] <= publisher_topic[3]):
+                        subscriber_topic[1] == publisher_topic[1]):
                     sub_connected = True
             if not sub_connected:
                 raise ValueError(

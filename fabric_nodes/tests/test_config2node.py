@@ -29,9 +29,9 @@ def test_error_configuration():
     then asserts that the actual error message includes the expected error message.
     """
     test_cases = {
-        'error_param_pub.param.yaml': (f'must have at least two '
-                                       f'of the following parameters: '
-                                       f'bandwidth, msg_size, frequency'),
+        'error_param_pub.param.yaml': ('must have at least two '
+                                       'of the following parameters: '
+                                       'bandwidth, msg_size, frequency'),
         'error_pub_connection_qty.param.yaml': 'publisher is not connected',
         'error_pub_connection.param.yaml': 'publisher is not connected',
         'error_qty_node.param.yaml': 'node qty is not a valid number',

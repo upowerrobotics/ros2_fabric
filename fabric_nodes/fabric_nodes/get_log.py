@@ -41,12 +41,13 @@ class GetLog(Node):
 
     def read_log(self):
         ros_log_dir = os.path.expanduser('~') + '/.ros/log/'
-        dirlist = [d for d in next(os.walk(ros_log_dir))[1]]
+        dirlist = list(d for d in next(os.walk(ros_log_dir))[1])
         dirlist.sort()
         if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]
-        self.lines = open(ros_log_dir + self.run_id + '/launch.log', 'r').readlines()
-        self.get_logger().info('Reading log from ' + ros_log_dir + self.run_id + '/launch.log')
+        logfile_path = ros_log_dir + self.run_id + '/launch.log'
+        self.lines = open(logfile_path, 'r').readlines()
+        self.get_logger().info('Reading log from ' + logfile_path)
 
     def parse_log(self):
         begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())

@@ -1,7 +1,7 @@
 environments:
   - name: embedded
     nodes:
-      - name: cam_capture
+      - name: camera_driver
         qty: 3
         root_node: true
         terminal_node: false
@@ -9,15 +9,17 @@ environments:
           - name: image
             msg_size: 2.7M
             frequency: 30.0
-      - name: sr_lidar_capture
-        qty: 4
+      - name: gnss_driver
         root_node: true
         terminal_node: false
         publishers:
-          - name: point_cloud
-            msg_size: 200K
+          - name: imu
+            frequency: 125.0
+            msg_size: 64K
+          - name: gps
             frequency: 10.0
-      - name: lr_lidar_capture
+            msg_size: 64K
+      - name: lr_lidar_driver
         qty: 3
         root_node: true
         terminal_node: false
@@ -25,27 +27,170 @@ environments:
           - name: point_cloud
             msg_size: 350K
             frequency: 10.0
+      - name: radar_driver
+        qty: 4
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: detected_objects
+            msg_size: 128K
+            frequency: 50.0
+      - name: sr_lidar_driver
+        qty: 4
+        root_node: true
+        terminal_node: false
+        publishers:
+          - name: point_cloud
+            msg_size: 200K
+            frequency: 10.0
+#      - name: vehicle_driver
+#        root_node: false
+#        terminal_node: false
+#        publishers:
+#          - name: gear_status
+#            frequency: 50.0
+#            msg_size: 64K
+#        subscribers:
+#          - name: lateral_control
+#            node: lateral_controller
+#          - name: longitudinal_control
+#            node: longitudinal_controller
   - name: compute
     nodes:
-      - name: cam_rectify
+# Perception Stack
+      - name: camera_rectify
         qty: 3
         root_node: false
-        terminal_node: true
+        terminal_node: false
+        publishers:
+          - name: rectified_image
+            msg_size: 2.7M
+            frequency: 30.0
         subscribers:
           - name: image
-            node: cam_capture
-      - name: lidar_motion_comp
+            node: camera_driver
+      - name: camera_nn
         qty: 3
         root_node: false
-        terminal_node: true
+        terminal_node: false
+        publishers:
+          - name: detected_objects
+            bandwidth: 128K
+            frequency: 30.0
+        subscribers:
+          - name: rectified_image
+            node: camera_rectify
+      - name: sr_lidar_motion_comp
+        qty: 4
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: compensated_point_cloud
+            msg_size: 350K
+            frequency: 10.0
         subscribers:
           - name: point_cloud
-            node: sr_lidar_capture
+            node: sr_lidar_driver
+      - name: lr_lidar_motion_comp
+        qty: 3
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: compensated_point_cloud
+            msg_size: 350K
+            frequency: 10.0
+        subscribers:
           - name: point_cloud
-            node: lr_lidar_capture
-      - name: lidar_motion_comp_outlier
+            node: lr_lidar_driver
+      - name: lidar_fusion
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: fused_point_cloud
+            msg_size: 1.2M
+            frequency: 10.0
+        subscribers:
+          - name: compensated_point_cloud
+            node: sr_lidar_motion_comp_1
+          - name: compensated_point_cloud
+            node: sr_lidar_motion_comp_2
+          - name: compensated_point_cloud
+            node: sr_lidar_motion_comp_3
+          - name: compensated_point_cloud
+            node: sr_lidar_motion_comp_4
+          - name: compensated_point_cloud
+            node: lr_lidar_motion_comp_1
+          - name: compensated_point_cloud
+            node: lr_lidar_motion_comp_2
+          - name: compensated_point_cloud
+            node: lr_lidar_motion_comp_3
+      - name: lidar_ground_filtering
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: non_ground_point_cloud
+            msg_size: 800K
+            frequency: 10.0
+      - name: lidar_object_detection
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: detected_objects
+            msg_size: 128K
+            frequency: 30.0
+        subscribers:
+          - name: non_ground_point_cloud
+            node: lidar_ground_filtering
+      - name: object_fusion
         root_node: false
         terminal_node: true
         subscribers:
-          - name: point_cloud
-            node: sr_lidar_capture_4
+          - name: detected_objects
+            node: camera_nn_1
+          - name: detected_objects
+            node: camera_nn_2
+          - name: detected_objects
+            node: camera_nn_3
+          - name: detected_objects
+            node: lidar_object_detection
+          - name: detected_objects
+            node: radar_driver_1
+          - name: detected_objects
+            node: radar_driver_2
+          - name: detected_objects
+            node: radar_driver_3
+          - name: detected_objects
+            node: radar_driver_4
+# Localization Stack
+      - name: slam
+        root_node: false
+        terminal_node: false
+        publishers:
+          - name: position
+            bandwidth: 100K
+            frequency: 10.0
+        subscribers:
+          - name: fused_point_cloud
+            node: lidar_fusion
+      - name: odometry_state_estimator
+        root_node: false
+        terminal_node: true
+#        publishers:
+#          - name: position_estimate
+#            bandwidth: 100K
+#            msg_size: 64K
+        subscribers:
+          - name: imu
+            node: gnss_driver
+      - name: map_state_estimator
+        root_node: false
+        terminal_node: true
+#        publishers:
+#          - name: position_estimate
+#            bandwidth: 100K
+#            msg_size: 64K
+        subscribers:
+          - name: gps
+            node: gnss_driver
+          - name: position
+            node: slam

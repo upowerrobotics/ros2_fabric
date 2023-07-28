@@ -200,8 +200,7 @@ class Config2Nodes:
 
         return subscribe_topics
 
-    def generate_node(self, node_config, node_name, root_node,
-                      terminal_node, publish_topics, subscribe_topics):
+    def generate_node(self, node_config, publish_topics, subscribe_topics):
         """
         Generate a node based on the provided configuration.
 
@@ -222,6 +221,10 @@ class Config2Nodes:
 
         """
         node_qty = node_config.get('qty', 1)
+        node_name = node_config['name']
+        root_node = node_config['root_node']
+        terminal_node = node_config['terminal_node']
+
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
@@ -291,14 +294,8 @@ class Config2Nodes:
             if environment['name'] != self.env:
                 continue
             for node_config in environment['nodes']:
-                node_name = node_config['name']
-                root_node = node_config['root_node']
-                terminal_node = node_config['terminal_node']
-
                 publish_topics = self.process_publishers(node_config)
                 subscribe_topics = self.process_subscribers(node_config)
-
-                self.generate_node(node_config, node_name, root_node,
-                                   terminal_node, publish_topics, subscribe_topics)
+                self.generate_node(node_config, publish_topics, subscribe_topics)
 
         return self.nodes

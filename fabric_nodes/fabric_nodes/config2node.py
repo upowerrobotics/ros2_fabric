@@ -195,15 +195,8 @@ class Config2Nodes:
         for subscriber in subscribers:
             topic_name = subscriber['name']
             subscribe_topic = {'node': subscriber['node']}
-            subscriber_qty = subscriber.get('qty', 1)
 
-            for num in range(1, subscriber_qty + 1):
-                if subscriber_qty == 1:
-                    key = topic_name
-                else:
-                    key = f'{topic_name}_{num}'
-
-                subscribe_topics[key] = subscribe_topic
+            subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
         return subscribe_topics
 
@@ -232,8 +225,9 @@ class Config2Nodes:
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
-                    key: {'node': value['node'] + '_' + str(num)}
+                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}"}
                     for key, value in subscribe_topics.items()
+                    for namespace, topic in [key.split('/')]
                 }
                 node_name_with_num = f'{node_name}_{num}'
             else:

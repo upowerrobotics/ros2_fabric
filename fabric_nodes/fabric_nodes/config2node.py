@@ -208,12 +208,6 @@ class Config2Nodes:
         ----------
         node_config:
             The configuration of a specific node.
-        node_name : str
-            The name of the node.
-        root_node : bool
-            Whether the node is a root node.
-        terminal_node : bool
-            Whether the node is a terminal node.
         publish_topics : dict
             The processed publisher topics.
         subscribe_topics : dict

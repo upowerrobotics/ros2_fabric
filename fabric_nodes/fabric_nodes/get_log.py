@@ -64,25 +64,29 @@ class GetLog(Node):
                                            ', ending at ' + str(current_timestamp))
                     use_input_time = True
                     break
-                topic_name = str(re.search(r'(?<=Topic:\s).*(?=,)',
+                topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)',
                                            stats_log.group()).group()) or None
-                sub_node = str(re.search(r'(?<=Topic:\s/).*(?=/)',
+                sub_node = str(re.search(r'(?<=\[)node.*(?=\.n)',
                                          stats_log.group()).group()) or None
-                pub_node = str(re.search(r'(?<=\[).*(?=\.)',
+                pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)',
                                          stats_log.group()).group()) or None
-                ros_sub_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s).*',
+                ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*',
+                                         stats_log.group()).group()) or None
+                ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*',
                                              stats_log.group()).group()) or None
-                ros_pub_time = None
+                ros_pub_time = str(re.search(r'(?<=ROSPUB\sTS:\s)\d*',
+                                             stats_log.group()).group()) or None
                 rmw_sub_time = None
                 rmw_pub_time = None
                 parsed_log.append([topic_name, sub_node, pub_node,
-                                  ros_sub_time, ros_pub_time,
+                                  ros_time, ros_sub_time, ros_pub_time,
                                   rmw_sub_time, rmw_pub_time])
         if (not use_input_time):
             self.get_logger().info('This given log has less than ' + str(self.time) + ' seconds.')
             self.time = current_timestamp - begin_timestamp
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=[
                                             'Topic', 'Subscriber Node', 'Publisher Node',
+                                            'ROS Layer Transmission Time',
                                             'ROS Layer Subscriber Time',
                                             'ROS Layer Publisher Time',
                                             'RMW Layer Subscriber Time',

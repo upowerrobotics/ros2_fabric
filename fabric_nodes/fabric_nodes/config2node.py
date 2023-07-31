@@ -113,6 +113,12 @@ class Config2Nodes:
                     raise ValueError(
                         f"Terminal node '{node_config['name']}' cannot have publishers"
                     )
+                if ((not root_node and not terminal_node) and
+                        ('subscribers' not in node_config or 'publishers' not in node_config)):
+                    raise ValueError(
+                        f"Node '{node_config['name']}' must contain both publishers and"
+                        f'subscribers since it is not a root or terminal node'
+                    )
 
         # Validate publishers-subscribers connections
         for publisher_topic in publisher_topics:

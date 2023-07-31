@@ -105,15 +105,27 @@ class GetLog(Node):
         self.parsed_log_df.to_csv('log.csv', sep='\t', index=False)
         self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
         self.ros_xmt_time = list(map(int, self.parsed_log_df['ROS Layer Transmission Time']))
+        self.rmw_xmt_time = list(map(int, self.parsed_log_df['RMW Layer Transmission Time']))
         self.get_logger().info(
             'Average ROS XMT is: ' + str(np.mean(self.ros_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.ros_xmt_time)) + ' ns.')
+        self.get_logger().info(
+            'Average RMW XMT is: ' + str(np.mean(self.rmw_xmt_time)) + ' ns, ' +
+            'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
 
     def plot_log(self):
-        plt.hist(self.ros_xmt_time, color='blue', edgecolor='black')
-        plt.title('ROS Layer Transmission Time')
-        plt.xlabel('Time (Nanoseconds)')
-        plt.ylabel('Occurrences')
+        ax1 = plt.subplot(1, 2, 1)
+        ax1.hist(self.ros_xmt_time, color='blue', edgecolor='black')
+        ax1.set_title('ROS Layer Transmission Time')
+        ax1.set_xlabel('Time (Nanoseconds)')
+        ax1.set_ylabel('Occurrences')
+
+        ax2 = plt.subplot(1, 2, 2)
+        ax2.hist(self.rmw_xmt_time, color='yellow', edgecolor='black')
+        ax2.set_title('RMW Layer Transmission Time')
+        ax2.set_xlabel('Time (Nanoseconds)')
+        ax2.set_ylabel('Occurrences')
+
         plt.show()
 
 

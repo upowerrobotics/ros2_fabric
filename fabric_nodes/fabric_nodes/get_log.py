@@ -18,6 +18,7 @@ import os
 import re
 
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import rclpy
 
@@ -94,9 +95,17 @@ class GetLog(Node):
         """Output the parsed statistics."""
         self.parsed_log_df.to_csv('log.csv', sep='\t', index=False)
         self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
-        ros_xmt_time = self.parsed_log_df['ROS Layer Transmission Time'].tolist()
+        self.ros_xmt_time = list(map(int, self.parsed_log_df['ROS Layer Transmission Time']))
         self.get_logger().info(
-            'Average ROS XMT is: ' + str(np.mean(list(map(int, ros_xmt_time)))) + ' ns.')
+            'Average ROS XMT is: ' + str(np.mean(self.ros_xmt_time)) + ' ns, ' +
+            'with a standard deviation of ' + str(np.std(self.ros_xmt_time)) + ' ns.')
+
+    def plot_log(self):
+        plt.hist(self.ros_xmt_time, color='blue', edgecolor='black')
+        plt.title('ROS Layer Transmission Time')
+        plt.xlabel('Time (Nanoseconds)')
+        plt.ylabel('Occurrences')
+        plt.show()
 
 
 def main(args=None):
@@ -105,6 +114,7 @@ def main(args=None):
     m_log.read_log()
     m_log.parse_log()
     m_log.output_log()
+    m_log.plot_log()
     rclpy.shutdown()
 
 

@@ -51,35 +51,43 @@ class GetLog(Node):
         self.lines = open(logfile_path, 'r').readlines()
         self.get_logger().info('Reading log from ' + logfile_path)
 
-    def search_log(self, log):
+    def search_ros_log(self, log):
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)', log).group()) or None
         sub_node = str(re.search(r'(?<=\[)node.*(?=\.n)', log).group()) or None
         pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)', log).group()) or None
         ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*', log).group()) or None
         ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*', log).group()) or None
         ros_pub_time = str(re.search(r'(?<=ROSPUB\sTS:\s)\d*', log).group()) or None
-        rmw_sub_time = None
-        rmw_pub_time = None
         return [topic_name, sub_node, pub_node,
-                ros_time, ros_sub_time, ros_pub_time,
-                rmw_sub_time, rmw_pub_time]
+                ros_time, ros_sub_time, ros_pub_time]
+
+    def search_rmw_log(self, log):
+        rmw_time = str(re.search(r'(?<=rmw\sxmt\stime\sns:\s)\d*', log).group()) or None
+        rmw_sub_time = str(re.search(r'(?<=RMWSUB\sTS:\s)\d*', log).group()) or None
+        rmw_pub_time = str(re.search(r'(?<=RMWPUB\sTS:\s)\d*', log).group()) or None
+        return [rmw_time, rmw_sub_time, rmw_pub_time]
 
     def parse_log(self):
         begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())
         current_timestamp = begin_timestamp
         use_input_time = False
 
+        parsed_rmw = []
         parsed_log = []
         for line in self.lines:
+            current_timestamp = float(re.search(r'\d*\.\d*(?=\s)', line).group())
+            if (current_timestamp > begin_timestamp + self.time):
+                self.get_logger().info('Starting at ' + str(begin_timestamp) +
+                                        ', ending at ' + str(current_timestamp))
+                use_input_time = True
+                break
             stats_log = re.search(r'\[node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
-                current_timestamp = float(re.search(r'\d*\.\d*(?=\s)', line).group())
-                if (current_timestamp > begin_timestamp + self.time):
-                    self.get_logger().info('Starting at ' + str(begin_timestamp) +
-                                           ', ending at ' + str(current_timestamp))
-                    use_input_time = True
-                    break
-                parsed_log.append(self.search_log(stats_log.group()))
+                rmw_log = re.search(r'\[node.*.rmw]:\sT.*', line)
+                if rmw_log is not None:
+                    parsed_rmw = self.search_rmw_log(rmw_log.group())
+                    continue
+                parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):
             self.get_logger().info('This given log has less than ' + str(self.time) + ' seconds.')
             self.time = current_timestamp - begin_timestamp
@@ -88,6 +96,7 @@ class GetLog(Node):
                                             'ROS Layer Transmission Time',
                                             'ROS Layer Subscriber Time',
                                             'ROS Layer Publisher Time',
+                                            'RMW Layer Transmission Time',
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])
 

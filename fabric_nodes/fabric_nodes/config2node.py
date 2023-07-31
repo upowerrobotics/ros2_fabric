@@ -195,20 +195,12 @@ class Config2Nodes:
         for subscriber in subscribers:
             topic_name = subscriber['name']
             subscribe_topic = {'node': subscriber['node']}
-            subscriber_qty = subscriber.get('qty', 1)
 
-            for num in range(1, subscriber_qty + 1):
-                if subscriber_qty == 1:
-                    key = topic_name
-                else:
-                    key = f'{topic_name}_{num}'
-
-                subscribe_topics[key] = subscribe_topic
+            subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
         return subscribe_topics
 
-    def generate_node(self, node_config, node_name, root_node,
-                      terminal_node, publish_topics, subscribe_topics):
+    def generate_node(self, node_config, publish_topics, subscribe_topics):
         """
         Generate a node based on the provided configuration.
 
@@ -216,12 +208,6 @@ class Config2Nodes:
         ----------
         node_config:
             The configuration of a specific node.
-        node_name : str
-            The name of the node.
-        root_node : bool
-            Whether the node is a root node.
-        terminal_node : bool
-            Whether the node is a terminal node.
         publish_topics : dict
             The processed publisher topics.
         subscribe_topics : dict
@@ -229,11 +215,16 @@ class Config2Nodes:
 
         """
         node_qty = node_config.get('qty', 1)
+        node_name = node_config['name']
+        root_node = node_config['root_node']
+        terminal_node = node_config['terminal_node']
+
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
-                    key: {'node': value['node'] + '_' + str(num)}
+                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}"}
                     for key, value in subscribe_topics.items()
+                    for namespace, topic in [key.split('/')]
                 }
                 node_name_with_num = f'{node_name}_{num}'
             else:
@@ -297,14 +288,8 @@ class Config2Nodes:
             if environment['name'] != self.env:
                 continue
             for node_config in environment['nodes']:
-                node_name = node_config['name']
-                root_node = node_config['root_node']
-                terminal_node = node_config['terminal_node']
-
                 publish_topics = self.process_publishers(node_config)
                 subscribe_topics = self.process_subscribers(node_config)
-
-                self.generate_node(node_config, node_name, root_node,
-                                   terminal_node, publish_topics, subscribe_topics)
+                self.generate_node(node_config, publish_topics, subscribe_topics)
 
         return self.nodes

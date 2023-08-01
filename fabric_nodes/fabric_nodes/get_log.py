@@ -99,14 +99,27 @@ class GetLog(Node):
                                             'RMW Layer Transmission Time',
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])
+        self.parsed_log_df = self.parsed_log_df.astype({"ROS Layer Transmission Time":"int",
+                                                        "ROS Layer Subscriber Time":"int",
+                                                        "ROS Layer Publisher Time":"int",
+                                                        "RMW Layer Transmission Time":"int",
+                                                        "RMW Layer Subscriber Time":"int",
+                                                        "RMW Layer Publisher Time":"int",})
 
     def output_log(self):
         """Output the parsed statistics."""
         self.parsed_log_df.to_csv((
             str(round(self.time,3))+'-seconds-'+self.run_id+'.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
-        self.ros_xmt_time = list(map(int, self.parsed_log_df['ROS Layer Transmission Time']))
-        self.rmw_xmt_time = list(map(int, self.parsed_log_df['RMW Layer Transmission Time']))
+
+        self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
+        self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
+
+        self.parsed_df_by_topics =self.parsed_log_df.groupby('Topic').agg(
+            avg_ros_time=('ROS Layer Transmission Time', np.mean),
+            avg_rmw_time=('RMW Layer Transmission Time', np.mean)
+        ).reset_index()
+
         self.get_logger().info(
             'Average ROS XMT is: ' + str(np.mean(self.ros_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.ros_xmt_time)) + ' ns.')
@@ -126,6 +139,29 @@ class GetLog(Node):
         ax2.set_title('RMW Layer Transmission Time')
         ax2.set_xlabel('Time (Nanoseconds)')
         ax2.set_ylabel('Occurrences')
+
+        # plt.bar(list(self.parsed_df_by_topics['Topic']), list(self.parsed_df_by_topics['avg_ros_time']))
+        # plt.title('ROS Layer Transmission Time By Topics')
+        # plt.xlabel('Topic Name')
+        # plt.ylabel('Time (Nanoseconds)')
+        # plt.xticks(rotation=90, fontsize=6)
+
+        # plt.bar(list(self.parsed_df_by_topics['Topic']), list(self.parsed_df_by_topics['avg_rmw_time']))
+        # plt.title('RMW Layer Transmission Time By Topics')
+        # plt.xlabel('Topic Name')
+        # plt.ylabel('Time (Nanoseconds)')
+        # plt.xticks(rotation=90, fontsize=6)
+
+        # plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
+        #          np.divide(list(self.parsed_df_by_topics['avg_ros_time']),
+        #                           list(self.parsed_df_by_topics['avg_rmw_time'])))
+        # plt.grid()
+        # plt.title('Log of (ROS_TIME/RMW_TIME) by Topics')
+        # plt.xlabel('Topic Name')
+        # plt.ylabel('Log value')
+        # plt.xticks(ticks=range(len(list(self.parsed_df_by_topics['Topic']))),
+        #            labels=list(self.parsed_df_by_topics['Topic']),
+        #            rotation=90, fontsize=6)
 
         plt.show()
 

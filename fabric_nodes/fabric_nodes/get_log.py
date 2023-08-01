@@ -102,7 +102,8 @@ class GetLog(Node):
 
     def output_log(self):
         """Output the parsed statistics."""
-        self.parsed_log_df.to_csv('log.csv', sep='\t', index=False)
+        self.parsed_log_df.to_csv((
+            str(round(self.time,3))+'-seconds-'+self.run_id+'.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
         self.ros_xmt_time = list(map(int, self.parsed_log_df['ROS Layer Transmission Time']))
         self.rmw_xmt_time = list(map(int, self.parsed_log_df['RMW Layer Transmission Time']))

@@ -116,7 +116,7 @@ class Config2Nodes:
                 if ((not root_node and not terminal_node) and
                         ('subscribers' not in node_config or 'publishers' not in node_config)):
                     raise ValueError(
-                        f"Node '{node_config['name']}' must contain both publishers and"
+                        f"Node '{node_config['name']}' must contain both publishers and "
                         f'subscribers since it is not a root or terminal node'
                     )
 

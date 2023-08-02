@@ -1,0 +1,9 @@
+environments:
+  - name: env1
+    nodes:
+      - name: node1
+        root_node: false
+        terminal_node: false
+        subscribers:
+          - name: topic_1M
+            node: node1

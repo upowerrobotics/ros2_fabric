@@ -77,7 +77,7 @@ def test_topic_list():
 
     # Start the launch subprocess
     launch_process = subprocess.Popen(launch_str, shell=True, preexec_fn=os.setpgrp)
-    time.sleep(1)
+    time.sleep(3)
 
     # Get topic list
     topic_list_process = subprocess.run(topic_list_str, shell=True, capture_output=True, text=True)

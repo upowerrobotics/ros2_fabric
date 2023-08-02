@@ -32,15 +32,17 @@ def test_error_configuration():
         'error_param_pub.param.yaml': ('must have at least two '
                                        'of the following parameters: '
                                        'bandwidth, msg_size, frequency'),
-        'error_pub_connection_qty.param.yaml': 'publisher is not connected',
-        'error_pub_connection.param.yaml': 'publisher is not connected',
-        'error_qty_node.param.yaml': 'node qty is not a valid number',
-        'error_qty_pub.param.yaml': 'publisher qty is not a valid number',
-        'error_root_terminal.param.yaml': 'root node can not be terminal node',
-        'error_root.param.yaml': 'root node can not have subscribers',
-        'error_sub_connection_qty.param.yaml': 'subsciber is not connected',
-        'error_sub_connection.param.yaml': 'subsciber is not connected',
-        'error_terminal.param.yaml': 'terminal node can not have publihsers',
+        'error_pub_connection_qty.param.yaml': 'is not connected',
+        'error_pub_connection.param.yaml': 'is not connected',
+        'error_qty_node.param.yaml': 'Invalid node quantity',
+        'error_qty_pub.param.yaml': 'Invalid publisher quantity',
+        'error_missing_pubs.param.yaml': 'must contain both publishers and subscribers',
+        'error_missing_subs.param.yaml': 'must contain both publishers and subscribers',
+        'error_root_terminal.param.yaml': 'cannot be both a terminal node and a root node',
+        'error_root.param.yaml': 'cannot have subscribers',
+        'error_sub_connection_qty.param.yaml': 'is not connected',
+        'error_sub_connection.param.yaml': 'is not connected',
+        'error_terminal.param.yaml': 'cannot have publishers',
     }
 
     for config_file, expected_error in test_cases.items():
@@ -55,4 +57,4 @@ def test_error_configuration():
         with pytest.raises(ValueError) as excinfo:
             config2nodes.get_nodes()
 
-        assert (expected_error + str(excinfo.value))
+        assert (expected_error in str(excinfo.value))

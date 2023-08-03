@@ -261,20 +261,29 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
 }
 
 void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
-{  
-  auto now = this->now();
-  auto diff = now - rclcpp::Time(msg->timestamp);
-  
+{
+  debug_catch_msg(msg, topic_name);
+  debug_diff_time(msg, topic_name);
+}
+
+void DummyNode::debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+{
   catch_msg++;
-  float catch_rate = (catch_msg/msg->id) * 100.0;
+  float catch_rate = (catch_msg / msg->id) * 100.0;
   int miss_msg = msg->id - catch_msg;
 
   std::ostringstream log_stream;
-  log_stream << "Topic: " << topic_name
-    << ", Catch Rate: " << std::fixed << std::setprecision(1) << catch_rate << "%"
-    << ", Miss MSG: " << miss_msg;
+  log_stream << "Topic: " << topic_name <<
+    ", Catch Rate: " << std::fixed << std::setprecision(1) << catch_rate << "%" <<
+    ", Miss MSG: " << miss_msg;
 
   RCLCPP_DEBUG(this->get_logger(), log_stream.str().c_str());
+}
+
+void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+{
+  auto now = this->now();
+  auto diff = now - rclcpp::Time(msg->timestamp);
 
   RCLCPP_DEBUG(
     this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());

@@ -274,8 +274,7 @@ class Config2Nodes:
                 'publish_topics': publish_topics,
                 'subscribe_topics': subscribe_topics,
             }],
-            arguments=['--ros-args', '--log-level', 'DEBUG'],
-            output='log'
+            output='screen'
         )
         return node
 

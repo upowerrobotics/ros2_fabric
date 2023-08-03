@@ -132,8 +132,8 @@ class GetLog(Node):
         # self.plot_hist_xmt_time()
         # self.plot_bar_ros_xmt_by_topics()
         # self.plot_bar_rmw_xmt_by_topics()
-        # self.plot_log_diff_xmt_by_topics()
-        self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
+        self.plot_diff_xmt_by_topics()
+        # self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
         plt.show()
 
     def plot_hist_xmt_time(self):
@@ -165,14 +165,14 @@ class GetLog(Node):
         plt.ylabel('Time (Nanoseconds)')
         plt.xticks(rotation=90, fontsize=6)
 
-    def plot_log_diff_xmt_by_topics(self):
+    def plot_diff_xmt_by_topics(self):
         plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
-                 np.divide(list(self.parsed_df_by_topics['avg_ros_time']),
+               np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
                            list(self.parsed_df_by_topics['avg_rmw_time'])))
         plt.grid()
-        plt.title('Log of (ROS_TIME/RMW_TIME) by Topics')
+        plt.title('(ROS-RMW) Time by Topics')
         plt.xlabel('Topic Name')
-        plt.ylabel('Log value')
+        plt.ylabel('Time Difference')
         plt.xticks(ticks=range(len(list(self.parsed_df_by_topics['Topic']))),
                    labels=list(self.parsed_df_by_topics['Topic']),
                    rotation=90, fontsize=6)

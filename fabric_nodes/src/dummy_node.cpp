@@ -284,19 +284,19 @@ void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::strin
 {
   auto now = this->now();
 
-  if (pre_id == msg->id){
+  if (pre_id == msg->id) {
     pre_id++;
     auto diff = now - rclcpp::Time(msg->timestamp);
 
     RCLCPP_DEBUG(
-      this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());
-  }
-  else{
+      this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
+      diff.nanoseconds());
+  } else {
     pre_id = msg->id;
     RCLCPP_DEBUG(
       this->get_logger(), "Topic: %s drop in %li", topic_name.c_str(), now.nanoseconds());
   }
-  
+
 }
 
 }  // namespace fabric_nodes

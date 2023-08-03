@@ -69,8 +69,8 @@ private:
   void debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
   void debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
 
-  int64_t message_id_ = 0;
-  int64_t pre_id = 0;
+  int64_t message_id_ = 1;
+  int64_t pre_id = 1;
   int64_t catch_msg = 0;
   bool m_root_node = false;
   bool m_terminal_node = false;

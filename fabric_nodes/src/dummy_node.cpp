@@ -254,21 +254,21 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
   msg->data.resize(msg_bytes, 42);
   msg->timestamp = this->now();
 
-  message_id_++;
   msg->id = message_id_;
+  message_id_++;
 
   publisher->publish(std::move(msg));
 }
 
 void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
+  catch_msg++;
   debug_catch_msg(msg, topic_name);
   debug_diff_time(msg, topic_name);
 }
 
 void DummyNode::debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
-  catch_msg++;
   float catch_rate = (catch_msg / msg->id) * 100.0;
   int miss_msg = msg->id - catch_msg;
 
@@ -283,10 +283,20 @@ void DummyNode::debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::strin
 void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
   auto now = this->now();
-  auto diff = now - rclcpp::Time(msg->timestamp);
 
-  RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());
+  if (pre_id == msg->id){
+    pre_id++;
+    auto diff = now - rclcpp::Time(msg->timestamp);
+
+    RCLCPP_DEBUG(
+      this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());
+  }
+  else{
+    pre_id = msg->id;
+    RCLCPP_DEBUG(
+      this->get_logger(), "Topic: %s drop in %li", topic_name.c_str(), now.nanoseconds());
+  }
+  
 }
 
 }  // namespace fabric_nodes

@@ -42,12 +42,12 @@ class GetLog(Node):
         self.run_id = run_id
 
     def read_log(self):
-        ros_log_dir = os.path.expanduser('~') + '/.ros/log/'
+        ros_log_dir = os.path.join(os.path.expanduser('~') + '/.ros/log/')
         dirlist = list(d for d in next(os.walk(ros_log_dir))[1])
         dirlist.sort()
         if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]
-        logfile_path = ros_log_dir + self.run_id + '/launch.log'
+        logfile_path = os.path.join(ros_log_dir, self.run_id, 'launch.log')
         self.lines = open(logfile_path, 'r').readlines()
         self.get_logger().info('Reading log from ' + logfile_path)
 

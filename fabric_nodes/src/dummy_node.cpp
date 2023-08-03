@@ -271,23 +271,19 @@ void DummyNode::debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::strin
 {
   float catch_rate = (catch_msg / msg->id) * 100.0;
   int miss_msg = msg->id - catch_msg;
-
   std::ostringstream log_stream;
   log_stream << "Topic: " << topic_name <<
     ", Catch Rate: " << std::fixed << std::setprecision(1) << catch_rate << "%" <<
     ", Miss MSG: " << miss_msg;
-
   RCLCPP_DEBUG(this->get_logger(), log_stream.str().c_str());
 }
 
 void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
   auto now = this->now();
-
   if (pre_id == msg->id) {
     pre_id++;
     auto diff = now - rclcpp::Time(msg->timestamp);
-
     RCLCPP_DEBUG(
       this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
       diff.nanoseconds());
@@ -296,7 +292,6 @@ void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::strin
     RCLCPP_DEBUG(
       this->get_logger(), "Topic: %s drop in %li", topic_name.c_str(), now.nanoseconds());
   }
-
 }
 
 }  // namespace fabric_nodes

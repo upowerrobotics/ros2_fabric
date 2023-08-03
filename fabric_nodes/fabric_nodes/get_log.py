@@ -178,14 +178,24 @@ class GetLog(Node):
                    rotation=90, fontsize=6)
 
     def plot_topic_time_series(self, topic_df):
-        plt.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
-        plt.plot(topic_df['ROS Layer Publisher Time'], topic_df['RMW Layer Transmission Time'])
-        plt.legend(['ROS Transmission Duration', 'RMW Transmission Duration'])
-        plt.grid()
-        plt.title('Transmission Time Series for ' + list(topic_df['Topic'])[0])
-        plt.xlabel('Timestamps')
-        plt.ylabel('Transmission Time Duration (Nanoseconds)')
-        plt.xticks([])
+        ax1 = plt.subplot(1, 2, 1)
+        ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
+        ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['RMW Layer Transmission Time'])
+        ax1.legend(['ROS Transmission Duration', 'RMW Transmission Duration'])
+        ax1.grid()
+        ax1.set_title('Transmission Time Series for ' + list(topic_df['Topic'])[0])
+        ax1.set_xlabel('Timestamps')
+        ax1.set_ylabel('Transmission Time Duration (Nanoseconds)')
+        ax1.set_xticks([])
+
+        ax2 = plt.subplot(1, 2, 2)
+        ax2.plot(topic_df['ROS Layer Publisher Time'],
+                 topic_df['ROS Layer Transmission Time']-topic_df['RMW Layer Transmission Time'])
+        ax2.grid()
+        ax2.set_title('Difference in Transmission Time Series for ' + list(topic_df['Topic'])[0])
+        ax2.set_xlabel('Timestamps')
+        ax2.set_ylabel('(ROS-RMW) Transmission Time Duration (Nanoseconds)')
+        ax2.set_xticks([])
 
 def main(args=None):
     rclpy.init(args=args)

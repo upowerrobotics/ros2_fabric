@@ -100,11 +100,7 @@ class GetLog(Node):
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])
         self.parsed_log_df = self.parsed_log_df.astype({"ROS Layer Transmission Time": "int",
-                                                        "ROS Layer Subscriber Time": "int",
-                                                        "ROS Layer Publisher Time": "int",
-                                                        "RMW Layer Transmission Time": "int",
-                                                        "RMW Layer Subscriber Time": "int",
-                                                        "RMW Layer Publisher Time": "int"})
+                                                        "RMW Layer Transmission Time": "int"})
 
     def output_log(self):
         """Output the parsed statistics."""
@@ -120,6 +116,11 @@ class GetLog(Node):
             avg_rmw_time=('RMW Layer Transmission Time', np.mean)
         ).reset_index()
 
+        self.each_topic_parsed_log_df = []
+        topics_groups = self.parsed_log_df.sort_values(['Topic','ROS Layer Publisher Time'],ascending=True).groupby('Topic')
+        for gp in topics_groups.groups:
+            self.each_topic_parsed_log_df.append(topics_groups.get_group(gp))
+
         self.get_logger().info(
             'Average ROS XMT is: ' + str(np.mean(self.ros_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.ros_xmt_time)) + ' ns.')
@@ -128,10 +129,11 @@ class GetLog(Node):
             'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
 
     def plot_log(self):
-        self.plot_hist_xmt_time()
+        # self.plot_hist_xmt_time()
         # self.plot_bar_ros_xmt_by_topics()
         # self.plot_bar_rmw_xmt_by_topics()
         # self.plot_log_diff_xmt_by_topics()
+        self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
         plt.show()
 
     def plot_hist_xmt_time(self):
@@ -175,6 +177,15 @@ class GetLog(Node):
                    labels=list(self.parsed_df_by_topics['Topic']),
                    rotation=90, fontsize=6)
 
+    def plot_topic_time_series(self, topic_df):
+        plt.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
+        plt.plot(topic_df['ROS Layer Publisher Time'], topic_df['RMW Layer Transmission Time'])
+        plt.legend(['ROS Transmission Duration', 'RMW Transmission Duration'])
+        plt.grid()
+        plt.title('Transmission Time Series for ' + list(topic_df['Topic'])[0])
+        plt.xlabel('Timestamps')
+        plt.ylabel('Transmission Time Duration (Nanoseconds)')
+        plt.xticks([])
 
 def main(args=None):
     rclpy.init(args=args)

@@ -83,7 +83,7 @@ class GetLog(Node):
                 break
             stats_log = re.search(r'\[node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
-                rmw_log = re.search(r'\[node.*.rmw]:\sT.*', line)
+                rmw_log = re.search(r'\[node.*.CycloneDDS]:\sT.*', line)
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
                     continue
@@ -104,6 +104,9 @@ class GetLog(Node):
 
     def output_log(self):
         """Output the parsed statistics."""
+        outlier_indices = self.parsed_log_df[(self.parsed_log_df['ROS Layer Transmission Time'] <
+                                              self.parsed_log_df['RMW Layer Transmission Time'])].index
+        self.parsed_log_df.drop(outlier_indices , inplace=True)
         self.parsed_log_df.to_csv((
             str(round(self.time, 3))+'-seconds-'+self.run_id+'.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) + ' seconds on run: ' + self.run_id)
@@ -130,8 +133,8 @@ class GetLog(Node):
 
     def plot_log(self):
         # self.plot_bar_xmt_by_topics()
-        # self.plot_diff_xmt_by_topics()
-        self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
+        self.plot_diff_xmt_by_topics()
+        # self.plot_topic_time_series(self.each_topic_parsed_log_df[38])
         plt.show()
 
     def plot_hist_xmt_time(self):
@@ -192,7 +195,7 @@ class GetLog(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    m_log = GetLog(5)
+    m_log = GetLog(60)
     m_log.read_log()
     m_log.parse_log()
     m_log.output_log()

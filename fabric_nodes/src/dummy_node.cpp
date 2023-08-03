@@ -253,13 +253,28 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
   auto msg = std::make_unique<DummyMsgT>();
   msg->data.resize(msg_bytes, 42);
   msg->timestamp = this->now();
+
+  message_id_++;
+  msg->id = message_id_;
+
   publisher->publish(std::move(msg));
 }
 
 void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
-{
+{  
   auto now = this->now();
   auto diff = now - rclcpp::Time(msg->timestamp);
+  
+  catch_msg++;
+  float catch_rate = (catch_msg/msg->id) * 100.0;
+  int miss_msg = msg->id - catch_msg;
+
+  std::ostringstream log_stream;
+  log_stream << "Topic: " << topic_name
+    << ", Catch Rate: " << std::fixed << std::setprecision(1) << catch_rate << "%"
+    << ", Miss MSG: " << miss_msg;
+
+  RCLCPP_DEBUG(this->get_logger(), log_stream.str().c_str());
 
   RCLCPP_DEBUG(
     this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());

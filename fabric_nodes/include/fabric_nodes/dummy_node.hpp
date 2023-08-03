@@ -65,7 +65,10 @@ private:
   bool parse_data_size(const std::string & data_size, float * scalar, SizeType * type);
   void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes);
   void sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
-
+  
+  int64_t message_id_ = 0;
+  int64_t pre_id = 0;
+  int64_t catch_msg = 0;
   bool m_root_node = false;
   bool m_terminal_node = false;
   std::vector<PublishTopic> m_publish_topics;

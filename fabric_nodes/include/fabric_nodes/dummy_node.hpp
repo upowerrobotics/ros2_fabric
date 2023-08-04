@@ -45,6 +45,7 @@ struct PublishTopic
   std::string topic_name = "";
   rclcpp::Publisher<DummyMsgT>::SharedPtr publisher;
   rclcpp::TimerBase::SharedPtr publish_timer;
+  int64_t seq_num = 0;
 };
 
 struct SubscribeTopic
@@ -52,6 +53,8 @@ struct SubscribeTopic
   std::string node_name = "";
   std::string topic_name = "";
   rclcpp::Subscription<DummyMsgT>::SharedPtr subscriber;
+  int64_t seq_num = 0;
+  int64_t drop_msg_num = 0;
 };
 
 class DummyNode : public rclcpp::Node
@@ -63,18 +66,9 @@ private:
   void parse_publish_topic(const std::string & param_prefix);
   void parse_subscribe_topic(const std::string & subscribe_prefix);
   bool parse_data_size(const std::string & data_size, float * scalar, SizeType * type);
-  void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes);
-  void sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
+  void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes, int64_t & seq_num);
+  void sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name, int64_t & seq_num, int64_t & drop_msg_num);
 
-  std::mutex mtx;
-  DummyMsgT::SharedPtr sub_msg;
-  std::string sub_topic_name;
-  void set_subscription_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
-  void debug_catch_msg();
-  void debug_diff_time();
-
-  int message_id_ = 0;
-  int catch_msg_num = 0;
   bool m_root_node = false;
   bool m_terminal_node = false;
   std::vector<PublishTopic> m_publish_topics;

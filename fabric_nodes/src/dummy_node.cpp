@@ -165,7 +165,7 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   // https://answers.ros.org/question/308386/ros2-add-arguments-to-callback/
   // for explanation of the next line.
   std::function<void()> bound_func =
-    std::bind(&DummyNode::pub_callback, this, pub.publisher, msg_bytes);
+    std::bind(&DummyNode::pub_callback, this, pub.publisher, msg_bytes, pub.seq_num);
 
   pub.publish_timer = this->create_wall_timer(timer_interval, bound_func);
 
@@ -209,7 +209,7 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
 
   std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
-    &DummyNode::sub_callback, this, std::placeholders::_1, topic_oss.str());
+    &DummyNode::sub_callback, this, std::placeholders::_1, topic_oss.str(), sub.seq_num, sub.drop_msg_num);
 
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
@@ -248,53 +248,38 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
-void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes)
+void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes, int64_t & seq_num)
 {
   auto msg = std::make_unique<DummyMsgT>();
   msg->data.resize(msg_bytes, 42);
   msg->timestamp = this->now();
-
-  msg->id = message_id_;
-  message_id_++;
+  msg->seq_num = seq_num;
+  seq_num++;
 
   publisher->publish(std::move(msg));
 }
 
-void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name, int64_t & seq_num, int64_t & drop_msg_num)
 {
-  std::lock_guard<std::mutex> lock(mtx);
-
-  set_subscription_msg(msg, topic_name);
-  debug_catch_msg();
-  debug_diff_time();
-}
-
-void DummyNode::set_subscription_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
-{
-  sub_msg = msg;
-  sub_topic_name = topic_name;
-}
-
-void DummyNode::debug_catch_msg()
-{
-  if (catch_msg_num <= sub_msg->id) {
-    float catch_rate = (static_cast<float>(catch_msg_num) / static_cast<float>(sub_msg->id)) *
-      100.0f;
-    int64_t miss_msg_count = sub_msg->id - catch_msg_num;
-    RCLCPP_DEBUG(
-      this->get_logger(), "Topic: %s Catch Rate: %.2f Miss MSG: %li",
-      sub_topic_name.c_str(), catch_rate, miss_msg_count);
-  }
-  catch_msg_num++;
-}
-
-void DummyNode::debug_diff_time()
-{
+  // Calculate ROS xmt time
   auto now = this->now();
-  auto diff = now - rclcpp::Time(sub_msg->timestamp);
+  auto diff = now - rclcpp::Time(msg->timestamp);
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", sub_topic_name.c_str(),
+    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
     diff.nanoseconds());
+  
+  // Calculate Recieve Rate
+  if (msg->seq_num != seq_num){
+    drop_msg_num++;
+    seq_num = msg->seq_num;
+  }
+  else{
+    seq_num++;
+  }
+  float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
+  RCLCPP_DEBUG(
+    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %.2f", topic_name.c_str(),
+    drop_msg_num, recieve_rate);  
 }
 
 }  // namespace fabric_nodes

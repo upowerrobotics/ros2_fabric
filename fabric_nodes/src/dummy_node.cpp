@@ -209,7 +209,8 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
 
   std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
-    &DummyNode::sub_callback, this, std::placeholders::_1, topic_oss.str(), sub.seq_num, sub.drop_msg_num);
+    &DummyNode::sub_callback, this, std::placeholders::_1,
+    topic_oss.str(), sub.seq_num, sub.drop_msg_num);
 
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
@@ -248,7 +249,9 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
-void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes, int64_t & seq_num)
+void DummyNode::pub_callback(
+  rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
+  int64_t & seq_num)
 {
   auto msg = std::make_unique<DummyMsgT>();
   msg->data.resize(msg_bytes, 42);
@@ -259,7 +262,9 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
   publisher->publish(std::move(msg));
 }
 
-void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name, int64_t & seq_num, int64_t & drop_msg_num)
+void DummyNode::sub_callback(
+  const DummyMsgT::SharedPtr msg, const std::string & topic_name,
+  int64_t & seq_num, int64_t & drop_msg_num)
 {
   // Calculate ROS xmt time
   auto now = this->now();
@@ -267,19 +272,18 @@ void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string &
   RCLCPP_DEBUG(
     this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
     diff.nanoseconds());
-  
+
   // Calculate Recieve Rate
-  if (msg->seq_num != seq_num){
+  if (msg->seq_num != seq_num) {
     drop_msg_num++;
     seq_num = msg->seq_num;
-  }
-  else{
+  } else {
     seq_num++;
   }
   float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
   RCLCPP_DEBUG(
     this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %.2f", topic_name.c_str(),
-    drop_msg_num, recieve_rate);  
+    drop_msg_num, recieve_rate);
 }
 
 }  // namespace fabric_nodes

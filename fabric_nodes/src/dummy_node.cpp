@@ -285,7 +285,7 @@ void DummyNode::sub_callback(
   }
   float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %.2f, at time ns: %li",
+    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %f, at time ns: %li",
     topic_name.c_str(),
     drop_msg_num, recieve_rate, now.nanoseconds());
 
@@ -296,7 +296,7 @@ void DummyNode::sub_callback(
     initial_freq_time = now;
     auto freq = receive_num / freq_diff.seconds();
     receive_num = 0;
-    std::cout << "hahahahahahaha   " << freq << std::endl;
+    RCLCPP_DEBUG(this->get_logger(), "Topic: %s, Freq: %f", topic_name.c_str(), freq);
   }
 }
 

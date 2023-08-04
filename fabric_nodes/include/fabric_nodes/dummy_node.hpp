@@ -55,6 +55,8 @@ struct SubscribeTopic
   rclcpp::Subscription<DummyMsgT>::SharedPtr subscriber;
   int64_t seq_num = 0;
   int64_t drop_msg_num = 0;
+  int64_t receive_num = 0;
+  rclcpp::Time initial_freq_time;
 };
 
 class DummyNode : public rclcpp::Node
@@ -71,7 +73,8 @@ private:
     int64_t & seq_num);
   void sub_callback(
     const DummyMsgT::SharedPtr msg, const std::string & topic_name,
-    int64_t & seq_num, int64_t & drop_msg_num);
+    int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
+    rclcpp::Time & initial_freq_time);
 
   bool m_root_node = false;
   bool m_terminal_node = false;

@@ -208,9 +208,11 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   auto sub_options = rclcpp::SubscriptionOptions();
   sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
 
+  sub.initial_freq_time = this->now();
+
   std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
     &DummyNode::sub_callback, this, std::placeholders::_1,
-    topic_oss.str(), sub.seq_num, sub.drop_msg_num);
+    topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num, sub.initial_freq_time);
 
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
@@ -264,14 +266,15 @@ void DummyNode::pub_callback(
 
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
-  int64_t & seq_num, int64_t & drop_msg_num)
+  int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
+  rclcpp::Time & initial_freq_time)
 {
   // Calculate ROS xmt time
   auto now = this->now();
-  auto diff = now - rclcpp::Time(msg->timestamp);
+  auto xmt_diff = now - rclcpp::Time(msg->timestamp);
   RCLCPP_DEBUG(
     this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
-    diff.nanoseconds());
+    xmt_diff.nanoseconds());
 
   // Calculate Recieve Rate
   if (msg->seq_num != seq_num) {
@@ -282,8 +285,19 @@ void DummyNode::sub_callback(
   }
   float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %.2f, at time ns: %li", topic_name.c_str(),
+    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %.2f, at time ns: %li",
+    topic_name.c_str(),
     drop_msg_num, recieve_rate, now.nanoseconds());
+
+  // Calculate Frequency and Bandwidth
+  receive_num++;
+  auto freq_diff = now - initial_freq_time;
+  if (freq_diff.seconds() >= 10) {
+    initial_freq_time = now;
+    auto freq = receive_num / freq_diff.seconds();
+    receive_num = 0;
+    std::cout << "hahahahahahaha   " << freq << std::endl;
+  }
 }
 
 }  // namespace fabric_nodes

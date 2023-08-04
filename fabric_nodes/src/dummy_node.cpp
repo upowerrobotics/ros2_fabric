@@ -262,36 +262,39 @@ void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, 
 
 void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
-  catch_msg++;
-  debug_catch_msg(msg, topic_name);
-  debug_diff_time(msg, topic_name);
+  std::lock_guard<std::mutex> lock(mtx);
+
+  set_subscription_msg(msg, topic_name);
+  debug_catch_msg();
+  debug_diff_time();
 }
 
-void DummyNode::debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+void DummyNode::set_subscription_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
 {
-  float catch_rate = (catch_msg / msg->id) * 100.0;
-  int miss_msg = msg->id - catch_msg;
-  std::ostringstream log_stream;
-  log_stream << "Topic: " << topic_name <<
-    ", Catch Rate: " << std::fixed << std::setprecision(1) << catch_rate << "%" <<
-    ", Miss MSG: " << miss_msg;
-  RCLCPP_DEBUG(this->get_logger(), log_stream.str().c_str());
+  sub_msg = msg;
+  sub_topic_name = topic_name;
 }
 
-void DummyNode::debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+void DummyNode::debug_catch_msg()
+{
+  if (catch_msg_num <= sub_msg->id) {
+    float catch_rate = (static_cast<float>(catch_msg_num) / static_cast<float>(sub_msg->id)) *
+      100.0f;
+    int64_t miss_msg_count = sub_msg->id - catch_msg_num;
+    RCLCPP_DEBUG(
+      this->get_logger(), "Topic: %s Catch Rate: %.2f Miss MSG: %li",
+      sub_topic_name.c_str(), catch_rate, miss_msg_count);
+  }
+  catch_msg_num++;
+}
+
+void DummyNode::debug_diff_time()
 {
   auto now = this->now();
-  if (pre_id == msg->id) {
-    pre_id++;
-    auto diff = now - rclcpp::Time(msg->timestamp);
-    RCLCPP_DEBUG(
-      this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
-      diff.nanoseconds());
-  } else {
-    pre_id = msg->id;
-    RCLCPP_DEBUG(
-      this->get_logger(), "Topic: %s drop in %li", topic_name.c_str(), now.nanoseconds());
-  }
+  auto diff = now - rclcpp::Time(sub_msg->timestamp);
+  RCLCPP_DEBUG(
+    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", sub_topic_name.c_str(),
+    diff.nanoseconds());
 }
 
 }  // namespace fabric_nodes

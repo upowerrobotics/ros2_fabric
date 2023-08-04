@@ -66,12 +66,15 @@ private:
   void pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes);
   void sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
 
-  void debug_catch_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
-  void debug_diff_time(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
+  std::mutex mtx;
+  DummyMsgT::SharedPtr sub_msg;
+  std::string sub_topic_name;
+  void set_subscription_msg(const DummyMsgT::SharedPtr msg, const std::string & topic_name);
+  void debug_catch_msg();
+  void debug_diff_time();
 
-  int64_t message_id_ = 1;
-  int64_t pre_id = 1;
-  int64_t catch_msg = 0;
+  int message_id_ = 0;
+  int catch_msg_num = 0;
   bool m_root_node = false;
   bool m_terminal_node = false;
   std::vector<PublishTopic> m_publish_topics;

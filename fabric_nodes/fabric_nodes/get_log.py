@@ -83,7 +83,7 @@ class GetLog(Node):
                 break
             stats_log = re.search(r'\[node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
-                rmw_log = re.search(r'\[node.*.CycloneDDS]:\sT.*', line)
+                rmw_log = re.search(r'\[node.*\.(C|F|e|R).*]:\sT.*', line)
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
                     continue

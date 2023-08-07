@@ -1,3 +1,6 @@
+## @file
+# Test script for error configurations in the fabric_nodes package.
+
 # Copyright 2023 U Power Robotics USA, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

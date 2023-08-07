@@ -79,7 +79,7 @@ struct SubscribeTopic
   int64_t drop_msg_num = 0; ///< Number of dropped messages.
   int64_t receive_num = 0; ///< Number of received messages.
   rclcpp::Time initial_freq_time; ///< Time when frequency calculation started.
-  int64_t revieve_bytes = 0; ///< Number of received bytes.
+  size_t revieve_bytes = 0; ///< Number of received bytes.
 };
 
 /**
@@ -141,14 +141,14 @@ private:
   void sub_callback(
     const DummyMsgT::SharedPtr msg, const std::string & topic_name,
     int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
-    rclcpp::Time & initial_freq_time, int64_t & revieve_bytes);
+    rclcpp::Time & initial_freq_time, size_t & revieve_bytes);
 
   /**
    * @brief Format the byte value into human-readable format (e.g., KB, MB, GB).
    * @param byte The byte value to format.
    * @return The formatted string representing the byte value.
    */
-  std::string bw_format(const double byte);
+  std::string bw_format(const size_t byte);
 
   bool m_root_node = false; ///< Flag indicating if this is a root node.
   bool m_terminal_node = false; ///< Flag indicating if this is a terminal node.

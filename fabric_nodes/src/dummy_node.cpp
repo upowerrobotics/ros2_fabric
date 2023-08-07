@@ -303,7 +303,7 @@ void DummyNode::pub_callback(
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
-  rclcpp::Time & initial_freq_time, int64_t & revieve_bytes)
+  rclcpp::Time & initial_freq_time, size_t & revieve_bytes)
 {
   // Calculate ROS xmt time
   auto now = this->now();
@@ -311,7 +311,7 @@ void DummyNode::sub_callback(
 
   // Calculate Recieve Rate
   if (msg->seq_num != seq_num) {
-    drop_msg_num++;
+    drop_msg_num += (msg->seq_num - seq_num);
     seq_num = msg->seq_num;
   } else {
     seq_num++;
@@ -333,7 +333,9 @@ void DummyNode::sub_callback(
   rmw_serialized_message_init(&serialized_msg, 0u, &default_allocator);
   rmw_ret_t ret = rmw_serialize(msg.get(), ts, &serialized_msg);
   if (ret != RMW_RET_OK) {
-    std::cerr << "Failed to serialize message: " << rmw_get_error_string().str << std::endl;
+    rcutils_error_string_t error_string = rcutils_get_error_string();
+    std::string error_message(error_string.str);
+    RCLCPP_ERROR(this->get_logger(), "Failed to serialize message: %s", error_message.c_str());
     return;
   }
   size_t msg_size = serialized_msg.buffer_length;
@@ -360,7 +362,7 @@ void DummyNode::sub_callback(
  * @param byte The bandwidth value in bytes.
  * @return The formatted bandwidth value as a string.
  */
-std::string DummyNode::bw_format(const double byte)
+std::string DummyNode::bw_format(const size_t byte)
 {
   if (byte < static_cast<uint64_t>(SizeType::KILOBYTES)) {
     return std::to_string(byte) + "B";

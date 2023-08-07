@@ -1,21 +1,3 @@
-## @file
-# This file contains tests for verifying the correct launch of nodes in a ROS2 environment.
-#
-# Tests are executed at launch time and post-shutdown. They ensure that the required processes
-# are properly launched and that they terminate with expected exit codes.
-
-## @package ros2_nodes_test
-# Documentation for the ROS2 nodes test package.
-
-## @package TestProcessOutput
-# Documentation for the TestProcessOutput class.
-
-## @package generate_test_description
-# Documentation for the generate_test_description function.
-
-## @package fabric_nodes_test
-# Documentation for the fabric_nodes_test module.
-
 # Copyright 2023 U Power Robotics USA, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# @file
+# This file contains tests for verifying the correct launch of nodes in a ROS2 environment.
+#
+# Tests are executed at launch time and post-shutdown. They ensure that the required processes
+# are properly launched and that they terminate with expected exit codes.
+
+# @package ros2_nodes_test
+# Documentation for the ROS2 nodes test package.
+
+# @package TestProcessOutput
+# Documentation for the TestProcessOutput class.
+
+# @package generate_test_description
+# Documentation for the generate_test_description function.
+
+# @package fabric_nodes_test
+# Documentation for the fabric_nodes_test module.
+
 import os
 import unittest
 
@@ -41,7 +41,7 @@ import launch_testing
 import pytest
 
 
-## Generate a launch description for the nodes under test.
+# Generate a launch description for the nodes under test.
 @pytest.mark.launch_test
 def generate_test_description():
     """
@@ -77,7 +77,7 @@ def generate_test_description():
     ), context
 
 
-## A test case class for validating the process output after the nodes have been shutdown.
+# A test case class for validating the process output after the nodes have been shutdown.
 @launch_testing.post_shutdown_test()
 class TestProcessOutput(unittest.TestCase):
     """TestCase for validating the process output after the nodes have been shutdown."""

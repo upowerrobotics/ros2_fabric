@@ -283,7 +283,9 @@ void DummyNode::sub_callback(
   float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
 
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, ROS xmt time ns: %li. ROSPUB TS: %li, ROSSUB TS: %li, Drop Num: %li, Recieve Rate: %f",
+    this->get_logger(),
+    "Topic: %s, ROS xmt time ns: %li. ROSPUB TS: %li, ROSSUB TS: %li, "
+    "Drop Num: %li, Recieve Rate: %f",
     topic_name.c_str(), xmt_diff.nanoseconds(),
     rclcpp::Time(msg->timestamp).nanoseconds(), now.nanoseconds(),
     drop_msg_num, recieve_rate);

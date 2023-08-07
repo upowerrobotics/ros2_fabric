@@ -272,9 +272,6 @@ void DummyNode::sub_callback(
   // Calculate ROS xmt time
   auto now = this->now();
   auto xmt_diff = now - rclcpp::Time(msg->timestamp);
-  RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(),
-    xmt_diff.nanoseconds());
 
   // Calculate Recieve Rate
   if (msg->seq_num != seq_num) {
@@ -284,10 +281,12 @@ void DummyNode::sub_callback(
     seq_num++;
   }
   float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
+
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, Drop Num: %li, Recieve Rate: %f, at time ns: %li",
-    topic_name.c_str(),
-    drop_msg_num, recieve_rate, now.nanoseconds());
+    this->get_logger(), "Topic: %s, ROS xmt time ns: %li. ROSPUB TS: %li, ROSSUB TS: %li, Drop Num: %li, Recieve Rate: %f",
+    topic_name.c_str(), xmt_diff.nanoseconds(),
+    rclcpp::Time(msg->timestamp).nanoseconds(), now.nanoseconds(),
+    drop_msg_num, recieve_rate);
 
   // Calculate Frequency and Bandwidth
   receive_num++;

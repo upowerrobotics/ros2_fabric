@@ -212,7 +212,8 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
 
   std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
     &DummyNode::sub_callback, this, std::placeholders::_1,
-    topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num, sub.initial_freq_time);
+    topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num,
+    sub.initial_freq_time, sub.revieve_bytes);
 
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
@@ -267,7 +268,7 @@ void DummyNode::pub_callback(
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
-  rclcpp::Time & initial_freq_time)
+  rclcpp::Time & initial_freq_time, int64_t & revieve_bytes)
 {
   // Calculate ROS xmt time
   auto now = this->now();
@@ -291,13 +292,48 @@ void DummyNode::sub_callback(
     drop_msg_num, recieve_rate);
 
   // Calculate Frequency and Bandwidth
+  auto ts = rosidl_typesupport_cpp::get_message_type_support_handle<DummyMsgT>();
+  rcutils_allocator_t default_allocator = rcutils_get_default_allocator();
+  rmw_serialized_message_t serialized_msg = rmw_get_zero_initialized_serialized_message();
+  rmw_serialized_message_init(&serialized_msg, 0u, &default_allocator);
+  rmw_ret_t ret = rmw_serialize(msg.get(), ts, &serialized_msg);
+  if (ret != RMW_RET_OK) {
+    std::cerr << "Failed to serialize message: " << rmw_get_error_string().str << std::endl;
+    return;
+  }
+  size_t msg_size = serialized_msg.buffer_length;
+  rmw_serialized_message_fini(&serialized_msg);
+  revieve_bytes += msg_size;
+
   receive_num++;
-  auto freq_diff = now - initial_freq_time;
-  if (freq_diff.seconds() >= 10) {
+  auto ten_sec_diff = now - initial_freq_time;
+  if (ten_sec_diff.seconds() >= 10) {
     initial_freq_time = now;
-    auto freq = receive_num / freq_diff.seconds();
+    auto freq = receive_num / ten_sec_diff.seconds();
+    auto bandwidth = bw_format(revieve_bytes / ten_sec_diff.seconds());
     receive_num = 0;
-    RCLCPP_DEBUG(this->get_logger(), "Topic: %s, Freq: %f", topic_name.c_str(), freq);
+    revieve_bytes = 0;
+    RCLCPP_DEBUG(
+      this->get_logger(),
+      "Topic: %s, Freq: %f, Bandwidth: %s",
+      topic_name.c_str(), freq, bandwidth.c_str());
+    RCLCPP_INFO(
+      this->get_logger(),
+      "Topic: %s, Freq: %f, Bandwidth: %s",
+      topic_name.c_str(), freq, bandwidth.c_str());
+  }
+}
+
+std::string DummyNode::bw_format(const double byte)
+{
+  if (byte < static_cast<uint64_t>(SizeType::KILOBYTES)) {
+    return std::to_string(byte) + "B";
+  } else if (byte < static_cast<uint64_t>(SizeType::MEGABYTES)) {
+    return std::to_string(byte / static_cast<uint64_t>(SizeType::KILOBYTES)) + "KB";
+  } else if (byte < static_cast<uint64_t>(SizeType::GIGABYTES)) {
+    return std::to_string(byte / static_cast<uint64_t>(SizeType::MEGABYTES)) + "MB";
+  } else {
+    return std::to_string(byte / static_cast<uint64_t>(SizeType::GIGABYTES)) + "GB";
   }
 }
 

@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+"""
+This module contains tests for verifying the correct launch of nodes in a ROS2 environment.
+Tests are executed at launch time and post-shutdown. They ensure that the required processes
+are properly launched and that they terminate with expected exit codes.
+"""
+
+
 import os
 import unittest
 

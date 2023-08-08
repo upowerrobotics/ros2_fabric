@@ -12,24 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# @file
-# This file contains tests for verifying the correct launch of nodes in a ROS2 environment.
-#
-# Tests are executed at launch time and post-shutdown. They ensure that the required processes
-# are properly launched and that they terminate with expected exit codes.
-
-# @package ros2_nodes_test
-# Documentation for the ROS2 nodes test package.
-
-# @package TestProcessOutput
-# Documentation for the TestProcessOutput class.
-
-# @package generate_test_description
-# Documentation for the generate_test_description function.
-
-# @package fabric_nodes_test
-# Documentation for the fabric_nodes_test module.
-
 import os
 import unittest
 

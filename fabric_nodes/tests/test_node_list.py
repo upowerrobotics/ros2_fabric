@@ -12,27 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# @file
-# This file contains a test to check the availability of expected nodes in the ROS2 environment.
-
-# @package ros2_nodes_test
-# Documentation for the ROS2 nodes test package.
-
-# @package test_node_list
-# Documentation for the test_node_list function.
-
 import os
 import signal
 import subprocess
 import time
 
 
-# Test the availability of the expected nodes in the ROS2 environment.
-#
-# This function launches a subprocess that starts the 'fabric_nodes.launch.py' ROS2 launch
-# file. It then retrieves the list of active nodes using 'ros2 node list' and checks if the
-# expected nodes are in the list. The launch subprocess is then terminated, and the function
-# finally asserts that all the expected nodes were processed.
 def test_node_list():
     """
     Test the availability of the expected nodes in the ROS2 environment.

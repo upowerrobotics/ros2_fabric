@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# @file
-# Test script for error configurations in the fabric_nodes package.
-
 import os
 
 from ament_index_python import get_package_share_directory

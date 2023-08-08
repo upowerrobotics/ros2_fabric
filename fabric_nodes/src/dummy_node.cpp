@@ -42,10 +42,6 @@ static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE = char_len("subscribe_topics.");
 namespace fabric_nodes
 {
 
-/**
- * @brief Constructor for DummyNode class.
- * @param options The node options to configure the node.
- */
 DummyNode::DummyNode(rclcpp::NodeOptions options)
 : rclcpp::Node(
     "dummy_node",
@@ -85,10 +81,6 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   }
 }
 
-/**
- * @brief Parse the parameters related to publishing topics.
- * @param param_prefix The prefix for the publish topics.
- */
 void DummyNode::parse_publish_topic(const std::string & param_prefix)
 {
   PublishTopic pub;
@@ -180,10 +172,6 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   m_publish_topics.push_back(std::move(pub));
 }
 
-/**
- * @brief Parse the parameters related to subscribing topics.
- * @param param_prefix The prefix for the subscribe topics.
- */
 void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
 {
   SubscribeTopic sub;
@@ -233,13 +221,6 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   m_subscribe_topics.push_back(std::move(sub));
 }
 
-/**
- * @brief Parse the data size string to obtain scalar and type.
- * @param data_size The data size string (e.g., "1.5KB").
- * @param scalar Output parameter to store the scalar value.
- * @param type Output parameter to store the size type.
- * @return True if parsing was successful, false otherwise.
- */
 bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, SizeType * type)
 {
   if (data_size.length() == 0) {return false;}
@@ -271,12 +252,6 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
-/**
- * @brief Callback function for publishing messages.
- * @param publisher The publisher to use for publishing.
- * @param msg_bytes The size of the message to be published.
- * @param seq_num The sequence number for the published messages.
- */
 void DummyNode::pub_callback(
   rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
   int64_t & seq_num)
@@ -290,16 +265,6 @@ void DummyNode::pub_callback(
   publisher->publish(std::move(msg));
 }
 
-/**
- * @brief Callback function for subscribing to messages.
- * @param msg The received message.
- * @param topic_name The name of the topic the message was received on.
- * @param seq_num The sequence number for the received messages.
- * @param drop_msg_num The number of dropped messages.
- * @param receive_num The total number of received messages.
- * @param initial_freq_time The initial time to calculate the frequency.
- * @param revieve_bytes The total number of received bytes.
- */
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
@@ -357,11 +322,6 @@ void DummyNode::sub_callback(
   }
 }
 
-/**
- * @brief Format the bandwidth value in a human-readable format.
- * @param byte The bandwidth value in bytes.
- * @return The formatted bandwidth value as a string.
- */
 std::string DummyNode::bw_format(const size_t byte)
 {
   if (byte < static_cast<uint64_t>(SizeType::KILOBYTES)) {

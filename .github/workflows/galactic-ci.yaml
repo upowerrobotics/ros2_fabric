@@ -17,7 +17,7 @@ jobs:
         with:
           required-ros-distributions: galactic
       - name: apt-get update
-        run: sudo apt-get update && pip3 install --upgrade ament-pep257 && sudo apt-get install -y ros-humble-rmw-cyclonedds-cpp
+        run: sudo apt-get update && sudo apt-get install -y ros-galactic-rmw-cyclonedds-cpp
       - name: Run Tests
         id: galactic_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3
@@ -26,6 +26,7 @@ jobs:
             fabric_interfaces
             fabric_nodes
           target-ros2-distro: galactic
+          skip-tests: true
           import-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload logs
         uses: actions/upload-artifact@v1

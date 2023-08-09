@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: rostooling/setup-ros-docker:ubuntu-focal-ros-galactic-desktop-latest
+    env:
+      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.5
         with:
           required-ros-distributions: galactic
       - name: apt-get update
-        run: sudo apt-get update && sudo apt-get install --only-upgrade ament-pep257 && sudo apt-get upgrade
+        run: sudo apt-get update && pip3 install --upgrade ament-pep257 && sudo apt-get install -y ros-humble-rmw-cyclonedds-cpp
       - name: Run Tests
         id: galactic_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3

@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: rostooling/setup-ros-docker:ubuntu-jammy-ros-iron-desktop-latest
+    env:
+      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.6

@@ -16,7 +16,7 @@ jobs:
         uses: ros-tooling/setup-ros@v0.5
         with:
           required-ros-distributions: galactic
-      - name: apt-get update
+      - name: Install CycloneDDS
         run: sudo apt-get update && sudo apt-get install -y ros-galactic-rmw-cyclonedds-cpp
       - name: Run Tests
         id: galactic_action_ros_ci_step

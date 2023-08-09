@@ -16,6 +16,8 @@ jobs:
         uses: ros-tooling/setup-ros@v0.6
         with:
           required-ros-distributions: humble
+      - name: Install CycloneDDS
+        run: sudo apt-get update && sudo apt-get install -y ros-humble-rmw-cyclonedds-cpp
       - name: Run Tests
         id: humble_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3

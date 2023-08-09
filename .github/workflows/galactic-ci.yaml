@@ -15,7 +15,7 @@ jobs:
         with:
           required-ros-distributions: galactic
       - name: apt-get update
-        run: sudo apt-get update && sudo apt-get upgrade
+        run: sudo apt-get update && sudo apt-get install --only-upgrade ament-pep257 && sudo apt-get upgrade
       - name: Run Tests
         id: galactic_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3

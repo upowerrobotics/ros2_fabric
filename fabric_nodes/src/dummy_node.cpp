@@ -315,14 +315,14 @@ void DummyNode::sub_callback(
 
 std::string DummyNode::bw_format(const size_t byte)
 {
-  if (byte < static_cast<uint64_t>(SizeType::KILOBYTES)) {
+  if (byte < static_cast<size_t>(SizeType::KILOBYTES)) {
     return std::to_string(byte) + "B";
-  } else if (byte < static_cast<uint64_t>(SizeType::MEGABYTES)) {
-    return std::to_string(byte / static_cast<uint64_t>(SizeType::KILOBYTES)) + "KB";
-  } else if (byte < static_cast<uint64_t>(SizeType::GIGABYTES)) {
-    return std::to_string(byte / static_cast<uint64_t>(SizeType::MEGABYTES)) + "MB";
+  } else if (byte < static_cast<size_t>(SizeType::MEGABYTES)) {
+    return std::to_string(byte / static_cast<size_t>(SizeType::KILOBYTES)) + "KB";
+  } else if (byte < static_cast<size_t>(SizeType::GIGABYTES)) {
+    return std::to_string(byte / static_cast<size_t>(SizeType::MEGABYTES)) + "MB";
   } else {
-    return std::to_string(byte / static_cast<uint64_t>(SizeType::GIGABYTES)) + "GB";
+    return std::to_string(byte / static_cast<size_t>(SizeType::GIGABYTES)) + "GB";
   }
 }
 

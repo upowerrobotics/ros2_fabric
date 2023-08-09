@@ -15,6 +15,7 @@
 
 """
 This module contains the function `generate_launch_description`.
+
 The configuration of the nodes is defined in a yaml file, either given by the 'CONFIG_FILE_PATH'
 environment variable or the default one located in 'param/pass_config.param.yaml'.
 A `Config2Nodes` object is created to parse this configuration for environment 'env1', which then

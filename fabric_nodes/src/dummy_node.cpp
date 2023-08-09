@@ -292,19 +292,10 @@ void DummyNode::sub_callback(
     drop_msg_num, recieve_rate);
 
   // Calculate Frequency and Bandwidth
-  auto ts = rosidl_typesupport_cpp::get_message_type_support_handle<DummyMsgT>();
-  rcutils_allocator_t default_allocator = rcutils_get_default_allocator();
-  rmw_serialized_message_t serialized_msg = rmw_get_zero_initialized_serialized_message();
-  rmw_serialized_message_init(&serialized_msg, 0u, &default_allocator);
-  rmw_ret_t ret = rmw_serialize(msg.get(), ts, &serialized_msg);
-  if (ret != RMW_RET_OK) {
-    rcutils_error_string_t error_string = rcutils_get_error_string();
-    std::string error_message(error_string.str);
-    RCLCPP_ERROR(this->get_logger(), "Failed to serialize message: %s", error_message.c_str());
-    return;
-  }
-  size_t msg_size = serialized_msg.buffer_length;
-  rmw_serialized_message_fini(&serialized_msg);
+  size_t msg_size = 0;
+  msg_size += sizeof(msg->timestamp.sec) + sizeof(msg->timestamp.nanosec);
+  msg_size += msg->data.size();
+  msg_size += sizeof(msg->seq_num);
   revieve_bytes += msg_size;
 
   receive_num++;

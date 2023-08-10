@@ -29,6 +29,8 @@
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 using namespace std::chrono_literals;
 
+static constexpr size_t MSG_OVERHEAD = sizeof(DummyMsgT::timestamp) + sizeof(DummyMsgT::seq_num);
+
 int constexpr char_len(const char * str)
 {
   return *str ? 1 + char_len(str + 1) : 0;
@@ -257,7 +259,7 @@ void DummyNode::pub_callback(
   int64_t & seq_num)
 {
   auto msg = std::make_unique<DummyMsgT>();
-  msg->data.resize(msg_bytes, 42);
+  msg->data.resize(msg_bytes - MSG_OVERHEAD, 42);
   msg->timestamp = this->now();
   msg->seq_num = seq_num;
   seq_num++;
@@ -292,11 +294,7 @@ void DummyNode::sub_callback(
     drop_msg_num, recieve_rate);
 
   // Calculate Frequency and Bandwidth
-  size_t msg_size = 0;
-  msg_size += sizeof(msg->timestamp.sec) + sizeof(msg->timestamp.nanosec);
-  msg_size += msg->data.size();
-  msg_size += sizeof(msg->seq_num);
-  revieve_bytes += msg_size;
+  revieve_bytes += (msg->data.size() + MSG_OVERHEAD);
 
   receive_num++;
   auto ten_sec_diff = now - initial_freq_time;

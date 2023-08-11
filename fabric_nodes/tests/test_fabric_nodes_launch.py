@@ -48,7 +48,7 @@ def generate_test_description():
     """
     config_file_path = os.path.join(
         get_package_share_directory('fabric_nodes'),
-        'param/pass_config.param.yaml'
+        'test_config/pass_config.test.yaml'
     )
     launch_file_path = os.path.join(
         get_package_share_directory('fabric_nodes'),

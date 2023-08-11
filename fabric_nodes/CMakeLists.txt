@@ -97,7 +97,7 @@ ament_auto_package(
   INSTALL_TO_SHARE
     config
     docs
-    param
+    test_config
     launch
     tests
 )

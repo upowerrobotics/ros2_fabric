@@ -9,11 +9,15 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: rostooling/setup-ros-docker:ubuntu-jammy-ros-iron-desktop-latest
+    env:
+      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
     steps:
       - name: Build Environment
         uses: ros-tooling/setup-ros@v0.6
         with:
           required-ros-distributions: iron
+      - name: Install CycloneDDS
+        run: sudo apt-get update && sudo apt-get install -y ros-iron-rmw-cyclonedds-cpp
       - name: Run Tests
         id: iron_action_ros_ci_step
         uses: ros-tooling/action-ros-ci@v0.3

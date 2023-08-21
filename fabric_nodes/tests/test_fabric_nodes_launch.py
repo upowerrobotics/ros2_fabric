@@ -32,6 +32,7 @@ import launch_testing
 import pytest
 
 
+# Generate a launch description for the nodes under test.
 @pytest.mark.launch_test
 def generate_test_description():
     """
@@ -67,6 +68,7 @@ def generate_test_description():
     ), context
 
 
+# A test case class for validating the process output after the nodes have been shutdown.
 @launch_testing.post_shutdown_test()
 class TestProcessOutput(unittest.TestCase):
     """TestCase for validating the process output after the nodes have been shutdown."""

@@ -29,6 +29,8 @@
 using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 using namespace std::chrono_literals;
 
+static constexpr size_t MSG_OVERHEAD = sizeof(DummyMsgT::timestamp) + sizeof(DummyMsgT::seq_num);
+
 int constexpr char_len(const char * str)
 {
   return *str ? 1 + char_len(str + 1) : 0;
@@ -165,7 +167,7 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   // https://answers.ros.org/question/308386/ros2-add-arguments-to-callback/
   // for explanation of the next line.
   std::function<void()> bound_func =
-    std::bind(&DummyNode::pub_callback, this, pub.publisher, msg_bytes);
+    std::bind(&DummyNode::pub_callback, this, pub.publisher, msg_bytes, pub.seq_num);
 
   pub.publish_timer = this->create_wall_timer(timer_interval, bound_func);
 
@@ -208,8 +210,12 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   auto sub_options = rclcpp::SubscriptionOptions();
   sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable;
 
+  sub.initial_freq_time = this->now();
+
   std::function<void(const DummyMsgT::SharedPtr)> cb = std::bind(
-    &DummyNode::sub_callback, this, std::placeholders::_1, topic_oss.str());
+    &DummyNode::sub_callback, this, std::placeholders::_1,
+    topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num,
+    sub.initial_freq_time, sub.revieve_bytes);
 
   sub.subscriber = this->create_subscription<DummyMsgT>(
     topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
@@ -248,21 +254,74 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
-void DummyNode::pub_callback(rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes)
+void DummyNode::pub_callback(
+  rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
+  int64_t & seq_num)
 {
   auto msg = std::make_unique<DummyMsgT>();
-  msg->data.resize(msg_bytes, 42);
+  msg->data.resize(msg_bytes - MSG_OVERHEAD, 42);
   msg->timestamp = this->now();
+  msg->seq_num = seq_num;
+  seq_num++;
+
   publisher->publish(std::move(msg));
 }
 
-void DummyNode::sub_callback(const DummyMsgT::SharedPtr msg, const std::string & topic_name)
+void DummyNode::sub_callback(
+  const DummyMsgT::SharedPtr msg, const std::string & topic_name,
+  int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
+  rclcpp::Time & initial_freq_time, size_t & revieve_bytes)
 {
+  // Calculate ROS xmt time
   auto now = this->now();
-  auto diff = now - rclcpp::Time(msg->timestamp);
+  auto xmt_diff = now - rclcpp::Time(msg->timestamp);
+
+  // Calculate Recieve Rate
+  if (msg->seq_num != seq_num) {
+    drop_msg_num += (msg->seq_num - seq_num);
+    seq_num = msg->seq_num;
+  } else {
+    seq_num++;
+  }
+  float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
 
   RCLCPP_DEBUG(
-    this->get_logger(), "Topic: %s, ROS xmt time ns: %li", topic_name.c_str(), diff.nanoseconds());
+    this->get_logger(),
+    "Topic: %s, ROS xmt time ns: %li. ROSPUB TS: %li, ROSSUB TS: %li, "
+    "Drop Num: %li, Recieve Rate: %f",
+    topic_name.c_str(), xmt_diff.nanoseconds(),
+    rclcpp::Time(msg->timestamp).nanoseconds(), now.nanoseconds(),
+    drop_msg_num, recieve_rate);
+
+  // Calculate Frequency and Bandwidth
+  revieve_bytes += (msg->data.size() + MSG_OVERHEAD);
+
+  receive_num++;
+  auto ten_sec_diff = now - initial_freq_time;
+  if (ten_sec_diff.seconds() >= 10) {
+    initial_freq_time = now;
+    auto freq = receive_num / ten_sec_diff.seconds();
+    auto bandwidth = bw_format(revieve_bytes / ten_sec_diff.seconds());
+    receive_num = 0;
+    revieve_bytes = 0;
+    RCLCPP_DEBUG(
+      this->get_logger(),
+      "Topic: %s, Freq: %f, Bandwidth: %s",
+      topic_name.c_str(), freq, bandwidth.c_str());
+  }
+}
+
+std::string DummyNode::bw_format(const size_t byte)
+{
+  if (byte < static_cast<size_t>(SizeType::KILOBYTES)) {
+    return std::to_string(byte) + "B";
+  } else if (byte < static_cast<size_t>(SizeType::MEGABYTES)) {
+    return std::to_string(byte / static_cast<size_t>(SizeType::KILOBYTES)) + "KB";
+  } else if (byte < static_cast<size_t>(SizeType::GIGABYTES)) {
+    return std::to_string(byte / static_cast<size_t>(SizeType::MEGABYTES)) + "MB";
+  } else {
+    return std::to_string(byte / static_cast<size_t>(SizeType::GIGABYTES)) + "GB";
+  }
 }
 
 }  // namespace fabric_nodes

@@ -68,6 +68,12 @@ class GetLog(Node):
         rmw_pub_time = str(re.search(r'(?<=RMWPUB\sTS:\s)\d*', log).group()) or None
         return [rmw_time, rmw_sub_time, rmw_pub_time]
 
+    def search_freq_bw_log(self, log):
+        topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sF)', log).group()) or None
+        topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
+        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*', log).group()) or None
+        return [topic_name, topic_freq, topic_bw]
+
     def parse_log(self):
         begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())
         current_timestamp = begin_timestamp
@@ -75,6 +81,7 @@ class GetLog(Node):
 
         parsed_rmw = []
         parsed_log = []
+        parsed_freq_bw = []
         for line in self.lines:
             current_timestamp = float(re.search(r'\d*\.\d*(?=\s)', line).group())
             if (current_timestamp > begin_timestamp + self.time):
@@ -85,8 +92,12 @@ class GetLog(Node):
             stats_log = re.search(r'\[node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
                 rmw_log = re.search(r'\[node.*\.(C|F|e|R).*]:\sT.*', line)
+                freq_bw_log = re.search(r'Freq:', stats_log.group())
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
+                    continue
+                if freq_bw_log is not None:
+                    parsed_freq_bw = self.search_freq_bw_log(stats_log.group())
                     continue
                 parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):

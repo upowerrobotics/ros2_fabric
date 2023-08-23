@@ -59,8 +59,10 @@ class GetLog(Node):
         ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*', log).group()) or None
         ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*', log).group()) or None
         ros_pub_time = str(re.search(r'(?<=ROSPUB\sTS:\s)\d*', log).group()) or None
+        drop_num = str(re.search(r'(?<=Drop\sNum:\s)\d*', log).group()) or None
+        receive_rate = str(re.search(r'(?<=Recieve\sRate:\s)\d*.\d*', log).group()) or None
         return [topic_name, sub_node, pub_node,
-                ros_time, ros_sub_time, ros_pub_time]
+                ros_time, ros_sub_time, ros_pub_time, drop_num, receive_rate]
 
     def search_rmw_log(self, log):
         rmw_time = str(re.search(r'(?<=rmw\sxmt\stime\sns:\s)\d*', log).group()) or None
@@ -109,6 +111,8 @@ class GetLog(Node):
                                             'ROS Layer Transmission Time',
                                             'ROS Layer Subscriber Time',
                                             'ROS Layer Publisher Time',
+                                            'ROS Layer Number of Dropped Messages',
+                                            'ROS Layer Accumulative Receive Rate',
                                             'RMW Layer Transmission Time',
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])

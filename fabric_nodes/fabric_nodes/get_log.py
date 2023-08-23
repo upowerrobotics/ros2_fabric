@@ -44,7 +44,7 @@ class GetLog(Node):
 
     def read_log(self):
         ros_log_dir = os.path.join(os.path.expanduser('~') + '/.ros/log/')
-        dirlist = [d for d in next(os.walk(ros_log_dir))[1]]
+        dirlist = list(next(os.walk(ros_log_dir))[1])
         dirlist.sort()
         if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]

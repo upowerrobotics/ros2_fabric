@@ -69,10 +69,11 @@ class GetLog(Node):
         return [rmw_time, rmw_sub_time, rmw_pub_time]
 
     def search_freq_bw_log(self, log):
+        time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sF)', log).group()) or None
         topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
         topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*', log).group()) or None
-        return [topic_name, topic_freq, topic_bw]
+        return [time_stamp, topic_name, topic_freq, topic_bw]
 
     def parse_log(self):
         begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())
@@ -97,7 +98,7 @@ class GetLog(Node):
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
                     continue
                 if freq_bw_log is not None:
-                    parsed_freq_bw = self.search_freq_bw_log(stats_log.group())
+                    parsed_freq_bw.append(self.search_freq_bw_log(line))
                     continue
                 parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):
@@ -113,6 +114,8 @@ class GetLog(Node):
                                             'RMW Layer Publisher Time'])
         self.parsed_log_df = self.parsed_log_df.astype({"ROS Layer Transmission Time": "int",
                                                         "RMW Layer Transmission Time": "int"})
+        self.parsed_freq_bw_df = pd.DataFrame(parsed_freq_bw, columns=[
+                                            'Timestamp', 'Topic', 'Frequency', 'Bandwidth'])
 
     def output_log(self):
         """Output the parsed statistics."""
@@ -122,7 +125,9 @@ class GetLog(Node):
                                 self.parsed_log_df['RMW Layer Transmission Time'] > 50000)].index
         self.parsed_log_df.drop(outlier_indices_neg.union(outlier_indices_large), inplace=True)
         self.parsed_log_df.to_csv((
-            str(round(self.time, 3))+'-seconds-'+self.run_id+'.csv'), sep='\t', index=False)
+            str(round(self.time, 3))+'-seconds-'+self.run_id+'_time_log.csv'), sep='\t', index=False)
+        self.parsed_freq_bw_df.to_csv((
+            str(round(self.time, 3))+'-seconds-'+self.run_id+'_fequency_bw_log.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) +
                                ' seconds on run: ' + self.run_id+ 'with' + self.dds)
 

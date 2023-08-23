@@ -17,8 +17,8 @@
 import os
 import re
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import rclpy
 
@@ -36,7 +36,7 @@ class GetLog(Node):
 
     """
 
-    def __init__(self, time=0, dds="rmw_cyclonedds", run_id='default_run'):
+    def __init__(self, time=0, dds='rmw_cyclonedds', run_id='default_run'):
         super().__init__('get_log')
         self.time = time
         self.dds = dds
@@ -44,7 +44,7 @@ class GetLog(Node):
 
     def read_log(self):
         ros_log_dir = os.path.join(os.path.expanduser('~') + '/.ros/log/')
-        dirlist = list(d for d in next(os.walk(ros_log_dir))[1])
+        dirlist = [d for d in next(os.walk(ros_log_dir))[1]]
         dirlist.sort()
         if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]
@@ -116,8 +116,8 @@ class GetLog(Node):
                                             'RMW Layer Transmission Time',
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])
-        self.parsed_log_df = self.parsed_log_df.astype({"ROS Layer Transmission Time": "int",
-                                                        "RMW Layer Transmission Time": "int"})
+        self.parsed_log_df = self.parsed_log_df.astype({'ROS Layer Transmission Time': 'int',
+                                                        'RMW Layer Transmission Time': 'int'})
         self.parsed_freq_bw_df = pd.DataFrame(parsed_freq_bw, columns=[
                                             'Timestamp', 'Topic', 'Frequency', 'Bandwidth'])
 
@@ -227,7 +227,7 @@ class GetLog(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    m_log = GetLog(60, "rmw_cyclonedds")
+    m_log = GetLog(60, 'rmw_cyclonedds')
     m_log.read_log()
     m_log.parse_log()
     m_log.output_log()

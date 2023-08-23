@@ -123,17 +123,21 @@ class GetLog(Node):
 
     def output_log(self):
         """Output the parsed statistics."""
-        outlier_indices_neg = self.parsed_log_df[(self.parsed_log_df['ROS Layer Transmission Time'] <
-                                              self.parsed_log_df['RMW Layer Transmission Time'])].index
-        outlier_indices_large = self.parsed_log_df[(self.parsed_log_df['ROS Layer Transmission Time'] -
+        outlier_indices_neg = self.parsed_log_df[(
+                              self.parsed_log_df['ROS Layer Transmission Time'] <
+                              self.parsed_log_df['RMW Layer Transmission Time'])].index
+        outlier_indices_large = self.parsed_log_df[(
+                                self.parsed_log_df['ROS Layer Transmission Time'] -
                                 self.parsed_log_df['RMW Layer Transmission Time'] > 50000)].index
         self.parsed_log_df.drop(outlier_indices_neg.union(outlier_indices_large), inplace=True)
         self.parsed_log_df.to_csv((
-            str(round(self.time, 3))+'-seconds-'+self.run_id+'_time_log.csv'), sep='\t', index=False)
+            str(round(self.time, 3)) + '-seconds-' +
+            self.run_id+'_time_log.csv'), sep='\t', index=False)
         self.parsed_freq_bw_df.to_csv((
-            str(round(self.time, 3))+'-seconds-'+self.run_id+'_fequency_bw_log.csv'), sep='\t', index=False)
+            str(round(self.time, 3)) + '-seconds-' +
+            self.run_id+'_fequency_bw_log.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) +
-                               ' seconds on run: ' + self.run_id+ 'with' + self.dds)
+                               ' seconds on run: ' + self.run_id + 'with' + self.dds)
 
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
@@ -144,7 +148,8 @@ class GetLog(Node):
         ).reset_index()
 
         self.each_topic_parsed_log_df = []
-        topics_groups = self.parsed_log_df.sort_values(['Topic','ROS Layer Publisher Time'],ascending=True).groupby('Topic')
+        topics_groups = self.parsed_log_df.sort_values([
+            'Topic', 'ROS Layer Publisher Time'], ascending=True).groupby('Topic')
         for gp in topics_groups.groups:
             self.each_topic_parsed_log_df.append(topics_groups.get_group(gp))
 
@@ -187,8 +192,8 @@ class GetLog(Node):
 
     def plot_diff_xmt_by_topics(self):
         plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
-               np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
-                           list(self.parsed_df_by_topics['avg_rmw_time'])))
+                 np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
+                             list(self.parsed_df_by_topics['avg_rmw_time'])))
         plt.grid()
         plt.title(self.dds + ' Average (ROS-RMW) Time by Topics')
         plt.xlabel('Topic Name')
@@ -210,12 +215,15 @@ class GetLog(Node):
 
         ax2 = plt.subplot(2, 1, 2)
         ax2.plot(topic_df['ROS Layer Publisher Time'],
-                 topic_df['ROS Layer Transmission Time']-topic_df['RMW Layer Transmission Time'], 'g')
+                 topic_df['ROS Layer Transmission Time'] -
+                 topic_df['RMW Layer Transmission Time'], 'g')
         ax2.grid()
-        ax2.set_title(self.dds + ' Difference in Transmission Time Series for ' + list(topic_df['Topic'])[0])
+        ax2.set_title(self.dds +
+                      ' Difference in Transmission Time Series for ' + list(topic_df['Topic'])[0])
         ax2.set_xlabel('Timestamps')
         ax2.set_ylabel('(ROS-RMW) Transmission Time Duration (Nanoseconds)')
         ax2.set_xticks([])
+
 
 def main(args=None):
     rclpy.init(args=args)

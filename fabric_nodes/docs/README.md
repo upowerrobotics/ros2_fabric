@@ -90,8 +90,3 @@ To fetch the measurements from the [ros log folder](~/.ros/log), use:
 ```bash
 ros2 run fabric_nodes get_log.py
 ```
-
-# **Notes**
-> ⚠️ **Important**: Avoid modifying contents in the [`test_configs`](../test_config) 
-> or the [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) file.
-> Doing so can trigger `colcon test` errors.

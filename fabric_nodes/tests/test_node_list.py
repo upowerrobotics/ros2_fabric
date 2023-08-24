@@ -36,7 +36,7 @@ def test_node_list():
         '/node3_1/node3_1',
         '/node3_2/node3_2'
     ]
-    launch_str = 'ros2 launch fabric_nodes fabric_nodes.launch.py'
+    launch_str = 'ros2 launch fabric_nodes test_fabric_nodes.launch.py'
     node_list_str = 'ros2 node list'
 
     # Start the launch subprocess

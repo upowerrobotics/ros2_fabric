@@ -72,7 +72,7 @@ def test_topic_list():
         '/node2_2/topic_500K_5',
         '/node2_2/topic_500K_6'
     ]
-    launch_str = 'ros2 launch fabric_nodes fabric_nodes.launch.py'
+    launch_str = 'ros2 launch fabric_nodes test_fabric_nodes.launch.py'
     topic_list_str = 'ros2 topic list'
 
     # Start the launch subprocess

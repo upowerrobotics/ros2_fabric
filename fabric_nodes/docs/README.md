@@ -8,9 +8,10 @@ FABRIC is a tool designed for the evaluation of
 This package allows users to establish a virtual environment that mirrors their implementation,
 facilitating the measurement of transmission latency, frequency, and bandwidth in the ROS2 layer.
 
-FABRIC is compatible with any middleware boasting an RMW implementation.
+FABRIC is compatible with any middleware boasting an RMW implementation with topic support.
 Furthermore, it is capable of gauging latency within the rmw layer.
-However, measuring latency in the rmw layer is presently limited to specific middleware:
+However, measuring latency in the RMW layer requires FABRIC-specific hooks
+which is why we have our own forks of the RMW implementations:
 [CycloneDDS](https://projects.eclipse.org/projects/iot.cyclonedds),
 [FastRTPS](https://fast-dds.docs.eprosima.com/en/v1.7.0/),
 and [e-CAL](https://eclipse-ecal.github.io/ecal/index.html).

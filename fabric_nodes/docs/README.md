@@ -23,7 +23,7 @@ These can be found here: [rmw_cyclonedds](https://github.com/upowerrobotics/rmw_
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 
 # **Quick Start**
-- Initiate `fabric_node` in the terminal and wait for roughly 1 minute:
+- Launch `fabric_node` in the terminal and wait for roughly 1 minute:
     ```bash
     ros2 launch fabric_nodes fabric_nodes.launch.py
     ```

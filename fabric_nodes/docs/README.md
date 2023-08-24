@@ -1,6 +1,6 @@
 # **FABRIC User Documentation**
 
-This document describes how to operate the [ROS2](https://github.com/ros2) package named **FABRIC**.
+This document describes how to operate the [ROS2](https://www.ros.org) package named **fabric_nodes**.
 
 FABRIC is a tool designed for the evaluation of [ROS2 middleware](https://docs.ros.org/en/humble/Concepts/Advanced/About-Middleware-Implementations.html). This package allows users to establish a virtual environment that mirrors their implementation, facilitating the measurement of transmission latency, frequency, and bandwidth in the ROS2 layer.
 

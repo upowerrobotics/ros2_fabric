@@ -54,14 +54,14 @@ Execute [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) which:
 
 - Metrics: latency, frequency, and bandwidth.
 - Logging: Uses [RCLCPP_DEBUG](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html).
-- Location: [ros log folder](~/.ros/log).
+- Location: ROS log folder (by default ~/.ros/log on Linux systems)
 
 ## RMW Layer Output (Conditional):
 
 - If the user installs the custom `rmw_implementation`,
   the `rmw_layer` also logs latency, frequency, and bandwidth.
   - Logging: Uses [RCLCPP_DEBUG](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html).
-  - Location: [ros log folder](~/.ros/log).
+  - Location: ROS log folder (by default ~/.ros/log on Linux systems)
 
 ## Log Extraction:
 

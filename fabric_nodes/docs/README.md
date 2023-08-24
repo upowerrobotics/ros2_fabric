@@ -76,7 +76,6 @@ Follow these steps to set up and utilize your custom `config.yaml`:
 
 ## Setup Configuration
 - Create a `config.yaml` tailored to your environment.
-- Place it in the [config folder](../config/).
 - Ensure it adheres to the required format;
   otherwise, [`config2node.py`](../fabric_nodes/config2node.py) will throw a `ValueError`.
 

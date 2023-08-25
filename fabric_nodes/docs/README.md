@@ -66,7 +66,7 @@ Execute [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) which:
 
 - [`get_log.py`](../fabric_nodes/get_log.py) processes the logs:
 
-  - Reads from [log folder](~/.ros/log).
+  - Reads from ROS log folder (by default ~/.ros/log on Linux systems).
   - Extracts: latency, frequency, and bandwidth for each topic.
   - Save the analyized csv file to where the user runs `get_log.py`.
 
@@ -80,13 +80,14 @@ Follow these steps to set up and utilize your custom `config.yaml`:
   otherwise, [`config2node.py`](../fabric_nodes/config2node.py) will throw a `ValueError`.
 
 ## Execute Configuration
-Run the command below to apply your `config.yaml`:
+Run the command below to apply your `config.yaml`.  
+Each environment object defines a compute environment, whether that is an Operating System, SoC, ECU, or ROS environment. All nodes in a single environment will be launched together. For more details, please refer to [YAML_API.md](YAML_API.md):
 ```bash
-ros2 launch fabric_nodes fabric_nodes.launch.py config-path:=/PATH/TO/USER/CONFIG environment:=USER_ENV_NUMBER
+ros2 launch fabric_nodes fabric_nodes.launch.py config-path:=/PATH/TO/USER/CONFIG environment:=USER_ENV
 ```
 
 ## Extract Measurements
-To fetch the measurements from the [ros log folder](~/.ros/log), use:
+To fetch the measurements from the ROS log folder (by default ~/.ros/log on Linux systems), use:
 ```bash
 ros2 run fabric_nodes get_log.py
 ```

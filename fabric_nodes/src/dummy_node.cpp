@@ -283,7 +283,8 @@ void DummyNode::sub_callback(
   } else {
     seq_num++;
   }
-  float recieve_rate = static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num;
+  float recieve_rate = (msg->seq_num != 0) ?
+    (static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num) : 1.0;
 
   RCLCPP_DEBUG(
     this->get_logger(),

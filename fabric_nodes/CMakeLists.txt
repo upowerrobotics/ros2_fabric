@@ -42,6 +42,12 @@ set(${PROJECT_NAME}_SRCS
 
 ament_python_install_package(${PROJECT_NAME})
 
+# Install Python executables
+install(PROGRAMS
+  ${PROJECT_NAME}/get_log.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_auto_add_library(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_INCLUDES}
   ${${PROJECT_NAME}_SRCS}

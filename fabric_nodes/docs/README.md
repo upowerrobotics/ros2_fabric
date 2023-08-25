@@ -10,14 +10,12 @@ facilitating the measurement of transmission latency, frequency, and bandwidth i
 FABRIC is compatible with any middleware boasting an RMW implementation with topic support.
 Furthermore, it is capable of gauging latency within the rmw layer.
 However, measuring latency in the RMW layer requires FABRIC-specific hooks
-which is why we have our own forks of the RMW implementations:
-[CycloneDDS](https://projects.eclipse.org/projects/iot.cyclonedds),
-[FastRTPS](https://fast-dds.docs.eprosima.com/en/v1.7.0/),
-and [e-CAL](https://eclipse-ecal.github.io/ecal/index.html).
+which is why we have our own forks of the RMW implementations.  
 
 To measure latency in the rmw layer,
-users are required to download and compile our customized rmw package for each middleware.
-These can be found here: [rmw_cyclonedds](https://github.com/upowerrobotics/rmw_cyclonedds),
+users are required to download and compile our own forks of the RMW implementations for each middleware.
+Our own forks of the RMW implementations: 
+[rmw_cyclonedds](https://github.com/upowerrobotics/rmw_cyclonedds),
 [rmw_fastrtps](https://github.com/upowerrobotics/rmw_fastrtps),
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 

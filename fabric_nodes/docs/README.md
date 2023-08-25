@@ -20,12 +20,14 @@ Our own forks of the RMW implementations:
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 
 # **Quick Start**
-- Launch `fabric_node` in the terminal and wait for roughly 1 minute:
+- Launch `fabric_node` in the terminal.  
+  After waiting for roughly 1 minute, kill the node:
     ```bash
     ros2 launch fabric_nodes fabric_nodes.launch.py
     ```
   
-- Run get_log.py to retrieve the evaluation:  
+- Run get_log.py to retrieve the evaluation.  
+  The analyized csv file will be saved in the folder where the user runs this command:  
     ```bash
     ros2 run fabric_nodes get_log.py
     ```
@@ -66,6 +68,7 @@ Execute [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) which:
 
   - Reads from [log folder](~/.ros/log).
   - Extracts: latency, frequency, and bandwidth for each topic.
+  - Save the analyized csv file to where the user runs `get_log.py`.
 
 # **User Configuration YAML for Evaluation**
 

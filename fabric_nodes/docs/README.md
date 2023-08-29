@@ -42,7 +42,7 @@ Here's a step-by-step breakdown:
 
 Execute [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) which:
 
-- Reads the configuration from [`pass_config.test.yaml`](../test_config/pass_config.test.yaml).
+- Reads the configuration from [`example.yaml`](../config/example.yaml).
   - For details on the config structure, refer to [YAML_API.md](YAML_API.md).
 - Validates the yaml structure with [`config2node.py`](../fabric_nodes/config2node.py).
 - Sets up nodes and topics using [`dummy_node.cpp`](../src/dummy_node.cpp).
@@ -78,10 +78,14 @@ Follow these steps to set up and utilize your custom `config.yaml`:
 - Create a `config.yaml` tailored to your environment.
 - Ensure it adheres to the required format;
   otherwise, [`config2node.py`](../fabric_nodes/config2node.py) will throw a `ValueError`.
+- Each environment object defines a compute environment, whether that is an Operating System, 
+  SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.
+- For more details on the `config.yaml` structure, please refer to [YAML_API.md](YAML_API.md)
 
 ## Execute Configuration
-Run the command below to apply your `config.yaml`.  
-Each environment object defines a compute environment, whether that is an Operating System, SoC, ECU, or ROS environment. All nodes in a single environment will be launched together. For more details, please refer to [YAML_API.md](YAML_API.md):
+- Run the command below to apply your `config.yaml`.
+- Use the environment argument to set the compute environment.
+- Make sure killing the node after 1 minute.
 ```bash
 ros2 launch fabric_nodes fabric_nodes.launch.py config-path:=/PATH/TO/USER/CONFIG environment:=USER_ENV
 ```

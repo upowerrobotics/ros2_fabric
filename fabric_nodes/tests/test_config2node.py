@@ -30,26 +30,26 @@ def test_error_configuration():
     then asserts that the actual error message includes the expected error message.
     """
     test_cases = {
-        'error_param_pub.param.yaml': ('must have at least two '
-                                       'of the following parameters: '
-                                       'bandwidth, msg_size, frequency'),
-        'error_pub_connection_qty.param.yaml': 'is not connected',
-        'error_pub_connection.param.yaml': 'is not connected',
-        'error_qty_node.param.yaml': 'Invalid node quantity',
-        'error_qty_pub.param.yaml': 'Invalid publisher quantity',
-        'error_missing_pubs.param.yaml': 'must contain both publishers and subscribers',
-        'error_missing_subs.param.yaml': 'must contain both publishers and subscribers',
-        'error_root_terminal.param.yaml': 'cannot be both a terminal node and a root node',
-        'error_root.param.yaml': 'cannot have subscribers',
-        'error_sub_connection_qty.param.yaml': 'is not connected',
-        'error_sub_connection.param.yaml': 'is not connected',
-        'error_terminal.param.yaml': 'cannot have publishers',
+        'error_param_pub.test.yaml': ('must have at least two '
+                                      'of the following parameters: '
+                                      'bandwidth, msg_size, frequency'),
+        'error_pub_connection_qty.test.yaml': 'is not connected',
+        'error_pub_connection.test.yaml': 'is not connected',
+        'error_qty_node.test.yaml': 'Invalid node quantity',
+        'error_qty_pub.test.yaml': 'Invalid publisher quantity',
+        'error_missing_pubs.test.yaml': 'must contain both publishers and subscribers',
+        'error_missing_subs.test.yaml': 'must contain both publishers and subscribers',
+        'error_root_terminal.test.yaml': 'cannot be both a terminal node and a root node',
+        'error_root.test.yaml': 'cannot have subscribers',
+        'error_sub_connection_qty.test.yaml': 'is not connected',
+        'error_sub_connection.test.yaml': 'is not connected',
+        'error_terminal.test.yaml': 'cannot have publishers',
     }
 
     for config_file, expected_error in test_cases.items():
         config_file_path = os.path.join(
             get_package_share_directory('fabric_nodes'),
-            'param/error_test_configs/',
+            'test_config/',
             config_file
         )
 

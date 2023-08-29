@@ -55,7 +55,7 @@ def generate_launch_description():
     """
     pass_config_path = os.path.join(
         get_package_share_directory('fabric_nodes'),
-        'config/example.yaml'
+        'test_config/pass_config.test.yaml'
     )
 
     config_path_arg = DeclareLaunchArgument(

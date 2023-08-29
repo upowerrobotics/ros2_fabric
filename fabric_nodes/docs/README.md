@@ -1,4 +1,5 @@
-# **FABRIC User Documentation**
+@mainpage
+# FABRIC User Documentation
 
 This document describes how to operate the
 [ROS2](https://www.ros.org) package named **fabric_nodes**.
@@ -19,20 +20,20 @@ Our own forks of the RMW implementations:
 [rmw_fastrtps](https://github.com/upowerrobotics/rmw_fastrtps),
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 
-# **Quick Start**
+# Quick Start
 - Launch `fabric_node` in the terminal.  
   After waiting for roughly 1 minute, kill the node:
-    ```bash
-    ros2 launch fabric_nodes fabric_nodes.launch.py
-    ```
+```bash
+ros2 launch fabric_nodes fabric_nodes.launch.py
+```
   
 - Run get_log.py to retrieve the evaluation.  
   The analyized csv file will be saved in the folder where the user runs this command:  
-    ```bash
-    ros2 run fabric_nodes get_log.py
-    ```
+```bash
+ros2 run fabric_nodes get_log.py
+```
   
-# **System Structure Workflow (Default Config File)**
+# System Structure Workflow (Default Config File)
 
 The system follows a sequential workflow to process
 and output various metrics related to latency, frequency, and bandwidth.
@@ -70,7 +71,7 @@ Execute [`fabric_nodes.launch.py`](../launch/fabric_nodes.launch.py) which:
   - Extracts: latency, frequency, and bandwidth for each topic.
   - Save the analyized csv file to where the user runs `get_log.py`.
 
-# **User Configuration YAML for Evaluation**
+# User Configuration YAML for Evaluation
 
 Follow these steps to set up and utilize your custom `config.yaml`:
 

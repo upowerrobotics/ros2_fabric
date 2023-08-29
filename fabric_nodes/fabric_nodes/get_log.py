@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2023 U Power Robotics USA, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,18 +30,36 @@ class GetLog(Node):
 
     Parameters
     ----------
-        time (int): Logging duration in nanoseconds
-        run_id (str): ID for a specific run
+    time : int
+        Logging duration in nanoseconds
+    dds : str
+        Data Distribution Service middleware
+    run_id : str
+        ID for a specific run
 
     """
 
     def __init__(self, time=0, dds='rmw_cyclonedds', run_id='default_run'):
+        """
+        Construct and initialize GetLog class.
+
+        Parameters
+        ----------
+        time : int
+            Logging duration in nanoseconds
+        dds : str
+            Data Distribution Service middleware
+        run_id : str
+            ID for a specific run
+
+        """
         super().__init__('get_log')
         self.time = time
         self.dds = dds
         self.run_id = run_id
 
     def read_log(self):
+        """Read log file and load its lines into self.lines."""
         ros_log_dir = os.path.join(os.path.expanduser('~') + '/.ros/log/')
         dirlist = list(next(os.walk(ros_log_dir))[1])
         dirlist.sort()
@@ -53,6 +70,20 @@ class GetLog(Node):
         self.get_logger().info('Reading log from ' + logfile_path)
 
     def search_ros_log(self, log):
+        """
+        Parse ROS logs and extract various information.
+
+        Parameters
+        ----------
+        log : str
+            A line from the log file
+
+        Returns
+        -------
+        extracted_data : list
+            The extracted data as a list
+
+        """
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)', log).group()) or None
         sub_node = str(re.search(r'(?<=\[)(.*node.*)(?=.\1\])', log).group()) or None
         pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)', log).group()) or None
@@ -65,12 +96,40 @@ class GetLog(Node):
                 ros_time, ros_sub_time, ros_pub_time, drop_num, receive_rate]
 
     def search_rmw_log(self, log):
+        """
+        Parse RMW logs and extract various information.
+
+        Parameters
+        ----------
+        log : str
+            A line from the log file
+
+        Returns
+        -------
+        extracted_data : list
+            The extracted data as a list
+
+        """
         rmw_time = str(re.search(r'(?<=rmw\sxmt\stime\sns:\s)\d*', log).group()) or None
         rmw_sub_time = str(re.search(r'(?<=RMWSUB\sTS:\s)\d*', log).group()) or None
         rmw_pub_time = str(re.search(r'(?<=RMWPUB\sTS:\s)\d*', log).group()) or None
         return [rmw_time, rmw_sub_time, rmw_pub_time]
 
     def search_freq_bw_log(self, log):
+        """
+        Parse frequency and bandwidth logs and extract various information.
+
+        Parameters
+        ----------
+        log : str
+            A line from the log file
+
+        Returns
+        -------
+        extracted_data : list
+            The extracted data as a list
+
+        """
         time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sF)', log).group()) or None
         topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
@@ -78,6 +137,7 @@ class GetLog(Node):
         return [time_stamp, topic_name, topic_freq, topic_bw]
 
     def parse_log(self):
+        """Parse the entire log file to gather statistics."""
         begin_timestamp = float(re.search(r'\d*\.\d*', self.lines[0]).group())
         current_timestamp = begin_timestamp
         use_input_time = False
@@ -161,12 +221,14 @@ class GetLog(Node):
             'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
 
     def plot_log(self):
+        """Generate various plots to visualize the log data."""
         # self.plot_bar_xmt_by_topics()
         # self.plot_diff_xmt_by_topics()
         self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
         plt.show()
 
     def plot_hist_xmt_time(self):
+        """Plot histograms for transmission times."""
         ax1 = plt.subplot(1, 2, 1)
         ax1.hist(self.ros_xmt_time, color='blue', edgecolor='black')
         ax1.set_title(self.dds + ' ROS Layer Transmission Time')
@@ -180,6 +242,7 @@ class GetLog(Node):
         ax2.set_ylabel('Occurrences')
 
     def plot_bar_xmt_by_topics(self):
+        """Plot average transmission time by topics."""
         plt.bar(list(self.parsed_df_by_topics['Topic']),
                 list(self.parsed_df_by_topics['avg_ros_time']))
         plt.bar(list(self.parsed_df_by_topics['Topic']),
@@ -191,6 +254,7 @@ class GetLog(Node):
         plt.xticks(rotation=90, fontsize=6)
 
     def plot_diff_xmt_by_topics(self):
+        """Plot difference in transmission time by topics."""
         plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
                  np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
                              list(self.parsed_df_by_topics['avg_rmw_time'])))
@@ -203,6 +267,15 @@ class GetLog(Node):
                    rotation=90, fontsize=6)
 
     def plot_topic_time_series(self, topic_df):
+        """
+        Plot time series for each topic.
+
+        Parameters
+        ----------
+        topic_df : pandas.DataFrame
+            DataFrame containing the log data for a specific topic
+
+        """
         ax1 = plt.subplot(2, 1, 1)
         ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
         ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['RMW Layer Transmission Time'])
@@ -226,6 +299,15 @@ class GetLog(Node):
 
 
 def main(args=None):
+    """
+    Initialize the ROS node and run the GetLog class methods.
+
+    Parameters
+    ----------
+    Command-line : args
+        Command-line arguments.
+
+    """
     rclpy.init(args=args)
     m_log = GetLog(60, 'rmw_cyclonedds')
     m_log.read_log()

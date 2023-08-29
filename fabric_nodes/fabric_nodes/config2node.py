@@ -24,8 +24,10 @@ class Config2Nodes:
 
     Parameters
     ----------
-        config_file_path (str): The path to the configuration file.
-        env (str): The environment to be used for processing the configuration.
+    config_file_path : str
+        The path to the configuration file.
+    env : str
+        The environment to be used for processing the configuration.
 
     """
 
@@ -150,12 +152,13 @@ class Config2Nodes:
 
         Parameters
         ----------
-        node_config :
+        node_config : dict
             The configuration of a specific node.
 
         Returns
         -------
-        dict: A dictionary containing the processed publisher topics.
+        publish_topics : dict
+            A dictionary containing the processed publisher topics.
 
         """
         publish_topics = {}
@@ -191,7 +194,7 @@ class Config2Nodes:
 
         Returns
         -------
-        subscribe_topics :
+        subscribe_topics : dict
             A dictionary containing the processed subscriber topics.
 
         """
@@ -212,7 +215,7 @@ class Config2Nodes:
 
         Parameters
         ----------
-        node_config:
+        node_config : dict
             The configuration of a specific node.
         publish_topics : dict
             The processed publisher topics.
@@ -260,7 +263,8 @@ class Config2Nodes:
 
         Returns
         -------
-        Node: The created ROS node object.
+        node : launch_ros.actions.Node
+            The created ROS node object.
 
         """
         node = Node(
@@ -285,7 +289,8 @@ class Config2Nodes:
 
         Returns
         -------
-        list: A list of the generated ROS node objects.
+        node_list : list
+            A list of the generated ROS node objects.
 
         """
         self.load_config()

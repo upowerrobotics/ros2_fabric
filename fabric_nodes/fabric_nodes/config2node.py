@@ -22,19 +22,40 @@ class Config2Nodes:
     """
     Helper class for processing configuration files and generating nodes.
 
-    Parameters
+    Attributes
     ----------
     config_file_path : str
-        The path to the configuration file.
+        The path of the config file.
     env : str
-        The environment to be used for processing the configuration.
+        Each environment object defines a compute environment,
+        whether that is an Operating System, SoC, ECU, or ROS environment.
+        All nodes in a single environment will be launched together.
+    nodes : list
+        List of generated nodes.
+    config : dict
+        Loaded configuration data.
 
     """
 
     def __init__(self, config_file_path, env):
+        """
+        Initialize Config2Nodes.
+
+        Parameters
+        ----------
+        config_file_path : str
+            The path of the config file.
+        env : str
+            The environment for processing the configuration.
+
+        """
+        ## The path of the configuration file.  # noqa
         self.config_file_path = config_file_path
+        ## The environment that is operate in this configuration.  # noqa
         self.env = env
+        ## The list of generate nodes that extracted from configuration.  # noqa
         self.nodes = []
+        ## The configuration that extracted from the path of the configuration file.  # noqa
         self.config = None
 
     def load_config(self):

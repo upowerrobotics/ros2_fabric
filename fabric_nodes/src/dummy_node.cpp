@@ -1,3 +1,11 @@
+/**
+ * @file dummy_node.cpp
+ * @brief Implementation source file for the DummyNode class.
+ * 
+ * @copyright Copyright (c) 2023 U Power Robotics USA, Inc. All Rights Reserved.
+ * 
+*/
+
 // Copyright 2023 U Power Robotics USA, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +39,11 @@ using namespace std::chrono_literals;
 
 static constexpr size_t MSG_OVERHEAD = sizeof(DummyMsgT::timestamp) + sizeof(DummyMsgT::seq_num);
 
+/**
+ * @brief Function to compute the length of a C-string at compile time.
+ * @param str The input C-string.
+ * @return The length of the string.
+ */
 int constexpr char_len(const char * str)
 {
   return *str ? 1 + char_len(str + 1) : 0;
@@ -41,9 +54,16 @@ static constexpr uint8_t PUBLISH_PREFIX_SIZE = char_len("publish_topics.");
 // Size of the text "subscribe_topics."
 static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE = char_len("subscribe_topics.");
 
+/**
+ * @brief Namespace containing classes and functions for the fabric nodes.
+ */
 namespace fabric_nodes
 {
 
+/**
+ * @brief Constructor for the DummyNode class.
+ * @param options The NodeOptions for configuring the node.
+ */
 DummyNode::DummyNode(rclcpp::NodeOptions options)
 : rclcpp::Node(
     "dummy_node",
@@ -83,6 +103,10 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   }
 }
 
+/**
+ * @brief Parses publish topic parameters and initializes the publisher.
+ * @param param_prefix The parameter prefix for the topic.
+ */
 void DummyNode::parse_publish_topic(const std::string & param_prefix)
 {
   PublishTopic pub;
@@ -174,6 +198,10 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   m_publish_topics.push_back(std::move(pub));
 }
 
+/**
+ * @brief Parses subscribe topic parameters and initializes the subscriber.
+ * @param param_prefix The parameter prefix for the topic.
+ */
 void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
 {
   SubscribeTopic sub;
@@ -223,6 +251,13 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   m_subscribe_topics.push_back(std::move(sub));
 }
 
+/**
+ * @brief Parse a data size string into its scalar value and unit.
+ * @param data_size The string representation of the data size (e.g., "8K", "16M").
+ * @param scalar The scalar value of the data size.
+ * @param type The unit of the data size.
+ * @return True if parsing was successful, false otherwise.
+ */
 bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, SizeType * type)
 {
   if (data_size.length() == 0) {return false;}
@@ -254,6 +289,12 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
+/**
+ * @brief Callback for the publisher.
+ * @param publisher The publisher that called this callback.
+ * @param msg_bytes The size of the message in bytes.
+ * @param seq_num Sequence number for published messages.
+ */
 void DummyNode::pub_callback(
   rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
   int64_t & seq_num)
@@ -267,6 +308,16 @@ void DummyNode::pub_callback(
   publisher->publish(std::move(msg));
 }
 
+/**
+ * @brief Callback for the subscriber.
+ * @param msg The received message.
+ * @param topic_name The topic name of the received message.
+ * @param seq_num Sequence number for received messages.
+ * @param drop_msg_num Number of dropped messages.
+ * @param receive_num Number of received messages.
+ * @param initial_freq_time The time when the initial frequency was recorded.
+ * @param revieve_bytes The number of received bytes.
+ */
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
@@ -312,6 +363,11 @@ void DummyNode::sub_callback(
   }
 }
 
+/**
+ * @brief Format the bandwidth into a human-readable string.
+ * @param byte The bandwidth in bytes.
+ * @return The human-readable string representing the bandwidth.
+ */
 std::string DummyNode::bw_format(const size_t byte)
 {
   if (byte < static_cast<size_t>(SizeType::KILOBYTES)) {

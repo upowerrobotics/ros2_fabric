@@ -40,7 +40,7 @@ Here's a step-by-step breakdown:
 
 ## 2-1. Initialization:
 
-Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
+Execute **fabric_nodes.launch.py** which:
 
 - Reads the configuration from **config/example.yaml**:
   - For details on the config structure, refer to \ref YAML_API.
@@ -80,7 +80,7 @@ Follow these steps to set up and utilize your custom **config.yaml**:
   otherwise, \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class" will throw a **ValueError**.
 - Each environment object defines a compute environment, whether that is an Operating System, 
   SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.
-- For more details on the **config.yaml** structure, please refer to [YAML_API.md](./YAML_API.md)
+- For more details on the **config.yaml** structure, please refer to \ref YAML_API.
 
 ## 3-2. Execute Configuration
 - Run the command below to apply your **config.yaml**.

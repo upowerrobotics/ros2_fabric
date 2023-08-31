@@ -16,7 +16,6 @@
 import os
 import re
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import rclpy
@@ -193,6 +192,7 @@ class GetLog(Node):
         self.get_logger().info(
             'Average RMW XMT is: ' + str(np.mean(self.rmw_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
+
 
 def main(args=None):
     rclpy.init(args=args)

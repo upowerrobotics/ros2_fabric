@@ -62,6 +62,7 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   ${PROJECT_NAME}/get_log.py
+  ${PROJECT_NAME}/plot_csv.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

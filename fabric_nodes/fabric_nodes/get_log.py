@@ -45,7 +45,7 @@ class GetLog(Node):
         self.run_id = run_id
 
     ##
-    # @brief Read log file and load its lines into self.lines.
+    # @brief Read log file and load its lines into lines.
     #
     def read_log(self):
         ros_log_dir = os.path.join(os.path.expanduser('~') + '/.ros/log/')
@@ -276,7 +276,6 @@ class GetLog(Node):
 
 ##
 # @brief Initialize the ROS node and run the GetLog class methods.
-# @param Command-line Command-line arguments.
 #
 def main(args=None):
     rclpy.init(args=args)

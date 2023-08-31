@@ -88,10 +88,10 @@ class DummyNode : public rclcpp::Node
 public:
   /**
    * @brief Constructs a DummyNode for ROS2
-   * 
+   *
    * The constructor for the DummyNode, which inherits from rclcpp::Node.
    * It sets up publishers and subscribers based on parameters.
-   * 
+   *
    * @param [in] options ROS2 Node options.
    * @exception rclcpp::exceptions::InvalidParametersException Throws an exception if required parameters are missing.
    */
@@ -100,9 +100,9 @@ public:
 private:
   /**
    * @brief Parses and sets up a publish topic
-   * 
+   *
    * This function parses parameters to setup a topic that this node will publish to.
-   * 
+   *
    * @param [in] param_prefix The prefix string for parameters related to this topic.
    * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
    */
@@ -110,9 +110,9 @@ private:
 
   /**
    * @brief Parses and sets up a subscribe topic
-   * 
+   *
    * This function parses parameters to setup a topic to which this node will subscribe.
-   * 
+   *
    * @param [in] subscribe_prefix The prefix string for parameters related to this topic.
    * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
    */
@@ -120,9 +120,9 @@ private:
 
   /**
    * @brief Parses data size string into a scalar and unit type
-   * 
+   *
    * Converts data size string (like "10M", "20K") into a scalar and unit type for easy calculations.
-   * 
+   *
    * @param [in] data_size The data size string (e.g., "10M", "20K").
    * @param [out] scalar Extracted scalar value.
    * @param [out] type Extracted size type (Bytes, KiloBytes, etc).

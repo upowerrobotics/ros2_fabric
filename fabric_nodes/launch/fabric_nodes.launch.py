@@ -26,6 +26,7 @@ from launch.substitutions import LaunchConfiguration
 ##
 # @brief This function use Config2Nodes to transfer config file to nodes.
 # @return nodes The nodes that is extracted from config file
+#
 def get_nodes(context, *args, **kwargs):
     config_path = LaunchConfiguration('config-path').perform(context)
     environment = LaunchConfiguration('environment').perform(context)
@@ -39,6 +40,7 @@ def get_nodes(context, *args, **kwargs):
 ##
 # @brief Generate the LaunchDescription for the fabric_nodes package.
 # @return LaunchDescription The LaunchDescription object.
+#
 def generate_launch_description():
     pass_config_path = os.path.join(
         get_package_share_directory('fabric_nodes'),

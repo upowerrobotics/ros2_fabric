@@ -40,7 +40,3 @@
 # pytest result
 fabric_nodes/tests/__pycache__/
 fabric_nodes/fabric_nodes/__pycache__/
-
-# Doxygen
-/html/
-/latex/

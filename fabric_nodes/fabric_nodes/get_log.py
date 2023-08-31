@@ -194,97 +194,12 @@ class GetLog(Node):
             'Average RMW XMT is: ' + str(np.mean(self.rmw_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
 
-    ##
-    # @brief Generate various plots to visualize the log data.
-    #
-    def plot_log(self):
-        # self.plot_bar_xmt_by_topics()
-        # self.plot_diff_xmt_by_topics()
-        self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
-        plt.show()
-
-    ##
-    # @brief Plot histograms for transmission times.
-    #
-    def plot_hist_xmt_time(self):
-        ax1 = plt.subplot(1, 2, 1)
-        ax1.hist(self.ros_xmt_time, color='blue', edgecolor='black')
-        ax1.set_title(self.dds + ' ROS Layer Transmission Time')
-        ax1.set_xlabel('Time (Nanoseconds)')
-        ax1.set_ylabel('Occurrences')
-
-        ax2 = plt.subplot(1, 2, 2)
-        ax2.hist(self.rmw_xmt_time, color='yellow', edgecolor='black')
-        ax2.set_title(self.dds + ' RMW Layer Transmission Time')
-        ax2.set_xlabel('Time (Nanoseconds)')
-        ax2.set_ylabel('Occurrences')
-
-    ##
-    # @brief Plot average transmission time by topics.
-    #
-    def plot_bar_xmt_by_topics(self):
-        plt.bar(list(self.parsed_df_by_topics['Topic']),
-                list(self.parsed_df_by_topics['avg_ros_time']))
-        plt.bar(list(self.parsed_df_by_topics['Topic']),
-                list(self.parsed_df_by_topics['avg_rmw_time']))
-        plt.legend(['Average ROS Transmission Duration', 'Average RMW Transmission Duration'])
-        plt.title(self.dds + ' Average Transmission Time By Topics')
-        plt.xlabel('Topic Name')
-        plt.ylabel('Time (Nanoseconds)')
-        plt.xticks(rotation=90, fontsize=6)
-
-    ##
-    # @brief Plot difference in transmission time by topics.
-    #
-    def plot_diff_xmt_by_topics(self):
-        plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
-                 np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
-                             list(self.parsed_df_by_topics['avg_rmw_time'])))
-        plt.grid()
-        plt.title(self.dds + ' Average (ROS-RMW) Time by Topics')
-        plt.xlabel('Topic Name')
-        plt.ylabel('Time Difference (Nanoseconds)')
-        plt.xticks(ticks=range(len(list(self.parsed_df_by_topics['Topic']))),
-                   labels=list(self.parsed_df_by_topics['Topic']),
-                   rotation=90, fontsize=6)
-
-    ##
-    # @brief Plot time series for each topic.
-    # @param topic_df DataFrame containing the log data for a specific topic
-    #
-    def plot_topic_time_series(self, topic_df):
-        ax1 = plt.subplot(2, 1, 1)
-        ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
-        ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['RMW Layer Transmission Time'])
-        ax1.legend(['ROS Transmission Duration', 'RMW Transmission Duration'])
-        ax1.grid()
-        ax1.set_title(self.dds + ' Transmission Time Series for ' + list(topic_df['Topic'])[0])
-        ax1.set_xlabel('Timestamps')
-        ax1.set_ylabel('Transmission Time Duration (Nanoseconds)')
-        ax1.set_xticks([])
-
-        ax2 = plt.subplot(2, 1, 2)
-        ax2.plot(topic_df['ROS Layer Publisher Time'],
-                 topic_df['ROS Layer Transmission Time'] -
-                 topic_df['RMW Layer Transmission Time'], 'g')
-        ax2.grid()
-        ax2.set_title(self.dds +
-                      ' Difference in Transmission Time Series for ' + list(topic_df['Topic'])[0])
-        ax2.set_xlabel('Timestamps')
-        ax2.set_ylabel('(ROS-RMW) Transmission Time Duration (Nanoseconds)')
-        ax2.set_xticks([])
-
-
-##
-# @brief Initialize the ROS node and run the GetLog class methods.
-#
 def main(args=None):
     rclpy.init(args=args)
     m_log = GetLog(60, 'rmw_cyclonedds')
     m_log.read_log()
     m_log.parse_log()
     m_log.output_log()
-    m_log.plot_log()
     rclpy.shutdown()
 
 

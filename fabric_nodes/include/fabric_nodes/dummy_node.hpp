@@ -80,6 +80,7 @@ struct SubscribeTopic
 };
 
 /**
+ * @class DummyNode
  * @brief A ROS2 Node for dummy publish and subscribe functionalities.
  */
 class DummyNode : public rclcpp::Node

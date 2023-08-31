@@ -1,7 +1,7 @@
 # FABRIC User Documentation
 
 This document describes how to operate the
-[ROS2](https://www.ros.org) package named **fabric_nodes**.
+[ROS2](https://www.ros.org) package named [fabric_nodes](https://github.com/upowerrobotics/ros2_fabric).
 
 FABRIC is a tool designed for the evaluation of end-to-end transmission statistics in a ROS environment.  
 This package allows users to establish a virtual environment that mirrors their implementation,
@@ -44,12 +44,12 @@ Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
 
 - Reads the configuration from [`example.yaml`](../config/example.yaml).
   - For details on the config structure, refer to \ref YAML_API.
-- Validates the yaml structure with [`config2node.py`](../fabric_nodes/config2node.py).
-- Sets up nodes and topics using [`dummy_node.cpp`](../src/dummy_node.cpp).
+- Validates the yaml structure with \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class".
+- Sets up nodes and topics using \ref fabric_nodes::DummyNode "DummyNode Class".
 
 ## 2-2. Output Metrics:
 
-[`dummy_node.cpp`](../src/dummy_node.cpp) outputs metrics:
+\ref fabric_nodes::DummyNode "DummyNode Class" outputs metrics:
 
 - Metrics: latency, frequency, and bandwidth.
 - Logging: Uses [RCLCPP_DEBUG](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html).
@@ -64,11 +64,11 @@ Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
 
 ## 2-4. Log Extraction:
 
-- [`get_log.py`](../fabric_nodes/get_log.py) processes the logs:
+- \ref fabric_nodes.get_log.GetLog "GetLog Class" processes the logs:
 
   - Reads from ROS log folder (by default ~/.ros/log on Linux systems).
   - Extracts: latency, frequency, and bandwidth for each topic.
-  - Save the analyized csv file to where the user runs `get_log.py`.
+  - Save the analyized csv file to where the user runs \ref fabric_nodes.get_log.GetLog "GetLog Class".
 
 # 3. User Configuration YAML for Evaluation
 
@@ -77,7 +77,7 @@ Follow these steps to set up and utilize your custom `config.yaml`:
 ## 3-1. Setup Configuration
 - Create a `config.yaml` tailored to your environment.
 - Ensure it adheres to the required format;
-  otherwise, [`config2node.py`](../fabric_nodes/config2node.py) will throw a `ValueError`.
+  otherwise, \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class" will throw a `ValueError`.
 - Each environment object defines a compute environment, whether that is an Operating System, 
   SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.
 - For more details on the `config.yaml` structure, please refer to [YAML_API.md](./YAML_API.md)

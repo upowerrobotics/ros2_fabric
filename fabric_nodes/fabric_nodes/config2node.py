@@ -12,30 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from launch_ros.actions import Node
 
 import yaml
 
 
+##
+# @class Config2Nodes.
+# @brief Helper class for processing configuration files and generating nodes.
+#
 class Config2Nodes:
-    """
-    Helper class for processing configuration files and generating nodes.
-
-    Attributes
-    ----------
-    config_file_path : str
-        The path of the config file.
-    env : str
-        Each environment object defines a compute environment,
-        whether that is an Operating System, SoC, ECU, or ROS environment.
-        All nodes in a single environment will be launched together.
-    nodes : list
-        List of generated nodes.
-    config : dict
-        Loaded configuration data.
-
-    """
 
     def __init__(self, config_file_path, env):
         """
@@ -49,13 +35,13 @@ class Config2Nodes:
             The environment for processing the configuration.
 
         """
-        ## The path of the configuration file.  # noqa
+        ## The path of the configuration file.
         self.config_file_path = config_file_path
-        ## The environment that is operate in this configuration.  # noqa
+        ## The environment that is operate in this configuration.
         self.env = env
-        ## The list of generate nodes that extracted from configuration.  # noqa
+        ## The list of generate nodes that extracted from configuration.
         self.nodes = []
-        ## The configuration that extracted from the path of the configuration file.  # noqa
+        ## The configuration that extracted from the path of the configuration file.
         self.config = None
 
     def load_config(self):

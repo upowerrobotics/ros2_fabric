@@ -1,7 +1,5 @@
 \page YAML_API ROS2 FABRIC YAML API
 
-# ROS2 FABRIC YAML API
-
 This document describes the format of YAML documents which can be read and acted upon by the FABRIC
 Python Startup script. See the [`config`](../config) folder for example
 configurations which conform to this specification.

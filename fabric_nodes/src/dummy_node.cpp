@@ -28,6 +28,11 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @brief Calculates the length of a null-terminated C-style string.
+ * @param [in] str A pointer to the null-terminated C-style string.
+ * @return The length of the string (number of characters) excluding the null terminator.
+ */
 int constexpr char_len(const char * str)
 {
   return *str ? 1 + char_len(str + 1) : 0;
@@ -41,9 +46,16 @@ static constexpr uint8_t PUBLISH_PREFIX_SIZE =
 static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE =
   char_len("subscribe_topics.");  ///< Size of the text "subscribe_topics."
 
+/**
+ * @brief Namespace containing classes and functions for the fabric nodes.
+ */
 namespace fabric_nodes
 {
 
+/**
+ * @brief Constructor for DummyNode.
+ * @param [in] options Node options for the ROS2 Node.
+ */
 DummyNode::DummyNode(rclcpp::NodeOptions options)
 : rclcpp::Node(
     "dummy_node",
@@ -83,6 +95,10 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   }
 }
 
+/**
+ * @brief Parses parameters to setup a publish topic.
+ * @param [in] param_prefix Prefix for the topic parameter.
+ */
 void DummyNode::parse_publish_topic(const std::string & param_prefix)
 {
   PublishTopic pub;
@@ -174,6 +190,10 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   m_publish_topics.push_back(std::move(pub));
 }
 
+/**
+ * @brief Parses parameters to setup a subscribe topic.
+ * @param [in] subscribe_prefix Prefix for the subscribe topic parameter.
+ */
 void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
 {
   SubscribeTopic sub;
@@ -224,6 +244,13 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
   m_subscribe_topics.push_back(std::move(sub));
 }
 
+/**
+ * @brief Parses data size and extracts scalar and type.
+ * @param [in] data_size The data size as a string.
+ * @param [out] scalar The extracted scalar.
+ * @param [out] type The extracted size type.
+ * @return True if parsing is successful, otherwise false.
+ */
 bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, SizeType * type)
 {
   if (data_size.length() == 0) {return false;}
@@ -255,6 +282,12 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
+/**
+ * @brief Publish callback.
+ * @param [in] publisher The ROS2 publisher.
+ * @param [in] msg_bytes The size of the message in bytes.
+ * @param [in,out] seq_num The sequence number.
+ */
 void DummyNode::pub_callback(
   rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
   int64_t & seq_num)
@@ -268,6 +301,16 @@ void DummyNode::pub_callback(
   publisher->publish(std::move(msg));
 }
 
+/**
+ * @brief Subscribe callback.
+ * @param [in] msg Received message.
+ * @param [in] topic_name The topic name.
+ * @param [in,out] seq_num Sequence number.
+ * @param [in,out] drop_msg_num Dropped message count.
+ * @param [in,out] receive_num Received message count.
+ * @param [in,out] initial_freq_time Initial frequency time for the topic.
+ * @param [in,out] revieve_bytes Received bytes for the topic.
+ */
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
@@ -313,6 +356,11 @@ void DummyNode::sub_callback(
   }
 }
 
+/**
+ * @brief Utility function for formatting bandwidth.
+ * @param [in] byte Bandwidth in bytes.
+ * @return Formatted bandwidth.
+ */
 std::string DummyNode::bw_format(const size_t byte)
 {
   if (byte < static_cast<size_t>(SizeType::KILOBYTES)) {

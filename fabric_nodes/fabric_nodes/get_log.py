@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import os
 import re
 
@@ -24,8 +23,11 @@ import rclpy
 from rclpy.node import Node
 
 
+##
+# @class GetLog.
+# @brief Gather statistics from log files for a given period or run.
+#
 class GetLog(Node):
-    """Gather statistics from log files for a given period or run."""
 
     def __init__(self, time=0, dds='rmw_cyclonedds', run_id='default_run'):
         """
@@ -42,11 +44,11 @@ class GetLog(Node):
 
         """
         super().__init__('get_log')
-        ## Logging duration in nanoseconds.  # noqa
+        ## Logging duration in nanoseconds.
         self.time = time
-        ## Data Distribution Service middleware that was operated.  # noqa
+        ## Data Distribution Service middleware that was operated.
         self.dds = dds
-        ## ID for a specific run.  # noqa
+        ## ID for a specific run.
         self.run_id = run_id
 
     def read_log(self):
@@ -57,7 +59,7 @@ class GetLog(Node):
         if (self.run_id == 'default_run'):
             self.run_id = dirlist[-1]
         logfile_path = os.path.join(ros_log_dir, self.run_id, 'launch.log')
-        ## The line that extracted from log.  # noqa
+        ## The line that extracted from log.
         self.lines = open(logfile_path, 'r').readlines()
         self.get_logger().info('Reading log from ' + logfile_path)
 
@@ -157,9 +159,9 @@ class GetLog(Node):
                 parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):
             self.get_logger().info('This given log has less than ' + str(self.time) + ' seconds.')
-            ## The time difference between the logger.  # noqa
+            ## The time difference between the logger.
             self.time = current_timestamp - begin_timestamp
-        ## The parsed Sub Time, Pub Time, and Trans Time in pd.DataFrame format.  # noqa
+        ## The parsed Sub Time, Pub Time, and Trans Time in pd.DataFrame format.
         self.parsed_log_df = pd.DataFrame(parsed_log, columns=[
                                             'Topic', 'Subscriber Node', 'Publisher Node',
                                             'ROS Layer Transmission Time',
@@ -172,7 +174,7 @@ class GetLog(Node):
                                             'RMW Layer Publisher Time'])
         self.parsed_log_df = self.parsed_log_df.astype({'ROS Layer Transmission Time': 'int',
                                                         'RMW Layer Transmission Time': 'int'})
-        ## The parsed measured frequency and bandwidth in pd.DataFrame format.  # noqa
+        ## The parsed measured frequency and bandwidth in pd.DataFrame format.
         self.parsed_freq_bw_df = pd.DataFrame(parsed_freq_bw, columns=[
                                             'Timestamp', 'Topic', 'Frequency', 'Bandwidth'])
 
@@ -194,18 +196,18 @@ class GetLog(Node):
         self.get_logger().info(str(self.time) +
                                ' seconds on run: ' + self.run_id + ' with ' + self.dds)
 
-        ## The xmt time of the ros layer.  # noqa
+        ## The xmt time of the ros layer.
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
-        ## The xmt time of the rmw layer.  # noqa
+        ## The xmt time of the rmw layer.
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
 
-        ## The parsed pd.DataFrame format based on topics.  # noqa
+        ## The parsed pd.DataFrame format based on topics.
         self.parsed_df_by_topics = self.parsed_log_df.groupby('Topic').agg(
             avg_ros_time=('ROS Layer Transmission Time', np.mean),
             avg_rmw_time=('RMW Layer Transmission Time', np.mean)
         ).reset_index()
 
-        ## The parsed pd.DataFrame format of each topics.  # noqa
+        ## The parsed pd.DataFrame format of each topics.
         self.each_topic_parsed_log_df = []
         topics_groups = self.parsed_log_df.sort_values([
             'Topic', 'ROS Layer Publisher Time'], ascending=True).groupby('Topic')

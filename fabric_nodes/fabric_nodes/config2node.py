@@ -23,18 +23,12 @@ import yaml
 #
 class Config2Nodes:
 
+    ##
+    # @brief The contructor for Config2Nodes.
+    # @param [in] config_file_path The path of the config file.
+    # @param [in] env The environment for processing the configuration.
+    #
     def __init__(self, config_file_path, env):
-        """
-        Initialize Config2Nodes.
-
-        Parameters
-        ----------
-        config_file_path : str
-            The path of the config file.
-        env : str
-            The environment for processing the configuration.
-
-        """
         ## The path of the configuration file.
         self.config_file_path = config_file_path
         ## The environment that is operate in this configuration.
@@ -44,13 +38,17 @@ class Config2Nodes:
         ## The configuration that extracted from the path of the configuration file.
         self.config = None
 
+    ##
+    # @brief Load the configuration file.
+    #
     def load_config(self):
-        """Load the configuration file."""
         with open(self.config_file_path, 'r') as file:
             self.config = yaml.safe_load(file)
 
+    ##
+    # @brief Validate the loaded configuration.
+    #
     def validate_config(self):
-        """Validate the loaded configuration."""
         publisher_topics = set()
         subscriber_topics = set()
 
@@ -152,22 +150,11 @@ class Config2Nodes:
                     f"Subscriber '{subscriber_topic[1]}' in node "
                     f"'{subscriber_topic[2]}' is not connected properly"
                 )
-
+    ##
+    # @brief Process publishers in the node configuration.
+    # @param [in] node_config The configuration of a specific node.
+    # @return A dictionary containing the processed publisher topics.
     def process_publishers(self, node_config):
-        """
-        Process publishers in the node configuration.
-
-        Parameters
-        ----------
-        node_config : dict
-            The configuration of a specific node.
-
-        Returns
-        -------
-        publish_topics : dict
-            A dictionary containing the processed publisher topics.
-
-        """
         publish_topics = {}
         publishers = node_config.get('publishers', [])
 
@@ -190,21 +177,11 @@ class Config2Nodes:
 
         return publish_topics
 
+    ##
+    # @brief Process subscribers in the node configuration.
+    # @param [in] node_config The configuration of a specific node.
+    # @return A dictionary containing the processed subscriber topics.
     def process_subscribers(self, node_config):
-        """
-        Process subscribers in the node configuration.
-
-        Parameters
-        ----------
-        node_config : dict
-            The configuration of a specific node.
-
-        Returns
-        -------
-        subscribe_topics : dict
-            A dictionary containing the processed subscriber topics.
-
-        """
         subscribe_topics = {}
         subscribers = node_config.get('subscribers', [])
 
@@ -216,20 +193,13 @@ class Config2Nodes:
 
         return subscribe_topics
 
+    ##
+    # @brief Generate a node based on the provided configuration.
+    # @param [in] node_config The configuration of a specific node.
+    # @param [in] publish_topics The processed publisher topics.
+    # @param [in] subscribe_topics The processed subscriber topics.
+    #
     def generate_node(self, node_config, publish_topics, subscribe_topics):
-        """
-        Generate a node based on the provided configuration.
-
-        Parameters
-        ----------
-        node_config : dict
-            The configuration of a specific node.
-        publish_topics : dict
-            The processed publisher topics.
-        subscribe_topics : dict
-            The processed subscriber topics.
-
-        """
         node_qty = node_config.get('qty', 1)
         node_name = node_config['name']
         root_node = node_config['root_node']
@@ -251,29 +221,15 @@ class Config2Nodes:
                                     publish_topics, subscribe_topics_qty)
             self.nodes.append(node)
 
+    ##
+    # @brief Create a ROS node object.
+    # @param [in] name The name of the node.
+    # @param [in] root_node Whether the node is a root node.
+    # @param [in] terminal_node Whether the node is a terminal node.
+    # @param [in] publish_topics The processed publisher topics.
+    # @param [in] subscribe_topics The processed subscriber topics.
+    # @return The created ROS node object.
     def create_node(self, name, root_node, terminal_node, publish_topics, subscribe_topics):
-        """
-        Create a ROS node object.
-
-        Parameters
-        ----------
-        name : str
-            The name of the node.
-        root_node : bool
-            Whether the node is a root node.
-        terminal_node : bool
-            Whether the node is a terminal node.
-        publish_topics : dict
-            The processed publisher topics.
-        subscribe_topics : dict
-            The processed subscriber topics.
-
-        Returns
-        -------
-        node : launch_ros.actions.Node
-            The created ROS node object.
-
-        """
         node = Node(
             package='fabric_nodes',
             executable='dummy_node_exe',
@@ -290,16 +246,10 @@ class Config2Nodes:
         )
         return node
 
+    ##
+    # @brief Get the generated nodes based on the configuration.
+    # @return A list of the generated ROS node objects.
     def get_nodes(self):
-        """
-        Get the generated nodes based on the configuration.
-
-        Returns
-        -------
-        node_list : list
-            A list of the generated ROS node objects.
-
-        """
         self.load_config()
         self.validate_config()
 

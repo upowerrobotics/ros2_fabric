@@ -20,7 +20,7 @@ Our own forks of the RMW implementations:
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 
 # 1. Quick Start
-- Launch `fabric_node` in the terminal.  
+- Launch **fabric_node** in the terminal.  
   After waiting for roughly 1 minute, kill the node:
 ```bash
 ros2 launch fabric_nodes fabric_nodes.launch.py
@@ -42,7 +42,7 @@ Here's a step-by-step breakdown:
 
 Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
 
-- Reads the configuration from [`example.yaml`](../config/example.yaml).
+- Reads the configuration from **config/example.yaml**:
   - For details on the config structure, refer to \ref YAML_API.
 - Validates the yaml structure with \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class".
 - Sets up nodes and topics using \ref fabric_nodes::DummyNode "DummyNode Class".
@@ -58,7 +58,7 @@ Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
 ## 2-3. RMW Layer Output (Conditional):
 
 - If the user installs the custom `rmw_implementation`,
-  the `rmw_layer` also logs latency, frequency, and bandwidth.
+  the **rmw_layer** also logs latency, frequency, and bandwidth.
   - Logging: Uses [RCLCPP_DEBUG](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html).
   - Location: ROS log folder (by default ~/.ros/log on Linux systems)
 
@@ -72,18 +72,18 @@ Execute \ref fabric_nodes.launch.py "fabric_nodes.launch.py" which:
 
 # 3. User Configuration YAML for Evaluation
 
-Follow these steps to set up and utilize your custom `config.yaml`:
+Follow these steps to set up and utilize your custom **config.yaml**:
 
 ## 3-1. Setup Configuration
-- Create a `config.yaml` tailored to your environment.
+- Create a **config.yaml** tailored to your environment.
 - Ensure it adheres to the required format;
-  otherwise, \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class" will throw a `ValueError`.
+  otherwise, \ref fabric_nodes.config2node.Config2Nodes "Config2Nodes Class" will throw a **ValueError**.
 - Each environment object defines a compute environment, whether that is an Operating System, 
   SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.
-- For more details on the `config.yaml` structure, please refer to [YAML_API.md](./YAML_API.md)
+- For more details on the **config.yaml** structure, please refer to [YAML_API.md](./YAML_API.md)
 
 ## 3-2. Execute Configuration
-- Run the command below to apply your `config.yaml`.
+- Run the command below to apply your **config.yaml**.
 - Use the environment argument to set the compute environment.
 - Make sure killing the node after 1 minute.
 ```bash

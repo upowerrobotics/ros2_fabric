@@ -22,15 +22,19 @@ and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 # 1. Quick Start
 - Launch **fabric_node** in the terminal.  
   After waiting for roughly 1 minute, kill the node:
-```bash
+<div style="width: auto; white-space: nowrap;">
+<pre>
 ros2 launch fabric_nodes fabric_nodes.launch.py
-```
+</pre>
+</div>
   
 - Run get_log.py to retrieve the evaluation.  
   The analyized csv file will be saved in the folder where the user runs this command:  
-```bash
+<div style="width: auto; white-space: nowrap;">
+<pre>
 ros2 run fabric_nodes get_log.py
-```
+</pre>
+</div>
   
 # 2. System Structure Workflow (Default Config File)
 
@@ -86,12 +90,16 @@ Follow these steps to set up and utilize your custom **config.yaml**:
 - Run the command below to apply your **config.yaml**.
 - Use the environment argument to set the compute environment.
 - Make sure killing the node after 1 minute.
-```bash
+<div style="width: auto; white-space: nowrap;">
+<pre>
 ros2 launch fabric_nodes fabric_nodes.launch.py config-path:=/PATH/TO/USER/CONFIG environment:=USER_ENV
-```
+</pre>
+</div>
 
 ## 3-3. Extract Measurements
 To fetch the measurements from the ROS log folder (by default ~/.ros/log on Linux systems), use:
-```bash
+<div style="width: auto; white-space: nowrap;">
+<pre>
 ros2 run fabric_nodes get_log.py
-```
+</pre>
+</div>

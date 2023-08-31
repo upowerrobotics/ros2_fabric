@@ -53,8 +53,13 @@ namespace fabric_nodes
 {
 
 /**
- * @brief Constructor for DummyNode.
- * @param [in] options Node options for the ROS2 Node.
+ * @brief Constructs a DummyNode for ROS2
+ * 
+ * The constructor for the DummyNode, which inherits from rclcpp::Node.
+ * It sets up publishers and subscribers based on parameters.
+ * 
+ * @param [in] options ROS2 Node options.
+ * @exception rclcpp::exceptions::InvalidParametersException Throws an exception if required parameters are missing.
  */
 DummyNode::DummyNode(rclcpp::NodeOptions options)
 : rclcpp::Node(
@@ -84,7 +89,7 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   if (!m_root_node) {
     // If this is not a root node, look for subscribed topics
     if (subscribe_params_msg.names.empty()) {
-      RCLCPP_ERROR(this->get_logger(), "No topics provided to subscribe to.");
+      RCLCPP_ERROR(this->get_logger(), "No topics provided to subscribe.");
       return;
     }
 
@@ -96,8 +101,12 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
 }
 
 /**
- * @brief Parses parameters to setup a publish topic.
- * @param [in] param_prefix Prefix for the topic parameter.
+ * @brief Parses and sets up a publish topic
+ * 
+ * This function parses parameters to setup a topic that this node will publish to.
+ * 
+ * @param [in] param_prefix The prefix string for parameters related to this topic.
+ * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
  */
 void DummyNode::parse_publish_topic(const std::string & param_prefix)
 {
@@ -191,8 +200,12 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
 }
 
 /**
- * @brief Parses parameters to setup a subscribe topic.
- * @param [in] subscribe_prefix Prefix for the subscribe topic parameter.
+ * @brief Parses and sets up a subscribe topic
+ * 
+ * This function parses parameters to setup a topic to which this node will subscribe.
+ * 
+ * @param [in] subscribe_prefix The prefix string for parameters related to this topic.
+ * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
  */
 void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
 {
@@ -245,11 +258,14 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
 }
 
 /**
- * @brief Parses data size and extracts scalar and type.
- * @param [in] data_size The data size as a string.
- * @param [out] scalar The extracted scalar.
- * @param [out] type The extracted size type.
- * @return True if parsing is successful, otherwise false.
+ * @brief Parses data size string into a scalar and unit type
+ * 
+ * Converts data size string (like "10M", "20K") into a scalar and unit type for easy calculations.
+ * 
+ * @param [in] data_size The data size string (e.g., "10M", "20K").
+ * @param [out] scalar Extracted scalar value.
+ * @param [out] type Extracted size type (Bytes, KiloBytes, etc).
+ * @return True if parsing successful, otherwise false.
  */
 bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, SizeType * type)
 {

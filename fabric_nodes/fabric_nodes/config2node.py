@@ -154,6 +154,7 @@ class Config2Nodes:
     # @brief Process publishers in the node configuration.
     # @param [in] node_config The configuration of a specific node.
     # @return A dictionary containing the processed publisher topics.
+    #
     def process_publishers(self, node_config):
         publish_topics = {}
         publishers = node_config.get('publishers', [])
@@ -181,6 +182,7 @@ class Config2Nodes:
     # @brief Process subscribers in the node configuration.
     # @param [in] node_config The configuration of a specific node.
     # @return A dictionary containing the processed subscriber topics.
+    #
     def process_subscribers(self, node_config):
         subscribe_topics = {}
         subscribers = node_config.get('subscribers', [])
@@ -229,6 +231,7 @@ class Config2Nodes:
     # @param [in] publish_topics The processed publisher topics.
     # @param [in] subscribe_topics The processed subscriber topics.
     # @return The created ROS node object.
+    #
     def create_node(self, name, root_node, terminal_node, publish_topics, subscribe_topics):
         node = Node(
             package='fabric_nodes',
@@ -249,6 +252,7 @@ class Config2Nodes:
     ##
     # @brief Get the generated nodes based on the configuration.
     # @return A list of the generated ROS node objects.
+    #
     def get_nodes(self):
         self.load_config()
         self.validate_config()

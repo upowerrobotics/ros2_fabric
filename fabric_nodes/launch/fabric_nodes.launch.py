@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## \file
+# The launch file that runs fabric_nodes.
 
 """
 This module contains the function `generate_launch_description`.

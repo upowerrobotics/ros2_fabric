@@ -1,11 +1,3 @@
-/**
- * @file
- * @brief Implemetation header file for the DummyNode Class
- * 
- * @copyright Copyright (c) 2023 U Power Robotics USA, Inc. All Rights Reserved.
- * 
-*/
-
 // Copyright 2023 U Power Robotics USA, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +22,14 @@
 #include <rclcpp/rclcpp.hpp>  // NOLINT
 #include <fabric_interfaces/msg/dummy_message.hpp>  // NOLINT
 
-using DummyMsgT = fabric_interfaces::msg::DummyMessage;
+using DummyMsgT = fabric_interfaces::msg::DummyMessage;  ///< The message type that dummynode is
+
+/**
+ * @brief Calculates the length of a null-terminated C-style string.
+ * @param [in] str A pointer to the null-terminated C-style string.
+ * @return The length of the string (number of characters) excluding the null terminator.
+ */
+int constexpr char_len(const char * str);
 
 /**
  * @brief Namespace containing classes and functions for the fabric nodes.

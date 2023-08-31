@@ -54,7 +54,7 @@ class GetLog(Node):
 
     def search_ros_log(self, log):
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)', log).group()) or None
-        sub_node = str(re.search(r'(?<=\[)node.*(?=\.n)', log).group()) or None
+        sub_node = str(re.search(r'(?<=\[)(.*node.*)(?=.\1\])', log).group()) or None
         pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)', log).group()) or None
         ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*', log).group()) or None
         ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*', log).group()) or None
@@ -92,9 +92,9 @@ class GetLog(Node):
                                        ', ending at ' + str(current_timestamp))
                 use_input_time = True
                 break
-            stats_log = re.search(r'\[node.*:\sT.*', line)
+            stats_log = re.search(r'(?<=\]\s)\[.*node.*:\sT.*', line)
             if stats_log is not None:  # valid lines
-                rmw_log = re.search(r'\[node.*\.(C|F|e|R).*]:\sT.*', line)
+                rmw_log = re.search(r'\[.*node.*\.(C|F|e|R).*]:\sT.*', line)
                 freq_bw_log = re.search(r'Freq:', stats_log.group())
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
@@ -137,7 +137,7 @@ class GetLog(Node):
             str(round(self.time, 3)) + '-seconds-' +
             self.run_id+'_fequency_bw_log.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) +
-                               ' seconds on run: ' + self.run_id + 'with' + self.dds)
+                               ' seconds on run: ' + self.run_id + ' with ' + self.dds)
 
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])

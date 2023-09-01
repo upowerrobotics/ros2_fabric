@@ -28,6 +28,11 @@ jobs:
           target-ros2-distro: galactic
           skip-tests: true
           import-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ steps.galactic_action_ros_ci_step.outputs.ros-workspace-directory-name }}/build/fabric_nodes/docs/html
       - name: Upload logs
         uses: actions/upload-artifact@v1
         with:

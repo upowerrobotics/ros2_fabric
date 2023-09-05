@@ -81,20 +81,16 @@ class Config2Nodes:
                         )
                     
                     # Validate QoS settings for publishers
-                    qos_depth = publisher.get('QoS_depth')
-                    qos_policy = publisher.get('QoS_policy')
-                    if qos_depth is None or qos_policy is None:
+                    qos_depth, qos_policy = publisher.get('QoS_depth'), publisher.get('QoS_policy')
+                    if qos_depth is not None and qos_depth < 0:
                         raise ValueError(
-                            f"Publisher '{publisher['name']}' must have both QoS_depth and QoS_policy"
-                        )
-                    if qos_depth < 0:
+                            f"QoS_depth for publisher '{publisher['name']}' "
+                            f"in node '{node_config['name']}' must be >= 0")
+                    if qos_policy is not None and qos_policy not in ['reliable', 'best_effort']:
                         raise ValueError(
-                            f"QoS_depth for publisher '{publisher['name']}' must be >= 0"
-                        )
-                    if qos_policy not in ['reliable', 'best_effort']:
-                        raise ValueError(
-                            f"QoS_policy for publisher '{publisher['name']}' must be either 'reliable' or 'best_effort'"
-                        )
+                            f"QoS_policy for publisher '{publisher['name']}' "
+                            f"in node '{node_config['name']}' "
+                            f"must be either 'reliable' or 'best_effort'")
 
                     # Store publisher_topics
                     for i in range(1, node_qty + 1):
@@ -112,20 +108,17 @@ class Config2Nodes:
 
                 for subscriber in node_subscribers:
                     # Validate QoS settings for subscribers
-                    qos_depth = subscriber.get('QoS_depth')
-                    qos_policy = subscriber.get('QoS_policy')
-                    if qos_depth is None or qos_policy is None:
+                    qos_depth, qos_policy = subscriber.get('QoS_depth'), subscriber.get('QoS_policy')
+                    if qos_depth is not None and qos_depth < 0:
                         raise ValueError(
-                            f"Subscriber '{subscriber['name']}' must have both QoS_depth and QoS_policy"
-                        )
-                    if qos_depth < 0:
+                            f"QoS_depth for subscriber "
+                            f"'{subscriber['node']}/{subscriber['name']}' "
+                            f"must be >= 0")
+                    if qos_policy is not None and qos_policy not in ['reliable', 'best_effort']:
                         raise ValueError(
-                            f"QoS_depth for subscriber '{subscriber['name']}' must be >= 0"
-                        )
-                    if qos_policy not in ['reliable', 'best_effort']:
-                        raise ValueError(
-                            f"QoS_policy for subscriber '{subscriber['name']}' must be either 'reliable' or 'best_effort'"
-                        )
+                            f"QoS_policy for subscriber "
+                            f"'{subscriber['node']}/{subscriber['name']}' "
+                            f"must be either 'reliable' or 'best_effort'")
 
                     # Store subscriber_topics
                     for i in range(1, node_qty + 1):
@@ -202,8 +195,8 @@ class Config2Nodes:
             if 'frequency' in publisher:
                 publish_topic['frequency'] = publisher['frequency']
 
-            publish_topic['QoS_depth'] = publisher['QoS_depth']
-            publish_topic['QoS_policy'] = publisher['QoS_policy']
+            publish_topic['QoS_depth'] = publisher.get('QoS_depth', 1)
+            publish_topic['QoS_policy'] = publisher.get('QoS_policy', 'reliable')
 
             publisher_qty = publisher.get('qty', 1)
 
@@ -226,8 +219,8 @@ class Config2Nodes:
             topic_name = subscriber['name']
             subscribe_topic = {}
             subscribe_topic['node'] = subscriber['node']
-            subscribe_topic['QoS_depth'] = subscriber['QoS_depth']
-            subscribe_topic['QoS_policy'] = subscriber['QoS_policy']
+            subscribe_topic['QoS_depth'] = subscriber.get('QoS_depth', 1)
+            subscribe_topic['QoS_policy'] = subscriber.get('QoS_policy', 'reliable')
 
             subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
@@ -248,8 +241,9 @@ class Config2Nodes:
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
-                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}",
-                                                   'QoS_depth': value['QoS_depth'], 'QoS_policy': value['QoS_policy']}
+                    f'{namespace}_{num}/{topic}': {
+                        'node': f"{value['node']}_{num}",
+                        'QoS_depth': value['QoS_depth'], 'QoS_policy': value['QoS_policy']}
                     for key, value in subscribe_topics.items()
                     for namespace, topic in [key.split('/')]
                 }

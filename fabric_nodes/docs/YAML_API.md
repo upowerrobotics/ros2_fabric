@@ -102,3 +102,15 @@ Properties:
 ### Subscriber Objects
 
 Each subscriber object represents one subscriber on a node.
+
+Properties:
+
+- **QoS_depth** *[integer]*: This is the history depth and is relevant 
+  when the **history_policy** is set to **RMW_QOS_POLICY_HISTORY_KEEP_LAST**. 
+  The depth specifies the number of most recent messages that should be kept around. 
+  For instance, if depth is set to 10, only the 10 most recent messages will be stored. 
+  Any new incoming messages will overwrite the oldest stored messages. 
+  If the depth is set to 0 the **history_policy** will be set to **RMW_QOS_POLICY_HISTORY_KEEP_ALL**. 
+
+- **QoS_policy** *[string]*: The reliability policy of the QoS setting.
+  The policy can either be **reliable** or **best_effort**.

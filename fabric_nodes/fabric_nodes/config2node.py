@@ -79,6 +79,22 @@ class Config2Nodes:
                             f"'{node_config['name']}' must have at least two of the "
                             f'following parameters: bandwidth, msg_size, frequency'
                         )
+                    
+                    # Validate QoS settings for publishers
+                    qos_depth = publisher.get('QoS_depth')
+                    qos_policy = publisher.get('QoS_policy')
+                    if qos_depth is None or qos_policy is None:
+                        raise ValueError(
+                            f"Publisher '{publisher['name']}' must have both QoS_depth and QoS_policy"
+                        )
+                    if qos_depth < 0:
+                        raise ValueError(
+                            f"QoS_depth for publisher '{publisher['name']}' must be >= 0"
+                        )
+                    if qos_policy not in ['reliable', 'best_effort']:
+                        raise ValueError(
+                            f"QoS_policy for publisher '{publisher['name']}' must be either 'reliable' or 'best_effort'"
+                        )
 
                     # Store publisher_topics
                     for i in range(1, node_qty + 1):
@@ -95,6 +111,22 @@ class Config2Nodes:
                 node_subscribers = node_config.get('subscribers', [])
 
                 for subscriber in node_subscribers:
+                    # Validate QoS settings for subscribers
+                    qos_depth = subscriber.get('QoS_depth')
+                    qos_policy = subscriber.get('QoS_policy')
+                    if qos_depth is None or qos_policy is None:
+                        raise ValueError(
+                            f"Subscriber '{subscriber['name']}' must have both QoS_depth and QoS_policy"
+                        )
+                    if qos_depth < 0:
+                        raise ValueError(
+                            f"QoS_depth for subscriber '{subscriber['name']}' must be >= 0"
+                        )
+                    if qos_policy not in ['reliable', 'best_effort']:
+                        raise ValueError(
+                            f"QoS_policy for subscriber '{subscriber['name']}' must be either 'reliable' or 'best_effort'"
+                        )
+
                     # Store subscriber_topics
                     for i in range(1, node_qty + 1):
                         base_subscriber_node_name = subscriber['node']
@@ -251,7 +283,7 @@ class Config2Nodes:
                 'publish_topics': publish_topics,
                 'subscribe_topics': subscribe_topics,
             }],
-            # arguments=['--ros-args', '--log-level', 'DEBUG'],
+            arguments=['--ros-args', '--log-level', 'DEBUG'],
             output='log'
         )
         return node

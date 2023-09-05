@@ -7,9 +7,13 @@ environments:
         publishers:
           - name: topic_1M
             frequency: 25.0
+            QoS_depth: 1
+            QoS_policy: reliable
       - name: node2
         root_node: false
         terminal_node: true
         subscribers:
           - name: topic_1M
             node: node1
+            QoS_depth: 1
+            QoS_policy: reliable

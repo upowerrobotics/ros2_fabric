@@ -15,6 +15,7 @@
 
 
 import os
+import sys, getopt
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,7 +28,7 @@ from rclpy.node import Node
 class PlotCSV(Node):
     """Plot CSVs for analysis."""
 
-    def __init__(self, dds, input_csv_file='latest'):
+    def __init__(self, dds, input_csv_file):
         super().__init__('plot_csv')
         self.dds = dds
         self.input_csv_file = input_csv_file
@@ -115,13 +116,21 @@ class PlotCSV(Node):
         ax2.set_xticks([])
 
 
-def main(args=None):
-    rclpy.init(args=args)
-    m_plot = PlotCSV(dds='rmw_cyclonedds')
+def main(argv):
+    rclpy.init(args=None)
+    inputfile = "latest"
+    opts, _ = getopt.getopt(argv,"hi:",["input_csv="])
+    for opt, arg in opts:
+        if opt == '-h':
+            print ('Correct Usage: ros2 run fabric_nodes plot_csv.py -i/--input_csv <inputfile>')
+            sys.exit()
+        elif opt in ("-i", "--input_csv"):
+            inputfile = arg
+    m_plot = PlotCSV(dds='rmw_cyclonedds', input_csv_file=inputfile)
     m_plot.read_csv()
     m_plot.plot_csv()
     rclpy.shutdown()
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

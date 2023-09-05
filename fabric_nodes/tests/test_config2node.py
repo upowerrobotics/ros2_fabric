@@ -44,6 +44,10 @@ def test_error_configuration():
         'error_sub_connection_qty.test.yaml': 'is not connected',
         'error_sub_connection.test.yaml': 'is not connected',
         'error_terminal.test.yaml': 'cannot have publishers',
+        'error_pub_qos_policy.yaml': 'QoS_policy for publisher',
+        'error_sub_qos_policy.yaml': 'QoS_policy for subscriber',
+        'error_pub_qos_depth.yaml': 'QoS_depth for publisher',
+        'error_sub_qos_depth.yaml': 'QoS_depth for subscriber'
     }
 
     for config_file, expected_error in test_cases.items():

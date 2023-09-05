@@ -374,30 +374,20 @@ void DummyNode::sub_callback(
   float recieve_rate = (msg->seq_num != 0) ?
     (static_cast<float>(msg->seq_num - drop_msg_num) / msg->seq_num) : 1.0;
 
+  // Calculate Frequency and Bandwidth
+  revieve_bytes += (msg->data.size() + MSG_OVERHEAD);
+  receive_num++;
+  auto time_from_start = now - initial_freq_time;
+  auto freq = receive_num / time_from_start.seconds();
+  auto bandwidth = bw_format(revieve_bytes / time_from_start.seconds());
+
   RCLCPP_DEBUG(
     this->get_logger(),
     "Topic: %s, ROS xmt time ns: %li. ROSPUB TS: %li, ROSSUB TS: %li, "
-    "Drop Num: %li, Recieve Rate: %f",
+    "Drop Num: %li, Recieve Rate: %f, Freq: %f, Bandwidth: %s",
     topic_name.c_str(), xmt_diff.nanoseconds(),
     rclcpp::Time(msg->timestamp).nanoseconds(), now.nanoseconds(),
-    drop_msg_num, recieve_rate);
-
-  // Calculate Frequency and Bandwidth
-  revieve_bytes += (msg->data.size() + MSG_OVERHEAD);
-
-  receive_num++;
-  auto ten_sec_diff = now - initial_freq_time;
-  if (ten_sec_diff.seconds() >= 10) {
-    initial_freq_time = now;
-    auto freq = receive_num / ten_sec_diff.seconds();
-    auto bandwidth = bw_format(revieve_bytes / ten_sec_diff.seconds());
-    receive_num = 0;
-    revieve_bytes = 0;
-    RCLCPP_DEBUG(
-      this->get_logger(),
-      "Topic: %s, Freq: %f, Bandwidth: %s",
-      topic_name.c_str(), freq, bandwidth.c_str());
-  }
+    drop_msg_num, recieve_rate, freq, bandwidth.c_str());
 }
 
 /**

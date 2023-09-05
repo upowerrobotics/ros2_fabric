@@ -49,14 +49,13 @@ enum class SizeType
 };
 
 /**
- * @brief Struct to hold the settings of QoS.
+ * @brief Struct to hold the settings of QoS (history depth and policy).
  */
 struct QosSetting
 {
-  size_t depth;  ///< Set the history depth to keep last
-  std::string policy;  ///< Set the reliability setting to 'reliable' or 'best_effort'
+  size_t depth = 1;  ///< Set the history depth to keep last
+  std::string policy = "reliable";  ///< Set the reliability setting to 'reliable' or 'best_effort'
 };
-
 
 /**
  * @brief Struct to hold all information related to a Publish topic.

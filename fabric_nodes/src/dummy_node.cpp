@@ -158,7 +158,7 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
     } else if (param_name_trimmed == "QoS_policy") {
       this->get_parameter(param, pub.qos_setting.policy);
 
-      if (pub.qos_setting.policy != std::string("reliable") || pub.qos_setting.policy != std::string("best_effort")) {
+      if (pub.qos_setting.policy != std::string("reliable") && pub.qos_setting.policy != std::string("best_effort")) {
         throw rclcpp::exceptions::InvalidParametersException{param_prefix +
                 ": QoS policy should be 'reliable' or 'best_effort'."};
       }
@@ -254,7 +254,7 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
     } else if (param_name_trimmed == "QoS_policy") {
       this->get_parameter(param, sub.qos_setting.policy);
 
-      if (sub.qos_setting.policy != std::string("reliable") || sub.qos_setting.policy != std::string("best_effort")) {
+      if (sub.qos_setting.policy != std::string("reliable") && sub.qos_setting.policy != std::string("best_effort")) {
         throw rclcpp::exceptions::InvalidParametersException{param +
                 ": QoS policy should be 'reliable' or 'best_effort'."};
       }
@@ -284,8 +284,13 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
     sub.initial_freq_time, sub.revieve_bytes);
 
   rclcpp::QoS qos = rclcpp::QoS{sub.qos_setting.depth};
-  sub.subscriber = this->create_subscription<DummyMsgT>(
-    topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
+  if (sub.qos_setting.policy == std::string("reliable")) {
+    sub.subscriber = this->create_subscription<DummyMsgT>(
+      topic_oss.str(), qos.reliable(), cb, sub_options);
+  } else if (sub.qos_setting.policy == std::string("best_effort")) {
+    sub.subscriber = this->create_subscription<DummyMsgT>(
+      topic_oss.str(), qos.best_effort(), cb, sub_options);
+  }  
 
   m_subscribe_topics.push_back(std::move(sub));
 }

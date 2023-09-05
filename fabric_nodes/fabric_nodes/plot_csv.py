@@ -25,7 +25,7 @@ from rclpy.node import Node
 
 
 class PlotCSV(Node):
-    """ Plot CSVs for analysis """
+    """Plot CSVs for analysis."""
 
     def __init__(self, dds, input_csv_file='latest'):
         super().__init__('plot_csv')

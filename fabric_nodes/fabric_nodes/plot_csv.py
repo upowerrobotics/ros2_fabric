@@ -15,7 +15,6 @@
 
 
 import os
-import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,9 +25,7 @@ from rclpy.node import Node
 
 
 class PlotCSV(Node):
-    """
-    Plot CSVs for analysis
-    """
+    """ Plot CSVs for analysis """
 
     def __init__(self, dds, input_csv_file='latest'):
         super().__init__('plot_csv')
@@ -37,9 +34,9 @@ class PlotCSV(Node):
 
     def read_csv(self):
         if self.input_csv_file == 'latest':
-            files = [file for file in os.listdir(".") if (file.lower().endswith('time_log.csv'))]
+            files = [file for file in os.listdir('.') if (file.lower().endswith('time_log.csv'))]
             files.sort(key=os.path.getmtime)
-            self.input_csv_file=files[-1]
+            self.input_csv_file = files[-1]
         self.parsed_log_df = pd.read_csv(self.input_csv_file, sep='\t')
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
@@ -120,7 +117,7 @@ class PlotCSV(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    m_plot = PlotCSV(dds="rmw_cyclonedds")
+    m_plot = PlotCSV(dds='rmw_cyclonedds')
     m_plot.read_csv()
     m_plot.plot_csv()
     rclpy.shutdown()

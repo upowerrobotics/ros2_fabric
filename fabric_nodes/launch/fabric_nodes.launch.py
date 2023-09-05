@@ -13,17 +13,6 @@
 # limitations under the License.
 
 
-"""
-This module contains the function `generate_launch_description`.
-
-The configuration of the nodes is defined in a yaml file, either given by the 'CONFIG_FILE_PATH'
-environment variable or the default one located in 'param/pass_config.param.yaml'.
-A `Config2Nodes` object is created to parse this configuration for environment 'env1', which then
-generates the corresponding nodes.
-Note: This file should not be removed even in custom, cause it is use to do 'colcon test'
-"""
-
-
 import os
 
 from ament_index_python import get_package_share_directory
@@ -34,6 +23,10 @@ from launch.actions import OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 
 
+##
+# @brief This function use Config2Nodes to transfer config file to nodes.
+# @return nodes The nodes that is extracted from config file
+#
 def get_nodes(context, *args, **kwargs):
     config_path = LaunchConfiguration('config-path').perform(context)
     environment = LaunchConfiguration('environment').perform(context)
@@ -44,15 +37,11 @@ def get_nodes(context, *args, **kwargs):
     return nodes
 
 
+##
+# @brief Generate the LaunchDescription for the fabric_nodes package.
+# @return LaunchDescription The LaunchDescription object.
+#
 def generate_launch_description():
-    """
-    Generate the LaunchDescription for the fabric_nodes package.
-
-    Returns
-    -------
-    LaunchDescription: The LaunchDescription object.
-
-    """
     pass_config_path = os.path.join(
         get_package_share_directory('fabric_nodes'),
         'config/example.yaml'

@@ -25,6 +25,23 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  # Set input and output files
+  set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile)
+  set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxyfile)
+
+  # Request to configure the file
+  configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+  # Note the option ALL which allows to build the docs together with the application
+  add_custom_target(doc_doxygen ALL
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM)
+endif()
+
 # require that dependencies from package.xml be available
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies(REQUIRED
@@ -61,6 +78,7 @@ rclcpp_components_register_node(${PROJECT_NAME}
 # Testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_flake8_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 
   # launch test

@@ -26,24 +26,41 @@
 #include <rclcpp/exceptions.hpp>  // NOLINT
 #include <fabric_interfaces/msg/dummy_message.hpp>  // NOLINT
 
-using DummyMsgT = fabric_interfaces::msg::DummyMessage;
 using namespace std::chrono_literals;
 
-static constexpr size_t MSG_OVERHEAD = sizeof(DummyMsgT::timestamp) + sizeof(DummyMsgT::seq_num);
-
+/**
+ * @brief Calculates the length of a null-terminated C-style string.
+ * @param [in] str A pointer to the null-terminated C-style string.
+ * @return The length of the string (number of characters) excluding the null terminator.
+ */
 int constexpr char_len(const char * str)
 {
   return *str ? 1 + char_len(str + 1) : 0;
 }
 
-// Size of the text "publish_topics."
-static constexpr uint8_t PUBLISH_PREFIX_SIZE = char_len("publish_topics.");
-// Size of the text "subscribe_topics."
-static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE = char_len("subscribe_topics.");
+static constexpr size_t MSG_OVERHEAD =
+  sizeof(DummyMsgT::timestamp) +
+  sizeof(DummyMsgT::seq_num);  ///< The massage size that is over head.
+static constexpr uint8_t PUBLISH_PREFIX_SIZE =
+  char_len("publish_topics.");  ///< Size of the text "publish_topics."
+static constexpr uint8_t SUBSCRIBE_PREFIX_SIZE =
+  char_len("subscribe_topics.");  ///< Size of the text "subscribe_topics."
 
+/**
+ * @brief Namespace containing classes and functions for the fabric nodes.
+ */
 namespace fabric_nodes
 {
 
+/**
+ * @brief Constructs a DummyNode for ROS2
+ *
+ * The constructor for the DummyNode, which inherits from rclcpp::Node.
+ * It sets up publishers and subscribers based on parameters.
+ *
+ * @param [in] options ROS2 Node options.
+ * @exception rclcpp::exceptions::InvalidParametersException Throws an exception if required parameters are missing.
+ */
 DummyNode::DummyNode(rclcpp::NodeOptions options)
 : rclcpp::Node(
     "dummy_node",
@@ -72,7 +89,7 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   if (!m_root_node) {
     // If this is not a root node, look for subscribed topics
     if (subscribe_params_msg.names.empty()) {
-      RCLCPP_ERROR(this->get_logger(), "No topics provided to subscribe to.");
+      RCLCPP_ERROR(this->get_logger(), "No topics provided to subscribe.");
       return;
     }
 
@@ -83,6 +100,14 @@ DummyNode::DummyNode(rclcpp::NodeOptions options)
   }
 }
 
+/**
+ * @brief Parses and sets up a publish topic
+ *
+ * This function parses parameters to setup a topic that this node will publish to.
+ *
+ * @param [in] param_prefix The prefix string for parameters related to this topic.
+ * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
+ */
 void DummyNode::parse_publish_topic(const std::string & param_prefix)
 {
   PublishTopic pub;
@@ -174,15 +199,24 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
   m_publish_topics.push_back(std::move(pub));
 }
 
-void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
+/**
+ * @brief Parses and sets up a subscribe topic
+ *
+ * This function parses parameters to setup a topic to which this node will subscribe.
+ *
+ * @param [in] subscribe_prefix The prefix string for parameters related to this topic.
+ * @exception rclcpp::exceptions::InvalidParameterValueException Throws if parameter values are incorrect.
+ */
+void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
 {
   SubscribeTopic sub;
-  sub.topic_name = param_prefix.substr(SUBSCRIBE_PREFIX_SIZE, std::string::npos);
+  sub.topic_name = subscribe_prefix.substr(SUBSCRIBE_PREFIX_SIZE, std::string::npos);
   RCLCPP_INFO(this->get_logger(), "Subscribe topic: %s", sub.topic_name.c_str());
-  const auto prefix_params_msg = this->list_parameters({param_prefix}, 3);
+  const auto prefix_params_msg = this->list_parameters({subscribe_prefix}, 3);
 
   for (const auto & param : prefix_params_msg.names) {
-    const auto & param_name_trimmed = param.substr(param_prefix.length() + 1, std::string::npos);
+    const auto & param_name_trimmed =
+      param.substr(subscribe_prefix.length() + 1, std::string::npos);
     bool param_format_invalid = false;
 
     if (param_name_trimmed == "node") {
@@ -223,6 +257,16 @@ void DummyNode::parse_subscribe_topic(const std::string & param_prefix)
   m_subscribe_topics.push_back(std::move(sub));
 }
 
+/**
+ * @brief Parses data size string into a scalar and unit type
+ *
+ * Converts data size string (like "10M", "20K") into a scalar and unit type for easy calculations.
+ *
+ * @param [in] data_size The data size string (e.g., "10M", "20K").
+ * @param [out] scalar Extracted scalar value.
+ * @param [out] type Extracted size type (Bytes, KiloBytes, etc).
+ * @return True if parsing successful, otherwise false.
+ */
 bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, SizeType * type)
 {
   if (data_size.length() == 0) {return false;}
@@ -254,6 +298,12 @@ bool DummyNode::parse_data_size(const std::string & data_size, float * scalar, S
   return true;
 }
 
+/**
+ * @brief Publish callback.
+ * @param [in] publisher The ROS2 publisher.
+ * @param [in] msg_bytes The size of the message in bytes.
+ * @param [in,out] seq_num The sequence number.
+ */
 void DummyNode::pub_callback(
   rclcpp::Publisher<DummyMsgT>::SharedPtr publisher, uint64_t msg_bytes,
   int64_t & seq_num)
@@ -267,6 +317,16 @@ void DummyNode::pub_callback(
   publisher->publish(std::move(msg));
 }
 
+/**
+ * @brief Subscribe callback.
+ * @param [in] msg Received message.
+ * @param [in] topic_name The topic name.
+ * @param [in,out] seq_num Sequence number.
+ * @param [in,out] drop_msg_num Dropped message count.
+ * @param [in,out] receive_num Received message count.
+ * @param [in,out] initial_freq_time Initial frequency time for the topic.
+ * @param [in,out] revieve_bytes Received bytes for the topic.
+ */
 void DummyNode::sub_callback(
   const DummyMsgT::SharedPtr msg, const std::string & topic_name,
   int64_t & seq_num, int64_t & drop_msg_num, int64_t & receive_num,
@@ -312,6 +372,11 @@ void DummyNode::sub_callback(
   }
 }
 
+/**
+ * @brief Utility function for formatting bandwidth.
+ * @param [in] byte Bandwidth in bytes.
+ * @return Formatted bandwidth.
+ */
 std::string DummyNode::bw_format(const size_t byte)
 {
   if (byte < static_cast<size_t>(SizeType::KILOBYTES)) {

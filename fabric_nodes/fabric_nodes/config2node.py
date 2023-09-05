@@ -169,6 +169,10 @@ class Config2Nodes:
                 publish_topic['bandwidth'] = publisher['bandwidth']
             if 'frequency' in publisher:
                 publish_topic['frequency'] = publisher['frequency']
+            if 'QoS_depth' in publisher:
+                publish_topic['QoS_depth'] = publisher['QoS_depth']
+            if 'QoS_policy' in publisher:
+                publish_topic['QoS_policy'] = publisher['QoS_policy']
 
             publisher_qty = publisher.get('qty', 1)
 
@@ -244,7 +248,7 @@ class Config2Nodes:
                 'publish_topics': publish_topics,
                 'subscribe_topics': subscribe_topics,
             }],
-            arguments=['--ros-args', '--log-level', 'DEBUG'],
+            # arguments=['--ros-args', '--log-level', 'DEBUG'],
             output='log'
         )
         return node

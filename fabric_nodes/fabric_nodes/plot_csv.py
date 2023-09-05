@@ -30,17 +30,17 @@ class PlotCSV(Node):
     Plot CSVs for analysis
     """
 
-    def __init__(self, dds):
+    def __init__(self, dds, input_csv_file='latest'):
         super().__init__('plot_csv')
         self.dds = dds
+        self.input_csv_file = input_csv_file
 
-    def read_csv(self, input_csv_file='latest'):
-        if input_csv_file == 'latest':
+    def read_csv(self):
+        if self.input_csv_file == 'latest':
             files = [file for file in os.listdir(".") if (file.lower().endswith('time_log.csv'))]
             files.sort(key=os.path.getmtime)
-            input_csv_file=files[-1]
-            print(input_csv_file)
-        self.parsed_log_df = pd.read_csv(input_csv_file, sep='\t')
+            self.input_csv_file=files[-1]
+        self.parsed_log_df = pd.read_csv(self.input_csv_file, sep='\t')
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
         self.parsed_df_by_topics = self.parsed_log_df.groupby('Topic').agg(

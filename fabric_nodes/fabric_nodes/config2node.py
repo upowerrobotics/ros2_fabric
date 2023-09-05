@@ -169,10 +169,9 @@ class Config2Nodes:
                 publish_topic['bandwidth'] = publisher['bandwidth']
             if 'frequency' in publisher:
                 publish_topic['frequency'] = publisher['frequency']
-            if 'QoS_depth' in publisher:
-                publish_topic['QoS_depth'] = publisher['QoS_depth']
-            if 'QoS_policy' in publisher:
-                publish_topic['QoS_policy'] = publisher['QoS_policy']
+
+            publish_topic['QoS_depth'] = publisher['QoS_depth']
+            publish_topic['QoS_policy'] = publisher['QoS_policy']
 
             publisher_qty = publisher.get('qty', 1)
 
@@ -193,7 +192,10 @@ class Config2Nodes:
 
         for subscriber in subscribers:
             topic_name = subscriber['name']
-            subscribe_topic = {'node': subscriber['node']}
+            subscribe_topic = {}
+            subscribe_topic['node'] = subscriber['node']
+            subscribe_topic['QoS_depth'] = subscriber['QoS_depth']
+            subscribe_topic['QoS_policy'] = subscriber['QoS_policy']
 
             subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
@@ -214,7 +216,8 @@ class Config2Nodes:
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
-                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}"}
+                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}",
+                                                   'QoS_depth': value['QoS_depth'], 'QoS_policy': value['QoS_policy']}
                     for key, value in subscribe_topics.items()
                     for namespace, topic in [key.split('/')]
                 }

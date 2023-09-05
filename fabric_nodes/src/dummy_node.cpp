@@ -168,15 +168,15 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
       param_format_invalid = true;
     }
 
-    if (pub.bandwidth_scalar == 0.0f && pub.frequency == 0.0f && pub.msg_size_scalar == 0.0f) {
-      throw rclcpp::exceptions::InvalidParametersException{param_prefix +
-              ": each topic must have two of bandwidth, frequency, or msg_size."};
-    }
-
     if (param_format_invalid) {
       throw rclcpp::exceptions::InvalidParameterValueException{param +
               " does not have a valid format."};
     }
+  }
+
+  if (pub.bandwidth_scalar == 0.0f && pub.frequency == 0.0f && pub.msg_size_scalar == 0.0f) {
+    throw rclcpp::exceptions::InvalidParametersException{param_prefix +
+            ": each topic must have two of bandwidth, frequency, or msg_size."};
   }
 
   // TODO(jwhitleywork): Figure out QoS settings

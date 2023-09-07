@@ -120,9 +120,9 @@ class GetLog(Node):
                                        ', ending at ' + str(current_timestamp))
                 use_input_time = True
                 break
-            stats_log = re.search(r'(?<=\]\s)\[.*node.*:\sT.*', line)
+            stats_log = re.search(r'.*Topic:.*', line)
             if stats_log is not None:  # valid lines
-                rmw_log = re.search(r'\[.*node.*\.(C|F|e|R).*]:\sT.*', line)
+                rmw_log = re.search(r'\[.*\.(C|F|e|R).*]:\sT.*', line)
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
                     continue

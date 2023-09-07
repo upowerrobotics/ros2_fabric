@@ -74,7 +74,7 @@ class GetLog(Node):
         receive_rate = str(re.search(r'(?<=Recieve\sRate:\s)\d*.\d*', log).group()) or None
         time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
         topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
-        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*', log).group()) or None
+        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*(K|M|G)?B', log).group()) or None
         return [topic_name, sub_node, pub_node,
                 ros_time, ros_sub_time, ros_pub_time, drop_num, receive_rate,
                 time_stamp, topic_freq, topic_bw]

@@ -7,5 +7,3 @@ environments:
         subscribers:
           - name: topic_1M
             node: node1
-            qos_depth: 1
-            qos_policy: reliable

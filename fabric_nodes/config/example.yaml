@@ -26,12 +26,8 @@ environments:
         subscribers:
           - name: lidar_raw_data_1
             node: lidar_publisher_node
-            qos_depth: 1
-            qos_policy: reliable
           - name: lidar_raw_data_2
             node: lidar_publisher_node
-            qos_depth: 1
-            qos_policy: reliable
       - name: lidar_reciever_node
         qty: 2
         root_node: false
@@ -39,9 +35,5 @@ environments:
         subscribers:
           - name: lidar_transfer_data_1
             node: lidar_transformer_node
-            qos_depth: 1
-            qos_policy: reliable
           - name: lidar_transfer_data_2
             node: lidar_transformer_node
-            qos_depth: 1
-            qos_policy: reliable

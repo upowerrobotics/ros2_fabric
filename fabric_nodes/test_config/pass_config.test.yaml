@@ -50,28 +50,16 @@ environments:
         subscribers:
           - name: topic_1M
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_1
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_2
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_1
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_2
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_3
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
       - name: node3
         qty: 2
         root_node: false
@@ -79,61 +67,31 @@ environments:
         subscribers:
           - name: topic_1M_1
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_1M_2
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_1M_3
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_1M_4
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_1
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_2
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_3
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_4
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_5
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_1
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_2
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_3
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_4
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_5
             node: node2
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_500K_6
             node: node2
-            qos_depth: 1
-            qos_policy: reliable

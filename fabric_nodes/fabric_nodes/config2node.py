@@ -107,19 +107,6 @@ class Config2Nodes:
                 node_subscribers = node_config.get('subscribers', [])
 
                 for subscriber in node_subscribers:
-                    # Validate QoS settings for subscribers
-                    qos_depth, qos_policy = subscriber.get('qos_depth'), subscriber.get('qos_policy')
-                    if qos_depth is not None and qos_depth < 0:
-                        raise ValueError(
-                            f"qos_depth for subscriber "
-                            f"'{subscriber['node']}/{subscriber['name']}' "
-                            f"must be >= 0")
-                    if qos_policy is not None and qos_policy not in ['reliable', 'best_effort']:
-                        raise ValueError(
-                            f"qos_policy for subscriber "
-                            f"'{subscriber['node']}/{subscriber['name']}' "
-                            f"must be either 'reliable' or 'best_effort'")
-
                     # Store subscriber_topics
                     for i in range(1, node_qty + 1):
                         base_subscriber_node_name = subscriber['node']
@@ -219,8 +206,6 @@ class Config2Nodes:
             topic_name = subscriber['name']
             subscribe_topic = {}
             subscribe_topic['node'] = subscriber['node']
-            subscribe_topic['qos_depth'] = subscriber.get('qos_depth', 1)
-            subscribe_topic['qos_policy'] = subscriber.get('qos_policy', 'reliable')
 
             subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
@@ -242,8 +227,7 @@ class Config2Nodes:
             if node_qty != 1:
                 subscribe_topics_qty = {
                     f'{namespace}_{num}/{topic}': {
-                        'node': f"{value['node']}_{num}",
-                        'qos_depth': value['qos_depth'], 'qos_policy': value['qos_policy']}
+                        'node': f"{value['node']}_{num}"}
                     for key, value in subscribe_topics.items()
                     for namespace, topic in [key.split('/')]
                 }
@@ -277,8 +261,8 @@ class Config2Nodes:
                 'publish_topics': publish_topics,
                 'subscribe_topics': subscribe_topics,
             }],
-            arguments=['--ros-args', '--log-level', 'DEBUG'],
-            output='log'
+            # arguments=['--ros-args', '--log-level', 'DEBUG'],
+            output='screen'
         )
         return node
 

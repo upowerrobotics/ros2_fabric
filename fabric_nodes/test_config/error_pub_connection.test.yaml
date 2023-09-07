@@ -22,9 +22,5 @@ environments:
         subscribers:
           - name: topic_2M_1
             node: node1
-            qos_depth: 1
-            qos_policy: reliable
           - name: topic_2M_2
             node: node1
-            qos_depth: 1
-            qos_policy: reliable

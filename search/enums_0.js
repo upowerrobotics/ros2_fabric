@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sizetype_140',['SizeType',['../namespacefabric__nodes.html#a0d094e141b260675d126fcfc51750a56',1,'fabric_nodes']]]
+  ['sizetype_126',['SizeType',['../namespacefabric__nodes.html#a0d094e141b260675d126fcfc51750a56',1,'fabric_nodes']]]
 ];

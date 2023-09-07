@@ -1,4 +1,0 @@
-<map id="fabric_nodes::PublishTopic" name="fabric_nodes::PublishTopic">
-<area shape="rect" id="node1" title="Struct to hold all information related to a Publish topic." alt="" coords="5,95,199,121"/>
-<area shape="rect" id="node2" href="$structfabric__nodes_1_1QosSetting.html" title="Struct to hold the settings of QoS (history depth and policy)." alt="" coords="10,5,194,32"/>
-</map>

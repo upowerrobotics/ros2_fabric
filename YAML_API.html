@@ -107,17 +107,10 @@ Publisher Objects</h3>
 <li><b>bandwidth</b> <em>[string]</em>: The total bandwidth for this topic or a single instance of this topic if <b>qty</b> is greater than 1. This value is a combination of a float value and a single character indicating the unit. The character unit can be <b>B</b>, <b>K</b>, <b>M</b>, or <b>G</b> indicating Bytes, Kilobytes, Megabytes, or Gigabytes per second respectively. e.g. <b>2.3M</b> would be 2.3 Megabytes/second or 2,411,725 Bytes/second (rounded to the nearest integer value).</li>
 <li><b>frequency</b> <em>[float]</em>: The frequency of message publishing in messages/second.</li>
 <li><b>msg_size</b> <em>[string]</em>: The size of the payload of each message transmission, not including a timestamp field. This value is a combination of a float value and a single character indicating the unit. The character unit can be <b>B</b>, <b>K</b>, <b>M</b>, or <b>G</b> indicating Bytes, Kilobytes, Megabytes, or Gigabytes respectively. e.g. <b>2.3M</b> would be 2.3 Megabytes or 2,411,725 Bytes (rounded to the nearest integer value).</li>
-<li><b>QoS_depth</b> <em>[integer]</em>: This is the history depth and is relevant when the <b>history_policy</b> is set to <b>RMW_QOS_POLICY_HISTORY_KEEP_LAST</b>. The depth specifies the number of most recent messages that should be kept around. For instance, if depth is set to 10, only the 10 most recent messages will be stored. Any new incoming messages will overwrite the oldest stored messages. If the depth is set to 0 the <b>history_policy</b> will be set to <b>RMW_QOS_POLICY_HISTORY_KEEP_ALL</b>. (Default: 1)</li>
-<li><b>QoS_policy</b> <em>[string]</em>: The reliability policy of the QoS setting. The policy can either be <b>reliable</b> or <b>best_effort</b>. (Default: reliable)</li>
 </ul>
 <h3><a class="anchor" id="autotoc_md17"></a>
 Subscriber Objects</h3>
-<p>Each subscriber object represents one subscriber on a node.</p>
-<p>Properties:</p>
-<ul>
-<li><b>QoS_depth</b> <em>[integer]</em>: This is the history depth and is relevant when the <b>history_policy</b> is set to <b>RMW_QOS_POLICY_HISTORY_KEEP_LAST</b>. The depth specifies the number of most recent messages that should be kept around. For instance, if depth is set to 10, only the 10 most recent messages will be stored. Any new incoming messages will overwrite the oldest stored messages. If the depth is set to 0 the <b>history_policy</b> will be set to <b>RMW_QOS_POLICY_HISTORY_KEEP_ALL</b>. (Default: 1)</li>
-<li><b>QoS_policy</b> <em>[string]</em>: The reliability policy of the QoS setting. The policy can either be <b>reliable</b> or <b>best_effort</b>. (Default: reliable) </li>
-</ul>
+<p>Each subscriber object represents one subscriber on a node. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

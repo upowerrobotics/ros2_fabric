@@ -8,10 +8,10 @@ environments:
           - name: topic_1M
             msg_size: 1M
             frequency: 25.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
         subscribers:
           - name: topic_1M
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable

@@ -10,8 +10,8 @@ environments:
             qty: 2
             msg_size: 2M
             frequency: 5.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
       - name: lidar_transformer_node
         qty: 2
         root_node: false
@@ -21,17 +21,17 @@ environments:
             qty: 2
             bandwidth: 2M
             frequency: 20.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
         subscribers:
           - name: lidar_raw_data_1
             node: lidar_publisher_node
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: lidar_raw_data_2
             node: lidar_publisher_node
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
       - name: lidar_reciever_node
         qty: 2
         root_node: false
@@ -39,9 +39,9 @@ environments:
         subscribers:
           - name: lidar_transfer_data_1
             node: lidar_transformer_node
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: lidar_transfer_data_2
             node: lidar_transformer_node
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable

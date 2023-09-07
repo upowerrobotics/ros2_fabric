@@ -10,20 +10,20 @@ environments:
             qty: 1
             msg_size: 1M
             frequency: 25.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M
             qty: 2
             bandwidth: 2M
             msg_size: 250K
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K
             qty: 3
             bandwidth: 500K
             frequency: 10.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
       - name: node2
         qty: 2
         root_node: false
@@ -33,45 +33,45 @@ environments:
             qty: 4
             msg_size: 1M
             frequency: 25.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M
             qty: 5
             bandwidth: 2M
             msg_size: 250K
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K
             qty: 6
             bandwidth: 500K
             frequency: 10.0
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
         subscribers:
           - name: topic_1M
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_1
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_2
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_1
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_2
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_3
             node: node1
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
       - name: node3
         qty: 2
         root_node: false
@@ -79,61 +79,61 @@ environments:
         subscribers:
           - name: topic_1M_1
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_1M_2
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_1M_3
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_1M_4
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_1
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_2
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_3
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_4
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_2M_5
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_1
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_2
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_3
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_4
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_5
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable
           - name: topic_500K_6
             node: node2
-            QoS_depth: 1
-            QoS_policy: reliable
+            qos_depth: 1
+            qos_policy: reliable

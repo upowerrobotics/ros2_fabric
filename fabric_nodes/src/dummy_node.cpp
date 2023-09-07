@@ -151,11 +151,11 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
         "\tmsg size: %.1f bytes",
         pub.msg_size_scalar * static_cast<uint64_t>(pub.msg_size_type)
       );
-    } else if (param_name_trimmed == "QoS_depth") {
+    } else if (param_name_trimmed == "qos_depth") {
       this->get_parameter(param, pub.qos_setting.depth);
 
       RCLCPP_INFO(this->get_logger(), "\tQoS depth: %ld", pub.qos_setting.depth);
-    } else if (param_name_trimmed == "QoS_policy") {
+    } else if (param_name_trimmed == "qos_policy") {
       this->get_parameter(param, pub.qos_setting.policy);
 
       if (pub.qos_setting.policy != std::string("reliable") &&
@@ -249,11 +249,11 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
       }
 
       RCLCPP_INFO(this->get_logger(), "\tnode name: %s", sub.node_name.c_str());
-    } else if (param_name_trimmed == "QoS_depth") {
+    } else if (param_name_trimmed == "qos_depth") {
       this->get_parameter(param, sub.qos_setting.depth);
 
       RCLCPP_INFO(this->get_logger(), "\tQoS depth: %ld", sub.qos_setting.depth);
-    } else if (param_name_trimmed == "QoS_policy") {
+    } else if (param_name_trimmed == "qos_policy") {
       this->get_parameter(param, sub.qos_setting.policy);
 
       if (sub.qos_setting.policy != std::string("reliable") &&

@@ -65,7 +65,7 @@ class GetLog(Node):
     #
     def search_ros_log(self, log):
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)', log).group()) or None
-        sub_node = str(re.search(r'(?<=\[)(.*node.*)(?=.\1\])', log).group()) or None
+        sub_node = str(re.search(r'(?<=\[)(.*)(?=.\1\])', log).group()) or None
         pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)', log).group()) or None
         ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*', log).group()) or None
         ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*', log).group()) or None

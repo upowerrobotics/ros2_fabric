@@ -279,6 +279,7 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
       sub.subscriber = this->create_subscription<DummyMsgT>(topic_oss.str(), qos, cb, sub_options);
       break;
     }
+    rclcpp::sleep_for(std::chrono::milliseconds(100));
   }
 
   m_subscribe_topics.push_back(std::move(sub));

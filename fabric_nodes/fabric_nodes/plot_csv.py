@@ -25,14 +25,25 @@ import rclpy
 from rclpy.node import Node
 
 
+##
+# @class PlotCSV.
+# @brief Plotting based on statistics from csv files.
+#
 class PlotCSV(Node):
-    """Plot CSVs for analysis."""
 
+    ##
+    # @brief The contructor for PlotCSV.
+    # @param [in] dds Data Distribution Service middleware.
+    # @param [in] input_csv_file Input csv name.
+    #
     def __init__(self, dds, input_csv_file):
         super().__init__('plot_csv')
         self.dds = dds
         self.input_csv_file = input_csv_file
 
+    ##
+    # @brief Read either the latest csv generated or specific input file
+    #
     def read_csv(self):
         if self.input_csv_file == 'latest':
             files = [file for file in os.listdir('.') if (file.lower().endswith('time_log.csv'))]
@@ -51,12 +62,18 @@ class PlotCSV(Node):
         for gp in topics_groups.groups:
             self.each_topic_parsed_log_df.append(topics_groups.get_group(gp))
 
+    ##
+    # @brief Generate various plots to visualize the log data.
+    #
     def plot_csv(self):
         # self.plot_bar_xmt_by_topics()
         # self.plot_diff_xmt_by_topics()
         self.plot_topic_time_series(self.each_topic_parsed_log_df[0])
         plt.show()
 
+    ##
+    # @brief Plot histograms for transmission times.
+    #
     def plot_hist_xmt_time(self):
         ax1 = plt.subplot(1, 2, 1)
         ax1.hist(self.ros_xmt_time, color='blue', edgecolor='black')
@@ -70,6 +87,9 @@ class PlotCSV(Node):
         ax2.set_xlabel('Time (Nanoseconds)')
         ax2.set_ylabel('Occurrences')
 
+    ##
+    # @brief Plot average transmission time by topics.
+    #
     def plot_bar_xmt_by_topics(self):
         plt.bar(list(self.parsed_df_by_topics['Topic']),
                 list(self.parsed_df_by_topics['avg_ros_time']))
@@ -81,6 +101,9 @@ class PlotCSV(Node):
         plt.ylabel('Time (Nanoseconds)')
         plt.xticks(rotation=90, fontsize=6)
 
+    ##
+    # @brief Plot difference in transmission time by topics.
+    #
     def plot_diff_xmt_by_topics(self):
         plt.plot(range(len(list(self.parsed_df_by_topics['Topic']))),
                  np.subtract(list(self.parsed_df_by_topics['avg_ros_time']),
@@ -93,6 +116,10 @@ class PlotCSV(Node):
                    labels=list(self.parsed_df_by_topics['Topic']),
                    rotation=90, fontsize=6)
 
+    ##
+    # @brief Plot time series for each topic.
+    # @param topic_df DataFrame containing the log data for a specific topic
+    #
     def plot_topic_time_series(self, topic_df):
         ax1 = plt.subplot(2, 1, 1)
         ax1.plot(topic_df['ROS Layer Publisher Time'], topic_df['ROS Layer Transmission Time'])
@@ -116,6 +143,9 @@ class PlotCSV(Node):
         ax2.set_xticks([])
 
 
+##
+# @brief Retrieve Argument from Command Line. Initialize the ROS node and run the PlotCSV class methods.
+#
 def main(argv):
     rclpy.init(args=None)
     inputfile = "latest"

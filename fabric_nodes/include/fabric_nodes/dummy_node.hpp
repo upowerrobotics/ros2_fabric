@@ -79,7 +79,6 @@ struct PublishTopic
  */
 struct SubscribeTopic
 {
-  QosSetting qos_setting;
   std::string node_name = "";  ///< Node name
   std::string topic_name = "";  ///< Name of the topic
   rclcpp::Subscription<DummyMsgT>::SharedPtr subscriber;  ///< ROS2 Subscriber

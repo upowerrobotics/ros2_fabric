@@ -62,7 +62,7 @@ struct QosSetting
  */
 struct PublishTopic
 {
-  QosSetting qos_setting;
+  QosSetting qos_setting;  ///< The QoS policy of the publisher
   float bandwidth_scalar = 0.0f;  ///< Bandwidth scalar
   SizeType bandwidth_size_type = SizeType::BYTES;  ///< Size type for bandwidth
   float frequency = 0.0f;  ///< Publishing frequency

@@ -7,11 +7,16 @@ var searchData=
   ['parsed_5fdf_5fby_5ftopics_36',['parsed_df_by_topics',['../classfabric__nodes_1_1get__log_1_1GetLog.html#abe2cfe230b2445b45a874105624e2869',1,'fabric_nodes::get_log::GetLog']]],
   ['parsed_5ffreq_5fbw_5fdf_37',['parsed_freq_bw_df',['../classfabric__nodes_1_1get__log_1_1GetLog.html#a091823d1532154c284e6c59c91a25e95',1,'fabric_nodes::get_log::GetLog']]],
   ['parsed_5flog_5fdf_38',['parsed_log_df',['../classfabric__nodes_1_1get__log_1_1GetLog.html#a859036287fb69b174274fc3b12d44e17',1,'fabric_nodes::get_log::GetLog']]],
-  ['plotcsv_39',['PlotCSV',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html',1,'fabric_nodes::plot_csv']]],
-  ['process_5fpublishers_40',['process_publishers',['../classfabric__nodes_1_1config2node_1_1Config2Nodes.html#a1dbbbf9dcc71810fc9d5360ccbad9993',1,'fabric_nodes::config2node::Config2Nodes']]],
-  ['process_5fsubscribers_41',['process_subscribers',['../classfabric__nodes_1_1config2node_1_1Config2Nodes.html#a67df3c8c5fb657c3499c26b94bf0b44e',1,'fabric_nodes::config2node::Config2Nodes']]],
-  ['pub_5fcallback_42',['pub_callback',['../classfabric__nodes_1_1DummyNode.html#a9df534aa7c39f85dc7ca24f3de724e60',1,'fabric_nodes::DummyNode']]],
-  ['publish_5ftimer_43',['publish_timer',['../structfabric__nodes_1_1PublishTopic.html#a4d23bcd3af2bbed306d98ff1a16a237e',1,'fabric_nodes::PublishTopic']]],
-  ['publisher_44',['publisher',['../structfabric__nodes_1_1PublishTopic.html#ab913c65f5f6eea08ff0fbd410974a233',1,'fabric_nodes::PublishTopic']]],
-  ['publishtopic_45',['PublishTopic',['../structfabric__nodes_1_1PublishTopic.html',1,'fabric_nodes']]]
+  ['plot_5fbar_5fxmt_5fby_5ftopics_39',['plot_bar_xmt_by_topics',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html#a63f6a5a139b40958fd0a5550d3072809',1,'fabric_nodes::plot_csv::PlotCSV']]],
+  ['plot_5fcsv_40',['plot_csv',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html#a68b7e5f41595a78cd9a0b9718230ca4c',1,'fabric_nodes::plot_csv::PlotCSV']]],
+  ['plot_5fdiff_5fxmt_5fby_5ftopics_41',['plot_diff_xmt_by_topics',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html#a431d26101897aa20326353278e65736f',1,'fabric_nodes::plot_csv::PlotCSV']]],
+  ['plot_5fhist_5fxmt_5ftime_42',['plot_hist_xmt_time',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html#aa53f63f9a53da81ccef9e54dbd176297',1,'fabric_nodes::plot_csv::PlotCSV']]],
+  ['plot_5ftopic_5ftime_5fseries_43',['plot_topic_time_series',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html#ac2cff41a24168d318e2775b80c776692',1,'fabric_nodes::plot_csv::PlotCSV']]],
+  ['plotcsv_44',['PlotCSV',['../classfabric__nodes_1_1plot__csv_1_1PlotCSV.html',1,'fabric_nodes::plot_csv']]],
+  ['process_5fpublishers_45',['process_publishers',['../classfabric__nodes_1_1config2node_1_1Config2Nodes.html#a1dbbbf9dcc71810fc9d5360ccbad9993',1,'fabric_nodes::config2node::Config2Nodes']]],
+  ['process_5fsubscribers_46',['process_subscribers',['../classfabric__nodes_1_1config2node_1_1Config2Nodes.html#a67df3c8c5fb657c3499c26b94bf0b44e',1,'fabric_nodes::config2node::Config2Nodes']]],
+  ['pub_5fcallback_47',['pub_callback',['../classfabric__nodes_1_1DummyNode.html#a9df534aa7c39f85dc7ca24f3de724e60',1,'fabric_nodes::DummyNode']]],
+  ['publish_5ftimer_48',['publish_timer',['../structfabric__nodes_1_1PublishTopic.html#a4d23bcd3af2bbed306d98ff1a16a237e',1,'fabric_nodes::PublishTopic']]],
+  ['publisher_49',['publisher',['../structfabric__nodes_1_1PublishTopic.html#ab913c65f5f6eea08ff0fbd410974a233',1,'fabric_nodes::PublishTopic']]],
+  ['publishtopic_50',['PublishTopic',['../structfabric__nodes_1_1PublishTopic.html',1,'fabric_nodes']]]
 ];

@@ -151,6 +151,21 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
         "\tmsg size: %.1f bytes",
         pub.msg_size_scalar * static_cast<uint64_t>(pub.msg_size_type)
       );
+    } else if (param_name_trimmed == "qos_depth") {
+      this->get_parameter(param, pub.qos_setting.depth);
+
+      RCLCPP_INFO(this->get_logger(), "\tQoS depth: %ld", pub.qos_setting.depth);
+    } else if (param_name_trimmed == "qos_policy") {
+      this->get_parameter(param, pub.qos_setting.policy);
+
+      if (pub.qos_setting.policy != std::string("reliable") &&
+        pub.qos_setting.policy != std::string("best_effort"))
+      {
+        throw rclcpp::exceptions::InvalidParametersException{param +
+                ": QoS policy should be 'reliable' or 'best_effort'."};
+      }
+
+      RCLCPP_INFO(this->get_logger(), "\tQoS policy: %s", pub.qos_setting.policy.c_str());
     } else {
       param_format_invalid = true;
     }
@@ -166,8 +181,14 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
     }
   }
 
-  // TODO(jwhitleywork): Figure out QoS settings
-  pub.publisher = this->create_publisher<DummyMsgT>(pub.topic_name, rclcpp::QoS{1});
+  rclcpp::QoS qos =
+    (pub.qos_setting.depth !=
+    0) ? rclcpp::QoS{pub.qos_setting.depth} : rclcpp::QoS{rclcpp::KeepAll()};
+  if (pub.qos_setting.policy == "reliable") {
+    pub.publisher = this->create_publisher<DummyMsgT>(pub.topic_name, qos.reliable());
+  } else if (pub.qos_setting.policy == "best_effort") {
+    pub.publisher = this->create_publisher<DummyMsgT>(pub.topic_name, qos.best_effort());
+  }
 
   float frequency = pub.frequency;
   uint64_t msg_bytes =
@@ -251,8 +272,15 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
     topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num,
     sub.initial_freq_time, sub.revieve_bytes);
 
-  sub.subscriber = this->create_subscription<DummyMsgT>(
-    topic_oss.str(), rclcpp::QoS{1}, cb, sub_options);
+  while (true) {
+    auto publishers_info = this->get_publishers_info_by_topic(topic_oss.str());
+    if (publishers_info.size() > 0) {
+      auto qos = publishers_info[0].qos_profile();
+      sub.subscriber = this->create_subscription<DummyMsgT>(topic_oss.str(), qos, cb, sub_options);
+      break;
+    }
+    rclcpp::sleep_for(std::chrono::milliseconds(100));
+  }
 
   m_subscribe_topics.push_back(std::move(sub));
 }

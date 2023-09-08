@@ -89,6 +89,17 @@ Properties:
   or Gigabytes respectively. e.g. **2.3M** would be 2.3 Megabytes or 2,411,725 Bytes (rounded to the
   nearest integer value).
 
+- **QoS_depth** *[integer]*: This is the history depth. 
+  The depth specifies the number of most recent messages that should be kept around. 
+  For instance, if depth is set to 10, only the 10 most recent messages will be stored. 
+  Any new incoming messages will overwrite the oldest stored messages. 
+  If the depth is set to 0 the **history_policy** will be set to **RMW_QOS_POLICY_HISTORY_KEEP_ALL**.
+  (Default: 1)
+
+- **QoS_policy** *[string]*: The reliability policy of the QoS setting.
+  The policy can either be **reliable** or **best_effort**. (Default: reliable)
+
 ### Subscriber Objects
 
-Each subscriber object represents one subscriber on a node.
+Each subscriber object represents one subscriber on a node. 
+The QoS policy of each subscriber will be settled the same as the connected publisher.

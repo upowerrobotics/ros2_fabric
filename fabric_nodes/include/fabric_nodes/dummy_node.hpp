@@ -49,10 +49,20 @@ enum class SizeType
 };
 
 /**
+ * @brief Struct to hold the settings of QoS (history depth and policy).
+ */
+struct QosSetting
+{
+  size_t depth = 1;  ///< Set the history depth to keep last
+  std::string policy = "reliable";  ///< Set the reliability setting to 'reliable' or 'best_effort'
+};
+
+/**
  * @brief Struct to hold all information related to a Publish topic.
  */
 struct PublishTopic
 {
+  QosSetting qos_setting;
   float bandwidth_scalar = 0.0f;  ///< Bandwidth scalar
   SizeType bandwidth_size_type = SizeType::BYTES;  ///< Size type for bandwidth
   float frequency = 0.0f;  ///< Publishing frequency

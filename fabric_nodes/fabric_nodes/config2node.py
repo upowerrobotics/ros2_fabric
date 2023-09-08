@@ -79,6 +79,18 @@ class Config2Nodes:
                             f"'{node_config['name']}' must have at least two of the "
                             f'following parameters: bandwidth, msg_size, frequency'
                         )
+                    
+                    # Validate QoS settings for publishers
+                    qos_depth, qos_policy = publisher.get('qos_depth'), publisher.get('qos_policy')
+                    if qos_depth is not None and qos_depth < 0:
+                        raise ValueError(
+                            f"qos_depth for publisher '{publisher['name']}' "
+                            f"in node '{node_config['name']}' must be >= 0")
+                    if qos_policy is not None and qos_policy not in ['reliable', 'best_effort']:
+                        raise ValueError(
+                            f"qos_policy for publisher '{publisher['name']}' "
+                            f"in node '{node_config['name']}' "
+                            f"must be either 'reliable' or 'best_effort'")
 
                     # Store publisher_topics
                     for i in range(1, node_qty + 1):
@@ -170,6 +182,9 @@ class Config2Nodes:
             if 'frequency' in publisher:
                 publish_topic['frequency'] = publisher['frequency']
 
+            publish_topic['qos_depth'] = publisher.get('qos_depth', 1)
+            publish_topic['qos_policy'] = publisher.get('qos_policy', 'reliable')
+
             publisher_qty = publisher.get('qty', 1)
 
             for num in range(1, publisher_qty + 1):
@@ -189,7 +204,8 @@ class Config2Nodes:
 
         for subscriber in subscribers:
             topic_name = subscriber['name']
-            subscribe_topic = {'node': subscriber['node']}
+            subscribe_topic = {}
+            subscribe_topic['node'] = subscriber['node']
 
             subscribe_topics[f"{subscriber['node']}/{topic_name}"] = subscribe_topic
 
@@ -210,7 +226,8 @@ class Config2Nodes:
         for num in range(1, node_qty + 1):
             if node_qty != 1:
                 subscribe_topics_qty = {
-                    f'{namespace}_{num}/{topic}': {'node': f"{value['node']}_{num}"}
+                    f'{namespace}_{num}/{topic}': {
+                        'node': f"{value['node']}_{num}"}
                     for key, value in subscribe_topics.items()
                     for namespace, topic in [key.split('/')]
                 }
@@ -245,7 +262,7 @@ class Config2Nodes:
                 'subscribe_topics': subscribe_topics,
             }],
             arguments=['--ros-args', '--log-level', 'DEBUG'],
-            output='log'
+            output='screen'
         )
         return node
 

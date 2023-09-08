@@ -9,9 +9,8 @@ environments:
             msg_size: 1M
             frequency: 25.0
             qos_depth: 1
-            qos_policy: reliable
+            qos_policy: HAHAHA
       - name: node2
-        qty: 2
         root_node: false
         terminal_node: true
         subscribers:

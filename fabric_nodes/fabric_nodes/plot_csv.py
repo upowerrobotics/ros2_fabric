@@ -38,7 +38,9 @@ class PlotCSV(Node):
     #
     def __init__(self, dds, input_csv_file):
         super().__init__('plot_csv')
+        ## Data Distribution Service middleware.
         self.dds = dds
+        ## Input csv file location.
         self.input_csv_file = input_csv_file
 
     ##
@@ -49,13 +51,18 @@ class PlotCSV(Node):
             files = [file for file in os.listdir('.') if (file.lower().endswith('time_log.csv'))]
             files.sort(key=os.path.getmtime)
             self.input_csv_file = files[-1]
+        ## Dataframe to store the parsed log.
         self.parsed_log_df = pd.read_csv(self.input_csv_file, sep='\t')
+        ## ROS transmission time duration in seconds.
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
+        ## RMW transmission time duration in seconds.
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])
+        ## Dataframe to store the parsed log grouped by topics.
         self.parsed_df_by_topics = self.parsed_log_df.groupby('Topic').agg(
             avg_ros_time=('ROS Layer Transmission Time', np.mean),
             avg_rmw_time=('RMW Layer Transmission Time', np.mean)
         ).reset_index()
+        ## Dataframe to store the parsed log by each topic.
         self.each_topic_parsed_log_df = []
         topics_groups = self.parsed_log_df.sort_values([
             'Topic', 'ROS Layer Publisher Time'], ascending=True).groupby('Topic')

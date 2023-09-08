@@ -4,7 +4,7 @@ var indexSectionsWithContent =
   1: "cdgpqs",
   2: "f",
   3: "_bcdgloprsv",
-  4: "bcdefilmnprst",
+  4: "bcdefilmnpqrst",
   5: "s",
   6: "fr"
 };

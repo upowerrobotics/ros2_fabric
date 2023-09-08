@@ -230,8 +230,6 @@ void DummyNode::parse_publish_topic(const std::string & param_prefix)
  */
 void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
 {
-  rclcpp::sleep_for(std::chrono::seconds(1));  // Sleep for one second for publisher get settled.
-
   SubscribeTopic sub;
   sub.topic_name = subscribe_prefix.substr(SUBSCRIBE_PREFIX_SIZE, std::string::npos);
   RCLCPP_INFO(this->get_logger(), "Subscribe topic: %s", sub.topic_name.c_str());
@@ -274,10 +272,13 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
     topic_oss.str(), sub.seq_num, sub.drop_msg_num, sub.receive_num,
     sub.initial_freq_time, sub.revieve_bytes);
 
-  auto publishers_info = this->get_publishers_info_by_topic(topic_oss.str());
-  if (publishers_info.size() > 0) {
-    auto qos = publishers_info[0].qos_profile();
-    sub.subscriber = this->create_subscription<DummyMsgT>(topic_oss.str(), qos, cb, sub_options);
+  while (true) {
+    auto publishers_info = this->get_publishers_info_by_topic(topic_oss.str());
+    if (publishers_info.size() > 0) {
+      auto qos = publishers_info[0].qos_profile();
+      sub.subscriber = this->create_subscription<DummyMsgT>(topic_oss.str(), qos, cb, sub_options);
+      break;
+    }
   }
 
   m_subscribe_topics.push_back(std::move(sub));

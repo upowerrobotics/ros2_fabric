@@ -1,7 +1,7 @@
 environments:
   - name: env1
     nodes:
-      - name: lidar_publisher_node
+      - name: lidar_publisher
         qty: 2
         root_node: true
         terminal_node: false
@@ -12,7 +12,7 @@ environments:
             frequency: 5.0
             qos_depth: 1
             qos_policy: reliable
-      - name: lidar_transformer_node
+      - name: lidar_transformer
         qty: 2
         root_node: false
         terminal_node: false
@@ -25,15 +25,15 @@ environments:
             qos_policy: reliable
         subscribers:
           - name: lidar_raw_data_1
-            node: lidar_publisher_node
+            node: lidar_publisher
           - name: lidar_raw_data_2
-            node: lidar_publisher_node
-      - name: lidar_reciever_node
+            node: lidar_publisher
+      - name: lidar_reciever
         qty: 2
         root_node: false
         terminal_node: true
         subscribers:
           - name: lidar_transfer_data_1
-            node: lidar_transformer_node
+            node: lidar_transformer
           - name: lidar_transfer_data_2
-            node: lidar_transformer_node
+            node: lidar_transformer

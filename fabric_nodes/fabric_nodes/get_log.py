@@ -65,15 +65,19 @@ class GetLog(Node):
     #
     def search_ros_log(self, log):
         topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sROS\sxmt)', log).group()) or None
-        sub_node = str(re.search(r'(?<=\[)(.*node.*)(?=.\1\])', log).group()) or None
+        sub_node = str(re.search(r'(?<=\[)(.*)(?=.\1\])', log).group()) or None
         pub_node = str(re.search(r'(?<=Topic:\s\/).*(?=\/)', log).group()) or None
         ros_time = str(re.search(r'(?<=ROS\sxmt\stime\sns:\s)\d*', log).group()) or None
         ros_sub_time = str(re.search(r'(?<=ROSSUB\sTS:\s)\d*', log).group()) or None
         ros_pub_time = str(re.search(r'(?<=ROSPUB\sTS:\s)\d*', log).group()) or None
         drop_num = str(re.search(r'(?<=Drop\sNum:\s)\d*', log).group()) or None
         receive_rate = str(re.search(r'(?<=Recieve\sRate:\s)\d*.\d*', log).group()) or None
+        time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
+        topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
+        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*(K|M|G)?B', log).group()) or None
         return [topic_name, sub_node, pub_node,
-                ros_time, ros_sub_time, ros_pub_time, drop_num, receive_rate]
+                ros_time, ros_sub_time, ros_pub_time, drop_num, receive_rate,
+                time_stamp, topic_freq, topic_bw]
 
     ##
     # @brief Parse RMW logs and extract various information.
@@ -116,15 +120,11 @@ class GetLog(Node):
                                        ', ending at ' + str(current_timestamp))
                 use_input_time = True
                 break
-            stats_log = re.search(r'(?<=\]\s)\[.*node.*:\sT.*', line)
+            stats_log = re.search(r'.*Topic:.*', line)
             if stats_log is not None:  # valid lines
-                rmw_log = re.search(r'\[.*node.*\.(C|F|e|R).*]:\sT.*', line)
-                freq_bw_log = re.search(r'Freq:', stats_log.group())
+                rmw_log = re.search(r'\[.*\.(C|F|e|R).*]:\sT.*', line)
                 if rmw_log is not None:
                     parsed_rmw = self.search_rmw_log(rmw_log.group())
-                    continue
-                if freq_bw_log is not None:
-                    parsed_freq_bw.append(self.search_freq_bw_log(line))
                     continue
                 parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):
@@ -139,14 +139,13 @@ class GetLog(Node):
                                             'ROS Layer Publisher Time',
                                             'ROS Layer Number of Dropped Messages',
                                             'ROS Layer Accumulative Receive Rate',
+                                            'Timestamp', 'Frequency', 'Bandwidth',
                                             'RMW Layer Transmission Time',
                                             'RMW Layer Subscriber Time',
                                             'RMW Layer Publisher Time'])
         self.parsed_log_df = self.parsed_log_df.astype({'ROS Layer Transmission Time': 'int',
                                                         'RMW Layer Transmission Time': 'int'})
         ## The parsed measured frequency and bandwidth in pd.DataFrame format.
-        self.parsed_freq_bw_df = pd.DataFrame(parsed_freq_bw, columns=[
-                                            'Timestamp', 'Topic', 'Frequency', 'Bandwidth'])
 
     ##
     # @brief Output the parsed statistics.
@@ -162,9 +161,6 @@ class GetLog(Node):
         self.parsed_log_df.to_csv((
             str(round(self.time, 3)) + '-seconds-' +
             self.run_id+'_time_log.csv'), sep='\t', index=False)
-        self.parsed_freq_bw_df.to_csv((
-            str(round(self.time, 3)) + '-seconds-' +
-            self.run_id+'_fequency_bw_log.csv'), sep='\t', index=False)
         self.get_logger().info(str(self.time) +
                                ' seconds on run: ' + self.run_id + ' with ' + self.dds)
 

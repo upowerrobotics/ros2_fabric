@@ -373,7 +373,7 @@ void DummyNode::sub_callback(
   // Calculate Recieve Rate
   if (msg->seq_num != seq_num) {
     drop_msg_num += (msg->seq_num - seq_num);
-    seq_num = msg->seq_num;
+    seq_num = msg->seq_num + 1;
   } else {
     seq_num++;
   }

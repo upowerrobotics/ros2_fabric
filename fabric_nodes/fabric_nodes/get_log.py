@@ -87,18 +87,6 @@ class GetLog():
         return [rmw_time, rmw_sub_time, rmw_pub_time]
 
     ##
-    # @brief Parse frequency and bandwidth logs and extract various information.
-    # @param [in] log A line from the log file.
-    # @return The extracted frequency and bandwidth log data as a list.
-    #
-    def search_freq_bw_log(self, log):
-        time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
-        topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sF)', log).group()) or None
-        topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
-        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*', log).group()) or None
-        return [time_stamp, topic_name, topic_freq, topic_bw]
-
-    ##
     # @brief Parse the entire log file to gather statistics.
     #
     def parse_log(self):

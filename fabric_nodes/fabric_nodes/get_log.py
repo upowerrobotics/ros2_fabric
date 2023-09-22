@@ -135,13 +135,6 @@ class GetLog():
     # @brief Output the parsed statistics.
     #
     def output_log(self):
-        outlier_indices_neg = self.parsed_log_df[(
-                              self.parsed_log_df['ROS Layer Transmission Time'] <
-                              self.parsed_log_df['RMW Layer Transmission Time'])].index
-        outlier_indices_large = self.parsed_log_df[(
-                                self.parsed_log_df['ROS Layer Transmission Time'] -
-                                self.parsed_log_df['RMW Layer Transmission Time'] > 50000)].index
-        self.parsed_log_df.drop(outlier_indices_neg.union(outlier_indices_large), inplace=True)
         self.parsed_log_df.to_csv((
             str(round(self.time, 3)) + '-seconds-' +
             self.run_id+'_time_log.csv'), sep='\t', index=False)

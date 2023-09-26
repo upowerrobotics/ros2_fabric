@@ -76,24 +76,6 @@ $(function() {
 
 <p>Gather statistics from log files for a given period or run.  
  <a href="classfabric__nodes_1_1get__log_1_1GetLog.html#details">More...</a></p>
-<div class="dynheader">
-Inheritance diagram for fabric_nodes.get_log.GetLog:</div>
-<div class="dyncontent">
-<div class="center"><img src="classfabric__nodes_1_1get__log_1_1GetLog__inherit__graph.png" border="0" usemap="#fabric__nodes_8get__log_8GetLog_inherit__map" alt="Inheritance graph"/></div>
-<map name="fabric__nodes_8get__log_8GetLog_inherit__map" id="fabric__nodes_8get__log_8GetLog_inherit__map">
-<area shape="rect" title="Gather statistics from log files for a given period or run." alt="" coords="5,80,212,107"/>
-<area shape="rect" title=" " alt="" coords="81,5,137,32"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for fabric_nodes.get_log.GetLog:</div>
-<div class="dyncontent">
-<div class="center"><img src="classfabric__nodes_1_1get__log_1_1GetLog__coll__graph.png" border="0" usemap="#fabric__nodes_8get__log_8GetLog_coll__map" alt="Collaboration graph"/></div>
-<map name="fabric__nodes_8get__log_8GetLog_coll__map" id="fabric__nodes_8get__log_8GetLog_coll__map">
-<area shape="rect" title="Gather statistics from log files for a given period or run." alt="" coords="5,80,212,107"/>
-<area shape="rect" title=" " alt="" coords="81,5,137,32"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -110,9 +92,6 @@ def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memitem:a7b8859860889c444720e61e0c5aa6638"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfabric__nodes_1_1get__log_1_1GetLog.html#a7b8859860889c444720e61e0c5aa6638">search_rmw_log</a> (self, log)</td></tr>
 <tr class="memdesc:a7b8859860889c444720e61e0c5aa6638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse RMW logs and extract various information.  <a href="classfabric__nodes_1_1get__log_1_1GetLog.html#a7b8859860889c444720e61e0c5aa6638">More...</a><br /></td></tr>
 <tr class="separator:a7b8859860889c444720e61e0c5aa6638"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae69ce1cc48fcd1bad11c1f4240ee6ca2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfabric__nodes_1_1get__log_1_1GetLog.html#ae69ce1cc48fcd1bad11c1f4240ee6ca2">search_freq_bw_log</a> (self, log)</td></tr>
-<tr class="memdesc:ae69ce1cc48fcd1bad11c1f4240ee6ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse frequency and bandwidth logs and extract various information.  <a href="classfabric__nodes_1_1get__log_1_1GetLog.html#ae69ce1cc48fcd1bad11c1f4240ee6ca2">More...</a><br /></td></tr>
-<tr class="separator:ae69ce1cc48fcd1bad11c1f4240ee6ca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa03c754e9acbd963927e0dddb96a3772"><td class="memItemLeft" align="right" valign="top"><a id="aa03c754e9acbd963927e0dddb96a3772"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfabric__nodes_1_1get__log_1_1GetLog.html#aa03c754e9acbd963927e0dddb96a3772">parse_log</a> (self)</td></tr>
 <tr class="memdesc:aa03c754e9acbd963927e0dddb96a3772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse the entire log file to gather statistics. <br /></td></tr>
@@ -214,43 +193,6 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae69ce1cc48fcd1bad11c1f4240ee6ca2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae69ce1cc48fcd1bad11c1f4240ee6ca2">&#9670;&nbsp;</a></span>search_freq_bw_log()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def fabric_nodes.get_log.GetLog.search_freq_bw_log </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>log</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Parse frequency and bandwidth logs and extract various information. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">log</td><td>A line from the log file. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The extracted frequency and bandwidth log data as a list. </dd></dl>
-
-</div>
-</div>
 <a id="a7b8859860889c444720e61e0c5aa6638"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b8859860889c444720e61e0c5aa6638">&#9670;&nbsp;</a></span>search_rmw_log()</h2>
 

@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structfabric__nodes_1_1PublishTopic.html" title="Struct to hold all information related to a Publish topic." alt="" coords="5,5,199,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,61,32"/>
+<area shape="rect" id="node2" href="$classfabric__nodes_1_1DummyNode.html" title="A ROS2 Node for dummy publish and subscribe functionalities." alt="" coords="109,5,308,32"/>
 </map>

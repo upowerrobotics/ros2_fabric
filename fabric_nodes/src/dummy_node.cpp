@@ -276,6 +276,12 @@ void DummyNode::parse_subscribe_topic(const std::string & subscribe_prefix)
     auto publishers_info = this->get_publishers_info_by_topic(topic_oss.str());
     if (publishers_info.size() > 0) {
       auto qos = publishers_info[0].qos_profile();
+
+      // Account for FastRTPS which does not forward a correct HistoryProfile
+      if (qos.history() == rclcpp::HistoryPolicy::Unknown) {
+        qos = qos.keep_last(1);
+      }
+
       sub.subscriber = this->create_subscription<DummyMsgT>(topic_oss.str(), qos, cb, sub_options);
       break;
     }
@@ -367,7 +373,7 @@ void DummyNode::sub_callback(
   // Calculate Recieve Rate
   if (msg->seq_num != seq_num) {
     drop_msg_num += (msg->seq_num - seq_num);
-    seq_num = msg->seq_num;
+    seq_num = msg->seq_num + 1;
   } else {
     seq_num++;
   }

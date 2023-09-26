@@ -18,16 +18,13 @@ import re
 
 import numpy as np
 import pandas as pd
-import rclpy
-
-from rclpy.node import Node
 
 
 ##
 # @class GetLog.
 # @brief Gather statistics from log files for a given period or run.
 #
-class GetLog(Node):
+class GetLog():
 
     ##
     # @brief The contructor for GetLog.
@@ -36,7 +33,6 @@ class GetLog(Node):
     # @param [in] run_id ID for a specific run.
     #
     def __init__(self, time=0, dds='rmw_cyclonedds', run_id='default_run'):
-        super().__init__('get_log')
         ## Logging duration in nanoseconds.
         self.time = time
         ## Data Distribution Service middleware that was operated.
@@ -56,7 +52,7 @@ class GetLog(Node):
         logfile_path = os.path.join(ros_log_dir, self.run_id, 'launch.log')
         ## The line that extracted from log.
         self.lines = open(logfile_path, 'r').readlines()
-        self.get_logger().info('Reading log from ' + logfile_path)
+        print('Reading log from ' + logfile_path)
 
     ##
     # @brief Parse ROS logs and extract various information.
@@ -91,18 +87,6 @@ class GetLog(Node):
         return [rmw_time, rmw_sub_time, rmw_pub_time]
 
     ##
-    # @brief Parse frequency and bandwidth logs and extract various information.
-    # @param [in] log A line from the log file.
-    # @return The extracted frequency and bandwidth log data as a list.
-    #
-    def search_freq_bw_log(self, log):
-        time_stamp = str(re.search(r'(?<=\[)\d*\.\d*(?=\])', log).group()) or None
-        topic_name = str(re.search(r'(?<=Topic:\s).*(?=,\sF)', log).group()) or None
-        topic_freq = str(re.search(r'(?<=Freq:\s)\d*\.\d*', log).group()) or None
-        topic_bw = str(re.search(r'(?<=Bandwidth:\s)\d*', log).group()) or None
-        return [time_stamp, topic_name, topic_freq, topic_bw]
-
-    ##
     # @brief Parse the entire log file to gather statistics.
     #
     def parse_log(self):
@@ -116,7 +100,7 @@ class GetLog(Node):
         for line in self.lines:
             current_timestamp = float(re.search(r'\d*\.\d*(?=\s)', line).group())
             if (current_timestamp > begin_timestamp + self.time):
-                self.get_logger().info('Starting at ' + str(begin_timestamp) +
+                print('Starting at ' + str(begin_timestamp) +
                                        ', ending at ' + str(current_timestamp))
                 use_input_time = True
                 break
@@ -128,7 +112,7 @@ class GetLog(Node):
                     continue
                 parsed_log.append(self.search_ros_log(stats_log.group())+parsed_rmw)
         if (not use_input_time):
-            self.get_logger().info('This given log has less than ' + str(self.time) + ' seconds.')
+            print('This given log has less than ' + str(self.time) + ' seconds.')
             ## The time difference between the logger.
             self.time = current_timestamp - begin_timestamp
         ## The parsed Sub Time, Pub Time, and Trans Time in pd.DataFrame format.
@@ -151,17 +135,10 @@ class GetLog(Node):
     # @brief Output the parsed statistics.
     #
     def output_log(self):
-        outlier_indices_neg = self.parsed_log_df[(
-                              self.parsed_log_df['ROS Layer Transmission Time'] <
-                              self.parsed_log_df['RMW Layer Transmission Time'])].index
-        outlier_indices_large = self.parsed_log_df[(
-                                self.parsed_log_df['ROS Layer Transmission Time'] -
-                                self.parsed_log_df['RMW Layer Transmission Time'] > 50000)].index
-        self.parsed_log_df.drop(outlier_indices_neg.union(outlier_indices_large), inplace=True)
         self.parsed_log_df.to_csv((
             str(round(self.time, 3)) + '-seconds-' +
             self.run_id+'_time_log.csv'), sep='\t', index=False)
-        self.get_logger().info(str(self.time) +
+        print(str(self.time) +
                                ' seconds on run: ' + self.run_id + ' with ' + self.dds)
 
         ## The xmt time of the ros layer.
@@ -182,21 +159,19 @@ class GetLog(Node):
         for gp in topics_groups.groups:
             self.each_topic_parsed_log_df.append(topics_groups.get_group(gp))
 
-        self.get_logger().info(
+        print(
             'Average ROS XMT is: ' + str(np.mean(self.ros_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.ros_xmt_time)) + ' ns.')
-        self.get_logger().info(
+        print(
             'Average RMW XMT is: ' + str(np.mean(self.rmw_xmt_time)) + ' ns, ' +
             'with a standard deviation of ' + str(np.std(self.rmw_xmt_time)) + ' ns.')
 
 
 def main(args=None):
-    rclpy.init(args=args)
     m_log = GetLog(60, 'rmw_cyclonedds')
     m_log.read_log()
     m_log.parse_log()
     m_log.output_log()
-    rclpy.shutdown()
 
 
 if __name__ == '__main__':

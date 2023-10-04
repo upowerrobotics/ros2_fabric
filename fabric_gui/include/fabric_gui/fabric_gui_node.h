@@ -18,13 +18,17 @@
 #include <rclcpp/rclcpp.hpp>
 #include "fabric_gui/fabric_gui.h"
 
-class FabricGUINode : public rclcpp::Node {
+class FabricGUINode: public rclcpp::Node {
 public:
-    explicit FabricGUINode(rclcpp::NodeOptions options);
-    ~FabricGUINode();
+  explicit FabricGUINode(rclcpp::NodeOptions options);
+  ~FabricGUINode();
 
 private:
-    std::unique_ptr<FabricGUI> gui_;
+  std::unique_ptr < QApplication > app_;
+  std::unique_ptr < FabricGUI > gui_;
+
+private slots:
+  void handleCloseRequest();
 };
 
 #endif // FABRIC_GUI_NODE_H

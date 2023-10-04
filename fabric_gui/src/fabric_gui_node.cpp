@@ -14,21 +14,34 @@
 
 #include "fabric_gui/fabric_gui_node.h"
 #include <QApplication>
+#include <QObject>
 
 FabricGUINode::FabricGUINode(rclcpp::NodeOptions options)
-  : rclcpp::Node("fabric_gui_node") {
-    int argc = 0;
-    char **argv = nullptr;
-    QApplication app(argc, argv);
-    
-    gui_ = std::make_unique<FabricGUI>();
-    gui_->show();
+: rclcpp::Node("fabric_gui_node")
+{
+  int argc = 0;
+  char ** argv = nullptr;
+  app_ = std::make_unique<QApplication>(argc, argv);
+  gui_ = std::make_unique<FabricGUI>();
 
-    app.exec();
+  QObject::connect(
+    gui_.get(), &FabricGUI::closeRequested, [this]() {
+      this->handleCloseRequest();
+    });
+
+  gui_->show();
+  app_->exec();
 }
 
-FabricGUINode::~FabricGUINode() {
-    // Destructor
+FabricGUINode::~FabricGUINode()
+{
+  gui_->close();
+  rclcpp::shutdown();
+}
+
+void FabricGUINode::handleCloseRequest()
+{
+  rclcpp::shutdown();
 }
 
 #include <rclcpp_components/register_node_macro.hpp>  // NOLINT

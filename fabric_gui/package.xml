@@ -8,6 +8,7 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
+  <depend>fabric_nodes</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
 

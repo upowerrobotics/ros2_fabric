@@ -16,20 +16,33 @@
 #define FABRIC_GUI_FABRIC_GUI_H
 
 #include <QDialog>
+#include <QFileDialog>
+#include <QProgressBar>
 
 namespace Ui {
-class FabricGUI;
+  class FabricGUI;
 }
 
-class FabricGUI : public QDialog {
-    Q_OBJECT
+class FabricGUI: public QDialog {
+  Q_OBJECT
 
 public:
-    explicit FabricGUI(QWidget *parent = nullptr);
-    ~FabricGUI();
+  explicit FabricGUI(QWidget * parent = nullptr);
+  ~FabricGUI();
 
 private:
-    Ui::FabricGUI *ui;
+  Ui::FabricGUI * ui;
+  QString config_path;
+
+signals:
+  void closeRequested();
+
+protected:
+  void closeEvent(QCloseEvent * event) override;
+
+private slots:
+  void on_pushButtonLaunch_clicked();
+  void on_pushButtonConfigPath_clicked();
 };
 
 #endif // FABRIC_GUI_H

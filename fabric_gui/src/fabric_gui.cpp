@@ -16,12 +16,12 @@
 #include "ui_fabric_gui.h"
 
 #include <QDebug>
-#include <QProcess>
 #include <QTimer>
 
 FabricGUI::FabricGUI(QWidget * parent)
 : QDialog(parent),
-  ui(new Ui::FabricGUI)
+  ui(new Ui::FabricGUI),
+  process_launch(std::make_shared<QProcess>(this))
 {
   ui->setupUi(this);
 
@@ -41,9 +41,20 @@ void FabricGUI::closeEvent(QCloseEvent * event)
 
 void FabricGUI::on_pushButtonLaunch_clicked()
 {
+  ui->pushButtonLaunch->setEnabled(false);
   ui->progressBarLaunch->setValue(0);
+  launch_progress = 0;
 
-  QProcess * process = new QProcess(this);
+  // stop and delete the prev timer and disconnected
+  if (timer_launch && timer_launch->isActive()) {
+    timer_launch->stop();
+    disconnect(timer_launch.get(), nullptr, nullptr, nullptr);
+    timer_launch->deleteLater();
+  }
+
+  // create new timer
+  timer_launch = std::make_unique<QTimer>(this);
+
   QString program = "ros2";
   QStringList arguments;
   arguments << "launch" << "fabric_nodes" << "fabric_nodes.launch.py";
@@ -51,34 +62,49 @@ void FabricGUI::on_pushButtonLaunch_clicked()
     qDebug() << "Read config file from: " << config_path;
     arguments << "config-path:=" + config_path;
   }
-  process->start(program, arguments);
-
-  QTimer * progressTimer = new QTimer(this);
-  int progress = 0;
+  process_launch->start(program, arguments);  
 
   connect(
-    progressTimer, &QTimer::timeout, [ = ]() mutable {
-      progress += 1;
-      ui->progressBarLaunch->setValue(progress);
+    timer_launch.get(), &QTimer::timeout, [ = ]() mutable {
+      launch_progress += 1;
+      ui->progressBarLaunch->setValue(launch_progress);
 
-      if (progress >= 100) {
-        progressTimer->stop();
-        if (process->state() == QProcess::Running) {
-          process->terminate();
-          process->waitForFinished(5000);
+      if (launch_progress >= 100) {
+        timer_launch->stop();
+        if (process_launch->state() == QProcess::Running) {
+          process_launch->terminate();
+          process_launch->waitForFinished(5000);
         }
-        progressTimer->deleteLater();
-        process->deleteLater();
-      }
-    });
+        timer_launch->deleteLater();
+        process_launch->deleteLater();
 
-  progressTimer->start(700);
+        ui->pushButtonLaunch->setEnabled(true);
+      }
+    }
+  );
+
+  timer_launch->start(700);
 
   connect(
-    process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-    [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
+    process_launch.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
       qDebug() << "launch finished";
     });
+}
+
+void FabricGUI::on_pushButtonLaunchPause_clicked()
+{
+  if (process_launch->state() == QProcess::Running) {
+    process_launch->terminate();
+    process_launch->waitForFinished(5000);
+  }
+
+  if (timer_launch && timer_launch->isActive()) {
+    disconnect(timer_launch.get(), nullptr, nullptr, nullptr);
+    timer_launch->stop();
+  }
+
+  ui->pushButtonLaunch->setEnabled(true);
 }
 
 void FabricGUI::on_pushButtonConfigPath_clicked()

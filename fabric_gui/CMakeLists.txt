@@ -15,15 +15,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(fabric_gui)
 
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Explicitly find Qt5 first
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
@@ -42,7 +33,6 @@ set(CMAKE_AUTORCC ON)
 set(FABRIC_GUI_SRC
   src/fabric_gui.cpp
   src/fabric_gui_node.cpp
-  src/fabric_gui.ui
 )  
 
 set(FABRIC_GUI_HEADERS
@@ -55,7 +45,7 @@ ament_auto_add_library(${PROJECT_NAME}_node SHARED
   ${FABRIC_GUI_HEADERS}
 )
 
-# Explicitly link with Qt libraries if necessary (might not be required, but kept for clarity)
+# Explicitly link with Qt libraries
 target_link_libraries(${PROJECT_NAME}_node
   Qt5::Widgets
 )

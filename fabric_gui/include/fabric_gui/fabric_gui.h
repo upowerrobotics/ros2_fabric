@@ -17,6 +17,7 @@
 
 #include <QDialog>
 #include <QFileDialog>
+#include <QProcess>
 #include <QProgressBar>
 
 namespace Ui {
@@ -32,7 +33,10 @@ public:
 
 private:
   Ui::FabricGUI * ui;
+  int launch_progress;
   QString config_path;
+  std::shared_ptr<QProcess> process_launch;
+  std::shared_ptr<QTimer> timer_launch;
 
 signals:
   void closeRequested();
@@ -42,7 +46,8 @@ protected:
 
 private slots:
   void on_pushButtonLaunch_clicked();
-  void on_pushButtonConfigPath_clicked();
+  void on_pushButtonLaunchPause_clicked();
+  void on_pushButtonConfigPath_clicked();  
 };
 
 #endif // FABRIC_GUI_H

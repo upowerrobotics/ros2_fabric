@@ -37,14 +37,21 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
+    <item row="1" column="3">
      <widget class="QProgressBar" name="progressBarLaunch">
       <property name="value">
        <number>0</number>
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButtonLaunchPause">
+      <property name="text">
+       <string>Pause</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" colspan="2">
      <widget class="QLineEdit" name="lineEditConfigPath">
       <property name="text">
        <string>src/fabric_nodes/config/example.yaml</string>

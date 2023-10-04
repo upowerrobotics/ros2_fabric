@@ -141,7 +141,7 @@ class GetLog():
         print(str(self.time) +
                                ' seconds on run: ' + self.run_id + ' with ' + self.dds)
 
-        ## The measurement of the ros layer.
+        ## The xmt time of the ros layer.
         self.ros_xmt_time = list(self.parsed_log_df['ROS Layer Transmission Time'])
         ## The xmt time of the rmw layer.
         self.rmw_xmt_time = list(self.parsed_log_df['RMW Layer Transmission Time'])

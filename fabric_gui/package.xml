@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fabric_gui</name>
+  <version>0.0.1</version>
+  <description>GUI for fabric</description>
+  <maintainer email="flush0129@gmail.com">I-Hsi Kao</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -6,60 +6,97 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
+    <width>926</width>
     <height>679</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>ROS2 FABRIC</string>
   </property>
-  <widget class="QWidget" name="widgetControl" native="true">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>931</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QPushButton" name="pushButtonLaunch">
-      <property name="text">
-       <string>Fabric Launch</string>
-      </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QWidget" name="widgetControl" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="3" column="3">
+       <widget class="QPushButton" name="pushButtonLaunchPause">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Pause</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QProgressBar" name="progressBarLaunch">
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pushButtonLaunch">
+        <property name="text">
+         <string>FABRIC Launch</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEditConfigPath">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>fabric_ws/src/fabric_nodes/config/example.yaml</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="2">
+       <widget class="QPushButton" name="pushButtonConfigPath">
+        <property name="text">
+         <string>Select Configuration File Path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEditLogPath">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>fabric_ws/tie_log.csv</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" colspan="2">
+       <widget class="QPushButton" name="pushButtonLogPath">
+        <property name="text">
+         <string>Select Log File Path</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabMeasurementResult">
+      <attribute name="title">
+       <string>Measurement Result</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2"/>
      </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="pushButtonConfigPath">
-      <property name="text">
-       <string>Config File Path</string>
-      </property>
+     <widget class="QWidget" name="tabHistogramResult">
+      <attribute name="title">
+       <string>Histogram Result</string>
+      </attribute>
      </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QProgressBar" name="progressBarLaunch">
-      <property name="value">
-       <number>0</number>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="pushButtonLaunchPause">
-      <property name="text">
-       <string>Pause</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" colspan="2">
-     <widget class="QLineEdit" name="lineEditConfigPath">
-      <property name="text">
-       <string>src/fabric_nodes/config/example.yaml</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

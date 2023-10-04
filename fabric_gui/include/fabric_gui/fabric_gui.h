@@ -35,8 +35,9 @@ private:
   Ui::FabricGUI * ui;
   int launch_progress;
   QString config_path;
-  std::shared_ptr<QProcess> process_launch;
-  std::shared_ptr<QTimer> timer_launch;
+  std::shared_ptr < QProcess > process_launch;
+  std::shared_ptr < QTimer > timer_launch;
+  void get_log_process();
 
 signals:
   void closeRequested();
@@ -47,7 +48,7 @@ protected:
 private slots:
   void on_pushButtonLaunch_clicked();
   void on_pushButtonLaunchPause_clicked();
-  void on_pushButtonConfigPath_clicked();  
+  void on_pushButtonConfigPath_clicked();
 };
 
 #endif // FABRIC_GUI_H

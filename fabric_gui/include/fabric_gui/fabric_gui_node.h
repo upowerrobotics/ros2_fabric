@@ -24,8 +24,8 @@ public:
   ~FabricGUINode();
 
 private:
-  std::unique_ptr <QApplication> app_;
-  std::unique_ptr <FabricGUI> gui_;
+  std::unique_ptr < QApplication > app_;
+  std::unique_ptr < FabricGUI > gui_;
 
 private slots:
   void handleCloseRequest();

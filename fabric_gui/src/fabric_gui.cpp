@@ -42,6 +42,7 @@ void FabricGUI::closeEvent(QCloseEvent * event)
 void FabricGUI::on_pushButtonLaunch_clicked()
 {
   ui->pushButtonLaunch->setEnabled(false);
+  ui->pushButtonLaunchPause->setEnabled(true);
   ui->progressBarLaunch->setValue(0);
   launch_progress = 0;
 
@@ -62,7 +63,7 @@ void FabricGUI::on_pushButtonLaunch_clicked()
     qDebug() << "Read config file from: " << config_path;
     arguments << "config-path:=" + config_path;
   }
-  process_launch->start(program, arguments);  
+  process_launch->start(program, arguments);
 
   connect(
     timer_launch.get(), &QTimer::timeout, [ = ]() mutable {
@@ -75,19 +76,20 @@ void FabricGUI::on_pushButtonLaunch_clicked()
           process_launch->terminate();
           process_launch->waitForFinished(5000);
         }
-        timer_launch->deleteLater();
-        process_launch->deleteLater();
+
+        get_log_process();
 
         ui->pushButtonLaunch->setEnabled(true);
+        ui->pushButtonLaunchPause->setEnabled(false);
       }
     }
   );
 
-  timer_launch->start(700);
+  timer_launch->start(650);
 
   connect(
     process_launch.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-      [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
+    [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
       qDebug() << "launch finished";
     });
 }
@@ -104,7 +106,10 @@ void FabricGUI::on_pushButtonLaunchPause_clicked()
     timer_launch->stop();
   }
 
+  get_log_process();
+
   ui->pushButtonLaunch->setEnabled(true);
+  ui->pushButtonLaunchPause->setEnabled(false);
 }
 
 void FabricGUI::on_pushButtonConfigPath_clicked()
@@ -121,5 +126,20 @@ void FabricGUI::on_pushButtonConfigPath_clicked()
     qDebug() << "Selected file:" << config_path;
 
     ui->lineEditConfigPath->setText(config_path);
+  }
+}
+
+void FabricGUI::get_log_process()
+{
+  std::unique_ptr<QProcess> getLogProcess;
+  getLogProcess = std::make_unique<QProcess>();
+  QString program = "ros2";
+  QStringList arguments;
+  arguments << "run" << "fabric_nodes" << "get_log.py";
+  getLogProcess->start(program, arguments);
+  if (getLogProcess->waitForFinished(-1)) {
+    qDebug() << "get_log.py process finished";
+  } else {
+    qDebug() << "Error: get_log.py process did not finish in a reasonable time.";
   }
 }

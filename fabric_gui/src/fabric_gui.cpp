@@ -173,30 +173,30 @@ void FabricGUI::get_log_process()
 void FabricGUI::load_latest_csv()
 {
   QDir dir(workspace_path);
-
   QStringList filters;
   filters << "*.csv";
   QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files);
 
-  if (!fileInfoList.isEmpty()) {
-    QDateTime latestTimestamp;
-    QString latestCSVFilePath;
-
-    foreach(const QFileInfo & fileInfo, fileInfoList) {
-      QDateTime fileTimestamp = fileInfo.lastModified();
-
-      if (fileTimestamp > latestTimestamp) {
-        latestTimestamp = fileTimestamp;
-        latestCSVFilePath = fileInfo.absoluteFilePath();
-      }
-    }
-
-    if (!latestCSVFilePath.isEmpty()) {
-      qDebug() << "Latest CSV file:" << latestCSVFilePath;
-    } else {
-      qDebug() << "No CSV files found in the folder.";
-    }
-  } else {
+  if (fileInfoList.isEmpty()) {
     qDebug() << "No CSV files found in the folder.";
+    return;
   }
+
+  QDateTime latestTimestamp;
+  QString latestCSVFilePath;
+  foreach(const QFileInfo & fileInfo, fileInfoList) {
+    QDateTime fileTimestamp = fileInfo.lastModified();
+
+    if (fileTimestamp > latestTimestamp) {
+      latestTimestamp = fileTimestamp;
+      latestCSVFilePath = fileInfo.absoluteFilePath();
+    }
+  }
+
+  if (latestCSVFilePath.isEmpty()) {
+    qDebug() << "No CSV files found in the folder.";
+    return;
+  }
+
+  qDebug() << "Latest CSV file:" << latestCSVFilePath;
 }

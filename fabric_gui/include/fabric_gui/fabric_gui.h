@@ -29,6 +29,7 @@
 #include <QTimer>
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -63,12 +64,19 @@ private:
   int launch_progress;
   QString config_path;
   QString workspace_path;
+
   std::shared_ptr < QProcess > process_launch;
   std::shared_ptr < QTimer > timer_launch;
   std::unordered_map < std::string, std::vector < FabricData >> fabric_data_map;
+  std::unordered_map < std::string, FabricData > fabric_average_map;
+
   void get_log_process();
   void load_latest_csv();
-  void plot_raw_data_table(const QString latestCSVFilePath);
+  void plot_rawdata_table(const QString latestCSVFilePath);
+  void plot_average_table();
+
+  double parse_bandwidth(const std::string & bandwidth_str);
+  std::string format_bandwidth(double bandwidth_value);
 
 signals:
   void closeRequested();

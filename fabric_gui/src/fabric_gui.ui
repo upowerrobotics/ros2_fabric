@@ -137,6 +137,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabAverageResult">
+      <attribute name="title">
+       <string>Average Result</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QTableView" name="tableViewAverageResult"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabHistogramResult">
       <attribute name="title">
        <string>Histogram Result</string>

@@ -200,10 +200,11 @@ void FabricGUI::load_latest_csv()
 
   qDebug() << "Latest CSV file:" << latestCSVFilePath;
 
-  plot_raw_data_table(latestCSVFilePath);
+  plot_rawdata_table(latestCSVFilePath);
+  plot_average_table();
 }
 
-void FabricGUI::plot_raw_data_table(const QString latestCSVFilePath)
+void FabricGUI::plot_rawdata_table(const QString latestCSVFilePath)
 {
   std::ifstream file(latestCSVFilePath.toStdString());
   if (!file.is_open()) {
@@ -288,4 +289,105 @@ void FabricGUI::plot_raw_data_table(const QString latestCSVFilePath)
   qDebug() << "Number of rows: " << model->rowCount();
   ui->tableViewMeasurementResult->resizeColumnsToContents();
   ui->tableViewMeasurementResult->update();
+}
+
+void FabricGUI::plot_average_table()
+{
+  for (const auto & entry : fabric_data_map) {
+    const std::string & topic = entry.first;
+    const std::vector<FabricData> & data_vector = entry.second;
+
+    FabricData average_data;
+    average_data.topic = topic;
+    average_data.subscriber_node = data_vector[0].subscriber_node;
+    average_data.publisher_node = data_vector[0].publisher_node;
+    average_data.ros_layer_transmission_time = 0;
+    average_data.rmw_layer_transmission_time = 0;
+    average_data.frequency = 0;
+    double total_bandwidth = 0.0;
+    int max_dropped_messages = std::numeric_limits<int>::min();
+    int min_receive_rate = std::numeric_limits<int>::max();
+
+    for (const FabricData & data : data_vector) {
+      average_data.ros_layer_transmission_time += data.ros_layer_transmission_time;
+      average_data.rmw_layer_transmission_time += data.rmw_layer_transmission_time;
+      total_bandwidth += parse_bandwidth(data.bandwidth);
+      average_data.frequency += data.frequency;
+      max_dropped_messages = std::max(
+        max_dropped_messages,
+        data.ros_layer_number_of_dropped_messages);
+      min_receive_rate = std::min(min_receive_rate, data.ros_layer_accumulative_receive_rate);
+    }
+
+    int count = data_vector.size();
+    average_data.ros_layer_transmission_time /= count;
+    average_data.rmw_layer_transmission_time /= count;
+    average_data.frequency /= count;
+    average_data.bandwidth = format_bandwidth(total_bandwidth / count);
+    average_data.ros_layer_number_of_dropped_messages = max_dropped_messages;
+    average_data.ros_layer_accumulative_receive_rate = min_receive_rate;
+
+    fabric_average_map[topic] = average_data;
+  }
+
+  QStandardItemModel * model = new QStandardItemModel(this);
+  model->setHorizontalHeaderLabels(
+    QStringList() << "Topic" << "Sub Node" << "Pub Node" << "ROS Layer XMT"
+                  << "RMW Layer XMT" << "Frequency" << "Bandwidth");
+  ui->tableViewAverageResult->setModel(model);
+
+  for (const auto & entry : fabric_average_map) {
+    const FabricData & data = entry.second;
+
+    QList<QStandardItem *> row;
+    row << new QStandardItem(QString::fromStdString(data.topic))
+        << new QStandardItem(QString::fromStdString(data.subscriber_node))
+        << new QStandardItem(QString::fromStdString(data.publisher_node))
+        << new QStandardItem(QString::number(data.ros_layer_transmission_time))
+        << new QStandardItem(QString::number(data.rmw_layer_transmission_time))
+        << new QStandardItem(QString::number(data.frequency))
+        << new QStandardItem(QString::fromStdString(data.bandwidth));
+
+    model->appendRow(row);
+  }
+
+  ui->tableViewAverageResult->resizeColumnsToContents();
+  ui->tableViewAverageResult->update();
+}
+
+double FabricGUI::parse_bandwidth(const std::string & bandwidth_str)
+{
+  double multiplier = 1.0;
+  if (bandwidth_str.find("KB") != std::string::npos) {
+    multiplier = 1024.0;
+  } else if (bandwidth_str.find("MB") != std::string::npos) {
+    multiplier = 1024.0 * 1024.0;
+  } else if (bandwidth_str.find("GB") != std::string::npos) {
+    multiplier = 1024.0 * 1024.0 * 1024.0;
+  }
+
+  double bandwidth_value;
+  std::istringstream(bandwidth_str) >> bandwidth_value;
+
+  return bandwidth_value * multiplier;
+}
+
+std::string FabricGUI::format_bandwidth(double bandwidth_value)
+{
+  std::ostringstream formatted_bandwidth_stream;
+
+  if (bandwidth_value >= 1024.0 * 1024.0 * 1024.0) {
+    formatted_bandwidth_stream << std::fixed << std::setprecision(2) <<
+      bandwidth_value / (1024.0 * 1024.0 * 1024.0) << "GB";
+  } else if (bandwidth_value >= 1024.0 * 1024.0) {
+    formatted_bandwidth_stream << std::fixed << std::setprecision(2) <<
+      bandwidth_value / (1024.0 * 1024.0) << "MB";
+  } else if (bandwidth_value >= 1024.0) {
+    formatted_bandwidth_stream << std::fixed << std::setprecision(2) << bandwidth_value / 1024.0 <<
+      "KB";
+  } else {
+    formatted_bandwidth_stream << std::fixed << std::setprecision(2) << bandwidth_value << "B";
+  }
+
+  return formatted_bandwidth_stream.str();
 }

@@ -18,16 +18,43 @@
 #include <rclcpp/rclcpp.hpp>
 #include "fabric_gui/fabric_gui.h"
 
+/**
+ * @brief Represents a ROS 2 Node for the Fabric GUI.
+ *
+ * This class inherits from rclcpp::Node and is responsible for managing
+ * the Fabric GUI application.
+ */
 class FabricGUINode: public rclcpp::Node {
 public:
+  /**
+   * @brief Constructor for the FabricGUINode class.
+   *
+   * @param options NodeOptions for configuring the node.
+   */
   explicit FabricGUINode(rclcpp::NodeOptions options);
+
+  /**
+   * @brief Destructor for the FabricGUINode class.
+   */
   ~FabricGUINode();
 
 private:
+  /**
+   * @brief Pointer to the Qt application.
+   */
   std::unique_ptr < QApplication > app_;
+
+  /**
+   * @brief Pointer to the Fabric GUI instance.
+   */
   std::unique_ptr < FabricGUI > gui_;
 
 private slots:
+  /**
+   * @brief Slot function to handle a close request.
+   *
+   * This slot is called when the GUI window is closed.
+   */
   void handleCloseRequest();
 };
 

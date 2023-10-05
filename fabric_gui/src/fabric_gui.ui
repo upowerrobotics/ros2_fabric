@@ -147,11 +147,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabHistogramResult">
-      <attribute name="title">
-       <string>Histogram Result</string>
-      </attribute>
-     </widget>
     </widget>
    </item>
   </layout>

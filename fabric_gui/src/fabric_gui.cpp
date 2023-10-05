@@ -87,7 +87,7 @@ void FabricGUI::on_pushButtonLaunch_clicked()
   ui->pushButtonLaunch->setEnabled(false);
   ui->pushButtonLaunchPause->setEnabled(true);
   ui->progressBarLaunch->setValue(0);
-  launch_progress = 0;
+  progressbar_value = 0;
 
   // Switch RMW
   QString selectedDDS = ui->comboBoxDDS->currentText();
@@ -110,10 +110,10 @@ void FabricGUI::on_pushButtonLaunch_clicked()
 
   connect(
     timer_launch.get(), &QTimer::timeout, [ = ]() mutable {
-      launch_progress += 1;
-      ui->progressBarLaunch->setValue(launch_progress);
+      progressbar_value += 1;
+      ui->progressBarLaunch->setValue(progressbar_value);
 
-      if (launch_progress >= 100) {
+      if (progressbar_value >= 100) {
         if (process_launch->state() == QProcess::Running) {
           process_launch->terminate();
           process_launch->waitForFinished(5000);
@@ -215,7 +215,7 @@ void FabricGUI::plot_rawdata_table(const QString latestCSVFilePath)
   QStandardItemModel * model = new QStandardItemModel(this);
   model->setHorizontalHeaderLabels(
     QStringList() << "Topic" << "Sub Node" << "Pub Node" << "ROS Layer XMT"
-                  << "Frequency" << "Bandwidth" << "RMW Layer XMT");
+                  << "RMW Layer XMT" << "Frequency" << "Bandwidth");
   ui->tableViewMeasurementResult->setModel(model);
 
   std::string line;
@@ -279,9 +279,9 @@ void FabricGUI::plot_rawdata_table(const QString latestCSVFilePath)
           << new QStandardItem(QString::fromStdString(data.subscriber_node))
           << new QStandardItem(QString::fromStdString(data.publisher_node))
           << new QStandardItem(QString::number(data.ros_layer_transmission_time))
+          << new QStandardItem(QString::number(data.rmw_layer_transmission_time))
           << new QStandardItem(QString::number(data.frequency))
-          << new QStandardItem(QString::fromStdString(data.bandwidth))
-          << new QStandardItem(QString::number(data.rmw_layer_transmission_time));
+          << new QStandardItem(QString::fromStdString(data.bandwidth));
 
       model->appendRow(row);
     }

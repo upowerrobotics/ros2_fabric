@@ -76,7 +76,7 @@ public:
 
 private:
   Ui::FabricGUI * ui;  ///< The UI instance.
-  int launch_progress;  ///< Progress of the fabric_nodes.launch.py.
+  int progressbar_value;  ///< Progressbar value of the fabric_nodes.launch.py.
   QString config_path;  ///< Path to configuration files.
   QString workspace_path;  ///< Path to the workspace.
 

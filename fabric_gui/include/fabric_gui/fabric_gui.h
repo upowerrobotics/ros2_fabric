@@ -23,8 +23,29 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QProgressBar>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include <QStringList>
 #include <QTimer>
+
+#include <fstream>
+#include <iostream>
+#include <ostream>
+#include <sstream>
+#include <string>
+
+struct FabricData
+{
+  std::string topic;
+  std::string subscriber_node;
+  std::string publisher_node;
+  long long ros_layer_transmission_time;
+  int ros_layer_number_of_dropped_messages;
+  int ros_layer_accumulative_receive_rate;
+  double frequency;
+  std::string bandwidth;
+  long long rmw_layer_transmission_time;
+};
 
 namespace Ui {
   class FabricGUI;
@@ -44,8 +65,10 @@ private:
   QString workspace_path;
   std::shared_ptr < QProcess > process_launch;
   std::shared_ptr < QTimer > timer_launch;
+  std::unordered_map < std::string, std::vector < FabricData >> fabric_data_map;
   void get_log_process();
   void load_latest_csv();
+  void plot_raw_data_table(const QString latestCSVFilePath);
 
 signals:
   void closeRequested();

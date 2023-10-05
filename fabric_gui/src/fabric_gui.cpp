@@ -199,4 +199,93 @@ void FabricGUI::load_latest_csv()
   }
 
   qDebug() << "Latest CSV file:" << latestCSVFilePath;
+
+  plot_raw_data_table(latestCSVFilePath);
+}
+
+void FabricGUI::plot_raw_data_table(const QString latestCSVFilePath)
+{
+  std::ifstream file(latestCSVFilePath.toStdString());
+  if (!file.is_open()) {
+    qDebug() << "Can't open csv:" << latestCSVFilePath;
+    return;
+  }
+
+  QStandardItemModel * model = new QStandardItemModel(this);
+  model->setHorizontalHeaderLabels(
+    QStringList() << "Topic" << "Sub Node" << "Pub Node" << "ROS Layer XMT"
+                  << "Frequency" << "Bandwidth" << "RMW Layer XMT");
+  ui->tableViewMeasurementResult->setModel(model);
+
+  std::string line;
+  bool skipFirstLine = true;
+  while (std::getline(file, line)) {
+    if (skipFirstLine) {
+      skipFirstLine = false;
+      continue;
+    }
+
+    std::istringstream iss(line);
+    FabricData data;
+
+    if (std::getline(iss, data.topic, '\t') &&
+      std::getline(iss, data.subscriber_node, '\t') &&
+      std::getline(iss, data.publisher_node, '\t'))
+    {
+
+      std::string temp;
+      if (std::getline(iss, temp, '\t')) {
+        data.ros_layer_transmission_time = std::stoll(temp);
+      }
+
+      // Skip ROS Layer Subscriber Time
+      std::getline(iss, temp, '\t');
+
+      // Skip ROS Layer Publisher Time
+      std::getline(iss, temp, '\t');
+
+      if (std::getline(iss, temp, '\t')) {
+        data.ros_layer_number_of_dropped_messages = std::stoi(temp);
+      }
+
+      if (std::getline(iss, temp, '\t')) {
+        data.ros_layer_accumulative_receive_rate = std::stod(temp);
+      }
+
+      // Skip Timestamp
+      std::getline(iss, temp, '\t');
+
+      if (std::getline(iss, temp, '\t')) {
+        data.frequency = std::stod(temp);
+      }
+
+      std::getline(iss, data.bandwidth, '\t');
+
+      if (std::getline(iss, temp, '\t')) {
+        data.rmw_layer_transmission_time = std::stoll(temp);
+      }
+
+      // Skip RMW Layer Subscriber Time
+      std::getline(iss, temp, '\t');
+
+      // Skip RMW Layer Publisher Time
+      std::getline(iss, temp, '\t');
+
+      fabric_data_map[data.topic].push_back(data);
+
+      QList<QStandardItem *> row;
+      row << new QStandardItem(QString::fromStdString(data.topic))
+          << new QStandardItem(QString::fromStdString(data.subscriber_node))
+          << new QStandardItem(QString::fromStdString(data.publisher_node))
+          << new QStandardItem(QString::number(data.ros_layer_transmission_time))
+          << new QStandardItem(QString::number(data.frequency))
+          << new QStandardItem(QString::fromStdString(data.bandwidth))
+          << new QStandardItem(QString::number(data.rmw_layer_transmission_time));
+
+      model->appendRow(row);
+    }
+  }
+  qDebug() << "Number of rows: " << model->rowCount();
+  ui->tableViewMeasurementResult->resizeColumnsToContents();
+  ui->tableViewMeasurementResult->update();
 }

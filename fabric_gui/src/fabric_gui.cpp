@@ -15,9 +15,6 @@
 #include "fabric_gui/fabric_gui.h"
 #include "ui_fabric_gui.h"
 
-#include <QDebug>
-#include <QTimer>
-
 FabricGUI::FabricGUI(QWidget * parent)
 : QDialog(parent),
   ui(new Ui::FabricGUI),
@@ -77,6 +74,15 @@ void FabricGUI::on_pushButtonConfigPath_clicked()
 
 void FabricGUI::on_pushButtonLaunch_clicked()
 {
+  // stop and delete the prev timer and disconnected
+  if (timer_launch && timer_launch->isActive()) {
+    disconnect(timer_launch.get(), nullptr, nullptr, nullptr);
+    timer_launch->deleteLater();
+  }
+
+  // create new timer
+  timer_launch = std::make_unique<QTimer>(this);
+
   // UI controls
   ui->pushButtonLaunch->setEnabled(false);
   ui->pushButtonLaunchPause->setEnabled(true);
@@ -93,16 +99,6 @@ void FabricGUI::on_pushButtonLaunch_clicked()
     setenv("RMW_IMPLEMENTATION", "rmw_ecal_proto_cpp", 1);
   }
 
-  // stop and delete the prev timer and disconnected
-  if (timer_launch && timer_launch->isActive()) {
-    timer_launch->stop();
-    disconnect(timer_launch.get(), nullptr, nullptr, nullptr);
-    timer_launch->deleteLater();
-  }
-
-  // create new timer
-  timer_launch = std::make_unique<QTimer>(this);
-
   QString program = "ros2";
   QStringList arguments;
   arguments << "launch" << "fabric_nodes" << "fabric_nodes.launch.py";
@@ -118,16 +114,14 @@ void FabricGUI::on_pushButtonLaunch_clicked()
       ui->progressBarLaunch->setValue(launch_progress);
 
       if (launch_progress >= 100) {
-        timer_launch->stop();
         if (process_launch->state() == QProcess::Running) {
           process_launch->terminate();
           process_launch->waitForFinished(5000);
         }
-
+        qDebug() << "launch finished";
         get_log_process();
-
-        ui->pushButtonLaunch->setEnabled(true);
-        ui->pushButtonLaunchPause->setEnabled(false);
+        load_latest_csv();
+        timer_launch->stop();
       }
     }
   );
@@ -137,7 +131,8 @@ void FabricGUI::on_pushButtonLaunch_clicked()
   connect(
     process_launch.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
     [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
-      qDebug() << "launch finished";
+      ui->pushButtonLaunch->setEnabled(true);
+      ui->pushButtonLaunchPause->setEnabled(false);
     });
 }
 
@@ -153,8 +148,9 @@ void FabricGUI::on_pushButtonLaunchPause_clicked()
     timer_launch->stop();
   }
 
+  qDebug() << "launch finished";
   get_log_process();
-
+  load_latest_csv();
   ui->pushButtonLaunch->setEnabled(true);
   ui->pushButtonLaunchPause->setEnabled(false);
 }
@@ -171,5 +167,36 @@ void FabricGUI::get_log_process()
     qDebug() << "get_log.py process finished";
   } else {
     qDebug() << "Error: get_log.py process did not finish in a reasonable time.";
+  }
+}
+
+void FabricGUI::load_latest_csv()
+{
+  QDir dir(workspace_path);
+
+  QStringList filters;
+  filters << "*.csv";
+  QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files);
+
+  if (!fileInfoList.isEmpty()) {
+    QDateTime latestTimestamp;
+    QString latestCSVFilePath;
+
+    foreach(const QFileInfo & fileInfo, fileInfoList) {
+      QDateTime fileTimestamp = fileInfo.lastModified();
+
+      if (fileTimestamp > latestTimestamp) {
+        latestTimestamp = fileTimestamp;
+        latestCSVFilePath = fileInfo.absoluteFilePath();
+      }
+    }
+
+    if (!latestCSVFilePath.isEmpty()) {
+      qDebug() << "Latest CSV file:" << latestCSVFilePath;
+    } else {
+      qDebug() << "No CSV files found in the folder.";
+    }
+  } else {
+    qDebug() << "No CSV files found in the folder.";
   }
 }

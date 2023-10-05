@@ -15,10 +15,16 @@
 #ifndef FABRIC_GUI__FABRIC_GUI_H
 #define FABRIC_GUI_FABRIC_GUI_H
 
+#include <QDateTime>
+#include <QDebug>
 #include <QDialog>
 #include <QFileDialog>
+#include <QFileInfoList>
+#include <QFileInfo>
 #include <QProcess>
 #include <QProgressBar>
+#include <QStringList>
+#include <QTimer>
 
 namespace Ui {
   class FabricGUI;
@@ -39,6 +45,7 @@ private:
   std::shared_ptr < QProcess > process_launch;
   std::shared_ptr < QTimer > timer_launch;
   void get_log_process();
+  void load_latest_csv();
 
 signals:
   void closeRequested();

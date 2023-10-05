@@ -39,12 +39,59 @@ void FabricGUI::closeEvent(QCloseEvent * event)
   QDialog::closeEvent(event);
 }
 
+void FabricGUI::on_pushButtonWorkspacePath_clicked()
+{
+  workspace_path = QFileDialog::getExistingDirectory(
+    this,                       // Parent
+    tr("Select Workspace Folder"), // Dialog title
+    "",                         // Start directory (empty means current directory or last visited)
+    QFileDialog::ShowDirsOnly   // Show only directories, not files
+  );
+
+  if (!workspace_path.isEmpty()) {
+    // Use the selected folder path as needed
+    qDebug() << "Selected folder:" << workspace_path;
+
+    ui->lineEditWorkspacePath->setText(workspace_path);
+  }
+
+  ui->pushButtonLaunch->setEnabled(true);
+}
+
+void FabricGUI::on_pushButtonConfigPath_clicked()
+{
+  config_path = QFileDialog::getOpenFileName(
+    this,                   // Parent
+    tr("Open Config"),      // Dialog title
+    "",                     // Start directory (empty means current directory or last visited)
+    tr("Config Files (*.yaml);;All Files (*)")      // File filter
+  );
+
+  if (!config_path.isEmpty()) {
+    // Use the selected file path as needed
+    qDebug() << "Selected file:" << config_path;
+
+    ui->lineEditConfigPath->setText(config_path);
+  }
+}
+
 void FabricGUI::on_pushButtonLaunch_clicked()
 {
+  // UI controls
   ui->pushButtonLaunch->setEnabled(false);
   ui->pushButtonLaunchPause->setEnabled(true);
   ui->progressBarLaunch->setValue(0);
   launch_progress = 0;
+
+  // Switch RMW
+  QString selectedDDS = ui->comboBoxDDS->currentText();
+  if (selectedDDS == "CycloneDDS") {
+    setenv("RMW_IMPLEMENTATION", "rmw_cyclonedds_cpp", 1);
+  } else if (selectedDDS == "FastRTPS") {
+    setenv("RMW_IMPLEMENTATION", "rmw_fastrtps_cpp", 1);
+  } else if (selectedDDS == "eCal") {
+    setenv("RMW_IMPLEMENTATION", "rmw_ecal_proto_cpp", 1);
+  }
 
   // stop and delete the prev timer and disconnected
   if (timer_launch && timer_launch->isActive()) {
@@ -110,23 +157,6 @@ void FabricGUI::on_pushButtonLaunchPause_clicked()
 
   ui->pushButtonLaunch->setEnabled(true);
   ui->pushButtonLaunchPause->setEnabled(false);
-}
-
-void FabricGUI::on_pushButtonConfigPath_clicked()
-{
-  config_path = QFileDialog::getOpenFileName(
-    this,                   // Parent
-    tr("Open Config"),      // Dialog title
-    "",                     // Start directory (empty means current directory or last visited)
-    tr("Config Files (*.yaml);;All Files (*)")      // File filter
-  );
-
-  if (!config_path.isEmpty()) {
-    // Use the selected file path as needed
-    qDebug() << "Selected file:" << config_path;
-
-    ui->lineEditConfigPath->setText(config_path);
-  }
 }
 
 void FabricGUI::get_log_process()

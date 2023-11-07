@@ -19,7 +19,25 @@ Our own forks of the RMW implementations:
 [rmw_fastrtps](https://github.com/upowerrobotics/rmw_fastrtps),
 and [rmw_ecal](https://github.com/upowerrobotics/rmw_ecal).
 
-# 1. Quick Start
+# 0. Quick Start (with UI)
+- Run **fabric_gui** in the terminal.
+<div style="width: auto; white-space: nowrap;">
+<pre>
+ros2 run fabric_gui fabric_gui_exe
+</pre>
+</div>
+
+- Button Discription:
+  - Select Workspace: Select the current ROS2 workspace you are using.
+  - Select Configuration File: Select the yaml configuration file you are using. Refer to \ref YAML_API.
+  - Fabric Launch: Runs the **fabric_nodes** for 60 sec and plot the data.
+  - Pause: pause the **fabric_nodes** and plot the data.
+
+- Tab Widget Discription:
+  - Measurement Result: Shows the rawdata of FABRIC.
+  - Average Result: Shows the average of rawdata of FABRIC.
+
+# 1. Quick Start (with command)
 - Launch **fabric_node** in the terminal.  
   After waiting for roughly 1 minute, kill the node:
 <div style="width: auto; white-space: nowrap;">

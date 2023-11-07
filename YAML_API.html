@@ -66,18 +66,18 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This document describes the format of YAML documents which can be read and acted upon by the FABRIC Python Startup script. See the <b>config</b> folder for example configurations which conform to this specification.</p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 How to Read this Document</h2>
 <p>The YAML file is divided into objects and properties. Objects have properties and each property of an object is written in the following form:</p>
 <ul>
 <li><b>property_name</b> <em>[property_value_type]</em> <b>required</b>: Property description.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 Document Structure</h2>
-<h3><a class="anchor" id="autotoc_md13"></a>
+<h3><a class="anchor" id="autotoc_md14"></a>
 Root Node</h3>
 <p>The root node of a FABRIC YAML document must always be <b>environments:</b>. It must contain an array of one or more environment objects.</p>
-<h3><a class="anchor" id="autotoc_md14"></a>
+<h3><a class="anchor" id="autotoc_md15"></a>
 Environment Objects</h3>
 <p>Each environment object defines a compute environment, whether that is an Operating System, SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.</p>
 <p>Properties:</p>
@@ -85,7 +85,7 @@ Environment Objects</h3>
 <li><b>name</b> <em>[string]</em> <b>required</b>: A name for the environment containing only alpha-numeric characters which must be unique in the document.</li>
 <li><b>nodes</b> <em>[array: Node Objects]</em> <b>required</b>: An array of one or more node objects.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md15"></a>
+<h3><a class="anchor" id="autotoc_md16"></a>
 Node Objects</h3>
 <p>Each node object represents a single process in an environment.</p>
 <p>Properties:</p>
@@ -97,7 +97,7 @@ Node Objects</h3>
 <li><b>publishers</b> <em>[array: Publisher objects]</em>: An array of one or more publisher objects. Required if <code>terminal_node</code> is false.</li>
 <li><code>subscribers</code> <em>[array: Subscriber objects]</em>: An array of one or more subscriber objects. Required if <b>root_node</b> is false.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md16"></a>
+<h3><a class="anchor" id="autotoc_md17"></a>
 Publisher Objects</h3>
 <p>Each publisher object represents one or more publishers on a node. Each publisher object must contain exactly two of the three properties <b>bandwidth</b>, <b>frequency</b>, and <b>msg_size</b> and the third will be inferred from the other two.</p>
 <p>Properties:</p>
@@ -110,7 +110,7 @@ Publisher Objects</h3>
 <li><b>QoS_depth</b> <em>[integer]</em>: This is the history depth. The depth specifies the number of most recent messages that should be kept around. For instance, if depth is set to 10, only the 10 most recent messages will be stored. Any new incoming messages will overwrite the oldest stored messages. If the depth is set to 0 the <b>history_policy</b> will be set to <b>RMW_QOS_POLICY_HISTORY_KEEP_ALL</b>. (Default: 1)</li>
 <li><b>QoS_policy</b> <em>[string]</em>: The reliability policy of the QoS setting. The policy can either be <b>reliable</b> or <b>best_effort</b>. (Default: reliable)</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md17"></a>
+<h3><a class="anchor" id="autotoc_md18"></a>
 Subscriber Objects</h3>
 <p>Each subscriber object represents one subscriber on a node. The QoS policy of each subscriber will be settled the same as the connected publisher. </p>
 </div></div><!-- contents -->

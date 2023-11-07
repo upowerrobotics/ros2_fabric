@@ -72,7 +72,26 @@ $(function() {
 </p>
 <p>To measure latency in the rmw layer, users are required to download and compile our own forks of the RMW implementations for each middleware. Our own forks of the RMW implementations: <a href="https://github.com/upowerrobotics/rmw_cyclonedds">rmw_cyclonedds</a>, <a href="https://github.com/upowerrobotics/rmw_fastrtps">rmw_fastrtps</a>, and <a href="https://github.com/upowerrobotics/rmw_ecal">rmw_ecal</a>.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
-1. Quick Start</h1>
+0. Quick Start (with UI)</h1>
+<ul>
+<li>Run <b>fabric_gui</b> in the terminal. <div style="width: auto; white-space: nowrap;"> <pre>
+ros2 run fabric_gui fabric_gui_exe
+</pre> </div></li>
+<li>Button Discription:<ul>
+<li>Select Workspace: Select the current ROS2 workspace you are using.</li>
+<li>Select Configuration File: Select the yaml configuration file you are using. Refer to <a class="el" href="YAML_API.html">ROS2 FABRIC YAML API</a>.</li>
+<li>Fabric Launch: Runs the <b><a class="el" href="namespacefabric__nodes.html" title="Namespace containing classes and functions for the fabric nodes.">fabric_nodes</a></b> for 60 sec and plot the data.</li>
+<li>Pause: pause the <b><a class="el" href="namespacefabric__nodes.html" title="Namespace containing classes and functions for the fabric nodes.">fabric_nodes</a></b> and plot the data.</li>
+</ul>
+</li>
+<li>Tab Widget Discription:<ul>
+<li>Measurement Result: Shows the rawdata of FABRIC.</li>
+<li>Average Result: Shows the average of rawdata of FABRIC.</li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md2"></a>
+1. Quick Start (with command)</h1>
 <ul>
 <li>Launch <b>fabric_node</b> in the terminal. <br  />
  After waiting for roughly 1 minute, kill the node: <div style="width: auto; white-space: nowrap;"> <pre>
@@ -84,10 +103,10 @@ ros2 launch <a class="el" href="namespacefabric__nodes.html" title="Namespace co
 ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace containing classes and functions for the fabric nodes.">fabric_nodes</a> get_log.py
 </pre> </div></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md2"></a>
+<h1><a class="anchor" id="autotoc_md3"></a>
 2. System Structure Workflow (Default Config File)</h1>
 <p>The system follows a sequential workflow to process and output various metrics related to latency, frequency, and bandwidth. Here's a step-by-step breakdown:</p>
-<h2><a class="anchor" id="autotoc_md3"></a>
+<h2><a class="anchor" id="autotoc_md4"></a>
 2-1. Initialization:</h2>
 <p>Execute <b>fabric_nodes.launch.py</b> which:</p>
 <ul>
@@ -98,7 +117,7 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 <li>Validates the yaml structure with <a class="el" href="classfabric__nodes_1_1config2node_1_1Config2Nodes.html">Config2Nodes Class</a>.</li>
 <li>Sets up nodes and topics using <a class="el" href="classfabric__nodes_1_1DummyNode.html">DummyNode Class</a>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md4"></a>
+<h2><a class="anchor" id="autotoc_md5"></a>
 2-2. Output Metrics:</h2>
 <p><a class="el" href="classfabric__nodes_1_1DummyNode.html">DummyNode Class</a> outputs metrics:</p>
 <ul>
@@ -106,7 +125,7 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 <li>Logging: Uses <a href="https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html">RCLCPP_DEBUG</a>.</li>
 <li>Location: ROS log folder (by default ~/.ros/log on Linux systems)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md5"></a>
+<h2><a class="anchor" id="autotoc_md6"></a>
 2-3. RMW Layer Output (Conditional):</h2>
 <ul>
 <li>If the user installs the custom <code>rmw_implementation</code>, the <b>rmw_layer</b> also logs latency, frequency, and bandwidth.<ul>
@@ -115,7 +134,7 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 2-4. Log Extraction:</h2>
 <ul>
 <li><a class="el" href="classfabric__nodes_1_1get__log_1_1GetLog.html">GetLog Class</a> processes the logs:<ul>
@@ -125,10 +144,10 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 3. User Configuration YAML for Evaluation</h1>
 <p>Follow these steps to set up and utilize your custom <b>config.yaml</b>:</p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 3-1. Setup Configuration</h2>
 <ul>
 <li>Create a <b>config.yaml</b> tailored to your environment.</li>
@@ -136,7 +155,7 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 <li>Each environment object defines a compute environment, whether that is an Operating System, SoC, ECU, or ROS environment. All nodes in a single environment will be launched together.</li>
 <li>For more details on the <b>config.yaml</b> structure, please refer to <a class="el" href="YAML_API.html">ROS2 FABRIC YAML API</a>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 3-2. Execute Configuration</h2>
 <ul>
 <li>Run the command below to apply your <b>config.yaml</b>.</li>
@@ -145,7 +164,7 @@ ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace conta
 ros2 launch <a class="el" href="namespacefabric__nodes.html" title="Namespace containing classes and functions for the fabric nodes.">fabric_nodes</a> fabric_nodes.launch.py config-path:=/PATH/TO/USER/CONFIG environment:=USER_ENV
 </pre> </div></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 3-3. Extract Measurements</h2>
 <p>To fetch the measurements from the ROS log folder (by default ~/.ros/log on Linux systems), use: </p><div style="width: auto; white-space: nowrap;"> <pre>
 ros2 run <a class="el" href="namespacefabric__nodes.html" title="Namespace containing classes and functions for the fabric nodes.">fabric_nodes</a> get_log.py
